@@ -1,9 +1,8 @@
-package app.habitzl.elasticsearch.status.monitor;
+package app.habitzl.elasticsearch.status.monitor.tool;
 
-import app.habitzl.elasticsearch.status.monitor.data.cluster.ClusterHealth;
-import app.habitzl.elasticsearch.status.monitor.data.node.NodeInfo;
-import app.habitzl.elasticsearch.status.monitor.mapper.NodeInfoParser;
-import app.habitzl.elasticsearch.status.monitor.mapper.ResponseMapper;
+import app.habitzl.elasticsearch.status.monitor.StatusMonitor;
+import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -19,13 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Roman Habitzl on 26.12.2020.
- */
 public class ElasticsearchStatusMonitor implements StatusMonitor {
 
 	private static final Logger LOG = LogManager.getLogger(ElasticsearchStatusMonitor.class);
-	private static final String GET_METHOD = "GET";
+	private static final String METHOD_GET = "GET";
 	private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
 	private final RestHighLevelClient client;
@@ -43,15 +39,15 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 	}
 
 	@Override
-	public ClusterHealth getClusterHealth() {
-		ClusterHealth clusterHealth;
+	public ClusterInfo getClusterInfo() {
+		ClusterInfo clusterHealth;
 
 		ClusterHealthRequest request = new ClusterHealthRequest();
 		try {
 			ClusterHealthResponse response = client.cluster().health(request, RequestOptions.DEFAULT);
-			clusterHealth = ClusterHealth.fromClusterHealthResponse(response);
+			clusterHealth = ClusterInfo.fromClusterHealthResponse(response);
 		} catch (IOException e) {
-			clusterHealth = ClusterHealth.unknown();
+			clusterHealth = ClusterInfo.unknown();
 			logConnectionError(e);
 		}
 
@@ -59,10 +55,10 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 	}
 
 	@Override
-	public List<NodeInfo> getNodeHealth() {
+	public List<NodeInfo> getNodeInfo() {
 		List<NodeInfo> nodeInfos = new ArrayList<>();
 
-		Request request = new Request(GET_METHOD, "/_cat/nodes");
+		Request request = new Request(METHOD_GET, "/_cat/nodes");
 		setAcceptedContentToJSON(request);
 		try {
 			Response response = client.getLowLevelClient().performRequest(request);
@@ -71,7 +67,7 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 			for (Map<String, Object> map : result) {
 				NodeInfo nodeInfo = nodeInfoParser.parse(map);
 				nodeInfos.add(nodeInfo);
-				LOG.debug("Received node info: {}", nodeInfo);
+				LOG.debug("Parsed node info: {}", nodeInfo);
 			}
 		} catch (IOException e) {
 			logConnectionError(e);

@@ -1,16 +1,22 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.data.cluster.ClusterHealth;
-import app.habitzl.elasticsearch.status.monitor.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 
 import java.util.List;
 
 /**
- * Created by Roman Habitzl on 26.12.2020.
+ * The status monitor is capable of querying the Elasticsearch cluster for various metrics.
  */
 public interface StatusMonitor {
 
-	ClusterHealth getClusterHealth();
+	/**
+	 * Gets information about the whole ES cluster.
+	 */
+	ClusterInfo getClusterInfo();
 
-	List<NodeInfo> getNodeHealth();
+	/**
+	 * Gets information about each node of the ES cluster.
+	 */
+	List<NodeInfo> getNodeInfo();
 }

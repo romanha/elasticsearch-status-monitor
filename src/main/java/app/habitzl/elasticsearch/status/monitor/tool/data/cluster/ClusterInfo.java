@@ -1,34 +1,32 @@
-package app.habitzl.elasticsearch.status.monitor.data.cluster;
+package app.habitzl.elasticsearch.status.monitor.tool.data.cluster;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.StringJoiner;
 
-/**
- * Created by Roman Habitzl on 26.12.2020.
- */
 @Immutable
-public class ClusterHealth implements Serializable {
+public final class ClusterInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private final String clusterName;
-	private final HealthStatus healthStatus;
+	private final ClusterHealthStatus healthStatus;
 	private final int numberOfNodes;
 	private final int numberOfDataNodes;
 	private final int numberOfActiveShards;
 	private final int numberOfInitializingShards;
 	private final int numberOfUnassignedShards;
 
-	public static ClusterHealth unknown() {
-		return new ClusterHealth("unknown", HealthStatus.UNKNOWN, -1, -1, -1, -1, -1);
+	public static ClusterInfo unknown() {
+		return new ClusterInfo("unknown", ClusterHealthStatus.UNKNOWN, -1, -1, -1, -1, -1);
 	}
 
-	public static ClusterHealth fromClusterHealthResponse(final ClusterHealthResponse response) {
-		return new ClusterHealth(
+	public static ClusterInfo fromClusterHealthResponse(final ClusterHealthResponse response) {
+		return new ClusterInfo(
 				response.getClusterName(),
-				HealthStatus.valueOf(response.getStatus().name()),
+				ClusterHealthStatus.valueOf(response.getStatus().name()),
 				response.getNumberOfNodes(),
 				response.getNumberOfDataNodes(),
 				response.getActiveShards(),
@@ -37,9 +35,9 @@ public class ClusterHealth implements Serializable {
 		);
 	}
 
-	private ClusterHealth(
+	private ClusterInfo(
 			final String clusterName,
-			final HealthStatus healthStatus,
+			final ClusterHealthStatus healthStatus,
 			final int numberOfNodes,
 			final int numberOfDataNodes,
 			final int numberOfActiveShards,
@@ -58,7 +56,7 @@ public class ClusterHealth implements Serializable {
 		return clusterName;
 	}
 
-	public HealthStatus getHealthStatus() {
+	public ClusterHealthStatus getHealthStatus() {
 		return healthStatus;
 	}
 
@@ -83,8 +81,36 @@ public class ClusterHealth implements Serializable {
 	}
 
 	@Override
+	@SuppressWarnings("CyclomaticComplexity")
+	public boolean equals(final Object o) {
+		boolean isEqual;
+
+		if (this == o) {
+			isEqual = true;
+		} else if (o == null || getClass() != o.getClass()) {
+			isEqual = false;
+		} else {
+			ClusterInfo that = (ClusterInfo) o;
+			isEqual = Objects.equals(numberOfNodes, that.numberOfNodes)
+					&& Objects.equals(numberOfDataNodes, that.numberOfDataNodes)
+					&& Objects.equals(numberOfActiveShards, that.numberOfActiveShards)
+					&& Objects.equals(numberOfInitializingShards, that.numberOfInitializingShards)
+					&& Objects.equals(numberOfUnassignedShards, that.numberOfUnassignedShards)
+					&& Objects.equals(clusterName, that.clusterName)
+					&& Objects.equals(healthStatus, that.healthStatus);
+		}
+
+		return isEqual;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(clusterName, healthStatus, numberOfNodes, numberOfDataNodes, numberOfActiveShards, numberOfInitializingShards, numberOfUnassignedShards);
+	}
+
+	@Override
 	public String toString() {
-		return new StringJoiner(", ", ClusterHealth.class.getSimpleName() + "[", "]")
+		return new StringJoiner(", ", ClusterInfo.class.getSimpleName() + "[", "]")
 				.add("clusterName='" + clusterName + "'")
 				.add("healthStatus=" + healthStatus)
 				.add("numberOfNodes=" + numberOfNodes)

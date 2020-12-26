@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.connection;
+package app.habitzl.elasticsearch.status.monitor.tool.connection;
 
 import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -6,9 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
-/**
- * Created by Roman Habitzl on 26.12.2020.
- */
 class RestClientProviderTest {
 
 	private RestClientProvider sut;

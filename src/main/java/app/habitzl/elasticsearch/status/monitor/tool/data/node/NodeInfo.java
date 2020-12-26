@@ -1,14 +1,12 @@
-package app.habitzl.elasticsearch.status.monitor.data.node;
+package app.habitzl.elasticsearch.status.monitor.tool.data.node;
 
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.StringJoiner;
 
-/**
- * Created by Roman Habitzl on 26.12.2020.
- */
 @Immutable
-public class NodeInfo implements Serializable {
+public final class NodeInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private final String nodeName;
@@ -55,6 +53,33 @@ public class NodeInfo implements Serializable {
 
 	public EndpointInfo getEndpointInfo() {
 		return endpointInfo;
+	}
+
+	@Override
+	@SuppressWarnings("CyclomaticComplexity")
+	public boolean equals(final Object o) {
+		boolean isEqual;
+
+		if (this == o) {
+			isEqual = true;
+		} else if (o == null || getClass() != o.getClass()) {
+			isEqual = false;
+		} else {
+			NodeInfo nodeInfo = (NodeInfo) o;
+			isEqual = Objects.equals(isMasterNode, nodeInfo.isMasterNode)
+					&& Objects.equals(isDataNode, nodeInfo.isDataNode)
+					&& Objects.equals(isMasterEligibleNode, nodeInfo.isMasterEligibleNode)
+					&& Objects.equals(loadAverageLast15Minutes, nodeInfo.loadAverageLast15Minutes)
+					&& Objects.equals(nodeName, nodeInfo.nodeName)
+					&& Objects.equals(endpointInfo, nodeInfo.endpointInfo);
+		}
+
+		return isEqual;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(nodeName, isMasterNode, isDataNode, isMasterEligibleNode, loadAverageLast15Minutes, endpointInfo);
 	}
 
 	@Override

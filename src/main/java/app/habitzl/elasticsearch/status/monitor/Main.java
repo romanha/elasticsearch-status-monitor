@@ -1,7 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.data.cluster.ClusterHealth;
-import app.habitzl.elasticsearch.status.monitor.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
- * Created by Roman Habitzl on 26.12.2020.
+ * The tool's main entry point.
  */
 public class Main {
 
@@ -24,11 +24,11 @@ public class Main {
 
 		LOG.info("Loading cluster information.");
 
-		printClusterHealth(statusMonitor.getClusterHealth());
-		printNodeHealth(statusMonitor.getNodeHealth());
+		printClusterHealth(statusMonitor.getClusterInfo());
+		printNodeHealth(statusMonitor.getNodeInfo());
 	}
 
-	private static void printClusterHealth(final ClusterHealth clusterHealth) {
+	private static void printClusterHealth(final ClusterInfo clusterHealth) {
 		System.out.println("Cluster: " + clusterHealth.getClusterName());
 		System.out.println("  # of nodes: " + clusterHealth.getNumberOfNodes());
 		System.out.println("  # of data nodes: " + clusterHealth.getNumberOfDataNodes());

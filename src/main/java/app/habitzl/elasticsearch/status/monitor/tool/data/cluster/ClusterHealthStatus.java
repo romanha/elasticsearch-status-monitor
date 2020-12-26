@@ -1,9 +1,6 @@
-package app.habitzl.elasticsearch.status.monitor.data.cluster;
+package app.habitzl.elasticsearch.status.monitor.tool.data.cluster;
 
-/**
- * Created by Roman Habitzl on 26.12.2020.
- */
-public enum HealthStatus {
+public enum ClusterHealthStatus {
 
 	/**
 	 * The cluster is perfectly fine, all shards have been allocated.

@@ -1,23 +1,23 @@
-package app.habitzl.elasticsearch.status.monitor.mapper;
+package app.habitzl.elasticsearch.status.monitor.tool.mapper;
 
+import app.habitzl.elasticsearch.status.monitor.tool.ResponseMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Roman Habitzl on 26.12.2020.
- */
-public class FromLowLevelClientResponseMapper implements ResponseMapper {
+public class JsonContentResponseMapper implements ResponseMapper {
 
 	private final ObjectMapper mapper;
 
-	public FromLowLevelClientResponseMapper() {
-		this.mapper = new ObjectMapper();
+	@Inject
+	public JsonContentResponseMapper(final ObjectMapper mapper) {
+		this.mapper = mapper;
 	}
 
 	@Override

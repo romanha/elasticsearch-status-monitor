@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.connection;
+package app.habitzl.elasticsearch.status.monitor.tool.connection;
 
 import org.elasticsearch.client.RestHighLevelClient;
 
@@ -7,7 +7,7 @@ import javax.inject.Provider;
 import java.util.Objects;
 
 /**
- * Created by Roman Habitzl on 26.12.2020.
+ * A provider responsible for returning a single instance of an Elasticsearch high-level REST client.
  */
 public class RestClientProvider implements Provider<RestHighLevelClient> {
 
