@@ -1,10 +1,13 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.data.ClusterHealth;
+import app.habitzl.elasticsearch.status.monitor.data.cluster.ClusterHealth;
+import app.habitzl.elasticsearch.status.monitor.data.node.NodeInfo;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 /**
  * Created by Roman Habitzl on 26.12.2020.
@@ -22,6 +25,7 @@ public class Main {
 		LOG.info("Loading cluster information.");
 
 		printClusterHealth(statusMonitor.getClusterHealth());
+		printNodeHealth(statusMonitor.getNodeHealth());
 	}
 
 	private static void printClusterHealth(final ClusterHealth clusterHealth) {
@@ -29,5 +33,15 @@ public class Main {
 		System.out.println("  # of nodes: " + clusterHealth.getNumberOfNodes());
 		System.out.println("  # of data nodes: " + clusterHealth.getNumberOfDataNodes());
 		System.out.println("  Status: " + clusterHealth.getHealthStatus().name());
+	}
+
+	private static void printNodeHealth(final List<NodeInfo> nodeInfos) {
+		for (NodeInfo nodeInfo : nodeInfos) {
+			System.out.println("Node: " + nodeInfo.getNodeName() + " (" + nodeInfo.getEndpointInfo().getIpAddress() + ")");
+			System.out.println("  is master: " + nodeInfo.isMasterNode());
+			System.out.println("  can become master: " + nodeInfo.isMasterEligibleNode());
+			System.out.println("  has data: " + nodeInfo.isDataNode());
+			System.out.println("  average load: " + nodeInfo.getLoadAverageLast15Minutes());
+		}
 	}
 }

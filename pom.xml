@@ -13,6 +13,7 @@
 		<!-- Production -->
 		<elasticsearch.version>6.8.13</elasticsearch.version>
 		<google.guice.version>5.0.0-BETA-1</google.guice.version>
+		<jackson.version>2.12.0</jackson.version>
 		<log4j.version>2.14.0</log4j.version>
 
 		<!-- Test -->
@@ -41,6 +42,12 @@
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 			<version>${google.guice.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>
 
 		<!-- log4j API -->

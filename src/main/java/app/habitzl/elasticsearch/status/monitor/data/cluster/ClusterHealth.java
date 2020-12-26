@@ -1,11 +1,17 @@
-package app.habitzl.elasticsearch.status.monitor.data;
+package app.habitzl.elasticsearch.status.monitor.data.cluster;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+
+import javax.annotation.concurrent.Immutable;
+import java.io.Serializable;
+import java.util.StringJoiner;
 
 /**
  * Created by Roman Habitzl on 26.12.2020.
  */
-public class ClusterHealth {
+@Immutable
+public class ClusterHealth implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private final String clusterName;
 	private final HealthStatus healthStatus;
@@ -78,15 +84,14 @@ public class ClusterHealth {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("ClusterHealth{");
-		sb.append("clusterName='").append(clusterName).append('\'');
-		sb.append(", healthStatus=").append(healthStatus);
-		sb.append(", numberOfNodes=").append(numberOfNodes);
-		sb.append(", numberOfDataNodes=").append(numberOfDataNodes);
-		sb.append(", numberOfActiveShards=").append(numberOfActiveShards);
-		sb.append(", numberOfInitializingShards=").append(numberOfInitializingShards);
-		sb.append(", numberOfUnassignedShards=").append(numberOfUnassignedShards);
-		sb.append('}');
-		return sb.toString();
+		return new StringJoiner(", ", ClusterHealth.class.getSimpleName() + "[", "]")
+				.add("clusterName='" + clusterName + "'")
+				.add("healthStatus=" + healthStatus)
+				.add("numberOfNodes=" + numberOfNodes)
+				.add("numberOfDataNodes=" + numberOfDataNodes)
+				.add("numberOfActiveShards=" + numberOfActiveShards)
+				.add("numberOfInitializingShards=" + numberOfInitializingShards)
+				.add("numberOfUnassignedShards=" + numberOfUnassignedShards)
+				.toString();
 	}
 }
