@@ -7,10 +7,115 @@
 	<groupId>app.habitzl.elasticsearch.status.monitor</groupId>
 	<artifactId>elasticsearch-status-monitor</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
 	<properties>
+		<!-- Production -->
+		<elasticsearch.version>6.8.13</elasticsearch.version>
+		<google.guice.version>5.0.0-BETA-1</google.guice.version>
+		<log4j.version>2.14.0</log4j.version>
+
+		<!-- Test -->
+		<junit.version>5.7.0</junit.version>
+		<hamcrest.version>2.2</hamcrest.version>
+		<mockito.version>3.6.28</mockito.version>
+
+		<!-- Compiler -->
+		<maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
+		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
+			<version>${elasticsearch.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>${google.guice.version}</version>
+		</dependency>
+
+		<!-- log4j API -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+		<!-- log4j implementation, only needed at runtime -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+		<!-- Test dependencies -->
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven.assembly.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>
+										app.habitzl.elasticsearch.status.monitor.Main
+									</mainClass>
+									<addClasspath>true</addClasspath>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.surefire.plugin.version}</version>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
