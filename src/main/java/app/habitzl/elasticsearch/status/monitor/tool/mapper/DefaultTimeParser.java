@@ -1,8 +1,8 @@
 package app.habitzl.elasticsearch.status.monitor.tool.mapper;
 
+import com.google.common.base.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.common.Strings;
 
 import java.time.Duration;
 
