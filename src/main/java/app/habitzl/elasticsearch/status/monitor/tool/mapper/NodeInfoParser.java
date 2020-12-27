@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.tool;
+package app.habitzl.elasticsearch.status.monitor.tool.mapper;
 
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 

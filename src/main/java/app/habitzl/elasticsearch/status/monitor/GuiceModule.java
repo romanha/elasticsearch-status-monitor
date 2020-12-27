@@ -1,13 +1,15 @@
 package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.ElasticsearchStatusMonitor;
+import app.habitzl.elasticsearch.status.monitor.tool.InfoParser;
+import app.habitzl.elasticsearch.status.monitor.tool.ResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.connection.ElasticsearchRestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.connection.RestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.connection.RestClientProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.JsonContentResponseMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultInfoParser;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultNodeInfoParser;
-import app.habitzl.elasticsearch.status.monitor.tool.NodeInfoParser;
-import app.habitzl.elasticsearch.status.monitor.tool.ResponseMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.mapper.JsonContentResponseMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.mapper.NodeInfoParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
@@ -28,6 +30,7 @@ class GuiceModule extends AbstractModule {
 		// Mapper and parser
 		bind(ObjectMapper.class).toInstance(new ObjectMapper());
 		bind(ResponseMapper.class).to(JsonContentResponseMapper.class).in(Singleton.class);
+		bind(InfoParser.class).to(DefaultInfoParser.class).in(Singleton.class);
 		bind(NodeInfoParser.class).to(DefaultNodeInfoParser.class).in(Singleton.class);
 	}
 }

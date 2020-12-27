@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor;
 import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -19,4 +20,9 @@ public interface StatusMonitor {
 	 * Gets information about each node of the ES cluster.
 	 */
 	List<NodeInfo> getNodeInfo();
+
+	/**
+	 * Closes the connection to the ES cluster.
+	 */
+	void closeConnection() throws IOException;
 }

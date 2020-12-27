@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor.tool;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitor;
 import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.params.NodeParams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -22,20 +23,18 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 
 	private static final Logger LOG = LogManager.getLogger(ElasticsearchStatusMonitor.class);
 	private static final String METHOD_GET = "GET";
+	private static final String HEADER_ACCEPT = "accept";
 	private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
 	private final RestHighLevelClient client;
 	private final ResponseMapper mapper;
-	private final NodeInfoParser nodeInfoParser;
+	private final InfoParser parser;
 
 	@Inject
-	public ElasticsearchStatusMonitor(
-			final RestHighLevelClient client,
-			final ResponseMapper mapper,
-			final NodeInfoParser nodeInfoParser) {
+	public ElasticsearchStatusMonitor(final RestHighLevelClient client, final ResponseMapper mapper, final InfoParser parser) {
 		this.client = client;
 		this.mapper = mapper;
-		this.nodeInfoParser = nodeInfoParser;
+		this.parser = parser;
 	}
 
 	@Override
@@ -60,12 +59,15 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 
 		Request request = new Request(METHOD_GET, "/_cat/nodes");
 		setAcceptedContentToJSON(request);
+		request.addParameter("h", NodeParams.all());
+		request.addParameter("time", "h");
+
 		try {
 			Response response = client.getLowLevelClient().performRequest(request);
 			List<Map<String, Object>> result = mapper.toMaps(response);
 
 			for (Map<String, Object> map : result) {
-				NodeInfo nodeInfo = nodeInfoParser.parse(map);
+				NodeInfo nodeInfo = parser.parseNodeInfo(map);
 				nodeInfos.add(nodeInfo);
 				LOG.debug("Parsed node info: {}", nodeInfo);
 			}
@@ -76,9 +78,14 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 		return nodeInfos;
 	}
 
+	@Override
+	public void closeConnection() throws IOException {
+		client.close();
+	}
+
 	private void setAcceptedContentToJSON(final Request request) {
 		RequestOptions.Builder builder = RequestOptions.DEFAULT.toBuilder();
-		builder.addHeader("accept", CONTENT_TYPE_APPLICATION_JSON);
+		builder.addHeader(HEADER_ACCEPT, CONTENT_TYPE_APPLICATION_JSON);
 		request.setOptions(builder);
 
 		request.addParameter("format", "json");
