@@ -10,7 +10,9 @@ import java.util.Objects;
  */
 public final class MapUtils {
 
-	private static final String EMPTY_STRING = "";
+	static final String EMPTY_STRING = "";
+	static final int ZERO_INTEGER = 0;
+	static final float ZERO_FLOAT = 0.0f;
 
 	private MapUtils() {
 		// instantiation protection
@@ -23,11 +25,11 @@ public final class MapUtils {
 
 	public static int getInteger(final Map<String, Object> data, final String key) {
 		String stringValue = getString(data, key);
-		return Strings.isNullOrEmpty(stringValue) ? 0 : Integer.parseInt(stringValue);
+		return Strings.isNullOrEmpty(stringValue) ? ZERO_INTEGER : Integer.parseInt(stringValue);
 	}
 
 	public static float getFloat(final Map<String, Object> data, final String key) {
 		String stringValue = getString(data, key);
-		return Strings.isNullOrEmpty(stringValue) ? 0.0f : Float.parseFloat(stringValue);
+		return Strings.isNullOrEmpty(stringValue) ? ZERO_FLOAT : Float.parseFloat(stringValue);
 	}
 }

@@ -59,8 +59,8 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 
 		Request request = new Request(METHOD_GET, "/_cat/nodes");
 		setAcceptedContentToJSON(request);
+		setTimeUnitsToSeconds(request);
 		request.addParameter("h", NodeParams.all());
-		request.addParameter("time", "h");
 
 		try {
 			Response response = client.getLowLevelClient().performRequest(request);
@@ -83,12 +83,24 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 		client.close();
 	}
 
+	/**
+	 * Either setting the "accept" header or the "format" parameter would also work alone.
+	 */
 	private void setAcceptedContentToJSON(final Request request) {
 		RequestOptions.Builder builder = RequestOptions.DEFAULT.toBuilder();
 		builder.addHeader(HEADER_ACCEPT, CONTENT_TYPE_APPLICATION_JSON);
 		request.setOptions(builder);
 
 		request.addParameter("format", "json");
+	}
+
+	/**
+	 * See time unit options in ES documentation.
+	 *
+	 * @see <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#time-units">Elasticsearch documentation</a>
+	 */
+	private void setTimeUnitsToSeconds(final Request request) {
+		request.addParameter("time", "s");
 	}
 
 	private void logConnectionError(final Exception e) {

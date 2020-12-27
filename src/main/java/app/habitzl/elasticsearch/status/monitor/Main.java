@@ -14,7 +14,6 @@ import java.util.List;
  * The tool's main entry point.
  */
 public class Main {
-
 	private static final Logger LOG = LogManager.getLogger(Main.class);
 
 	public static void main(final String[] args) {

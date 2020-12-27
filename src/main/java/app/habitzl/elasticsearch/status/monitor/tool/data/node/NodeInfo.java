@@ -61,6 +61,23 @@ public final class NodeInfo implements Serializable {
 		return uptime;
 	}
 
+	/**
+	 * The load average indicates the workload of a node.
+	 * In normal cases, this should be lower than the number of CPU cores on the node.
+	 * <p>
+	 * For example, the load value means for a single-core node:
+	 * <ul>
+	 * <li>load < 1: No pending processes exist.</li>
+	 * <li>load = 1: The system does not have idle resources to run more processes.</li>
+	 * <li>load > 1: Processes are queuing for resources.</li>
+	 * </ul>
+	 * If the load exceeds the number of CPU cores:
+	 * <ul>
+	 * <li>The CPU utilization or heap memory usage is high or reaches 100%.</li>
+	 * <li>The query QPS or write QPS spikes or significantly fluctuates.</li>
+	 * <li>The cluster receives slow queries.</li>
+	 * </ul>
+	 */
 	public float getLoadAverageLast15Minutes() {
 		return loadAverageLast15Minutes;
 	}

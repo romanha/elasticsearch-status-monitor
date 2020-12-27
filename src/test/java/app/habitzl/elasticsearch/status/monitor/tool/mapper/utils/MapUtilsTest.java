@@ -6,16 +6,17 @@ import org.junit.jupiter.api.Test;
 import java.security.SecureRandom;
 import java.util.Map;
 
+import static app.habitzl.elasticsearch.status.monitor.tool.mapper.utils.MapUtils.ZERO_FLOAT;
+import static app.habitzl.elasticsearch.status.monitor.tool.mapper.utils.MapUtils.ZERO_INTEGER;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.equalTo;
 
 class MapUtilsTest {
 
 	private static final String KNOWN_KEY = "key";
 	private static final String UNKNOWN_KEY = "unknown key";
 	private static final String STRING_VALUE = "string value";
-	private static final int ZERO_INT = 0;
-	private static final float ZERO_FLOAT = 0.0f;
 
 	private SecureRandom random;
 
@@ -57,7 +58,7 @@ class MapUtilsTest {
 		int result = MapUtils.getInteger(map, UNKNOWN_KEY);
 
 		// Then
-		assertThat(result, equalTo(ZERO_INT));
+		assertThat(result, equalTo(ZERO_INTEGER));
 	}
 
 	@Test

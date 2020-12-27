@@ -25,7 +25,8 @@ class DefaultNodeInfoParserTest {
 	private static final Integer TEST_HEAP = 33;
 	private static final String TEST_PROCESS_ID = "1234";
 	private static final String TEST_NODE_NAME = "node name";
-	private static final String TEST_UPTIME = "15m";
+	private static final String TEST_UPTIME_IN_SECONDS = "300";
+	private static final String TEST_UPTIME_IN_SECONDS_FORMATTED = "0:00:05 days";
 	private static final Float TEST_LOAD_AVERAGE = 1.23f;
 
 	private DefaultNodeInfoParser sut;
@@ -46,7 +47,7 @@ class DefaultNodeInfoParserTest {
 				Map.entry(NodeParams.NODE_NAME_KEY, TEST_NODE_NAME),
 				Map.entry(NodeParams.NODE_MASTER_KEY, DefaultNodeInfoParser.MASTER_NODE_MARKER),
 				Map.entry(NodeParams.NODE_ROLE_KEY, NODE_ROLE_MASTER_DATA_PLUS_UNKNOWN_CHARS),
-				Map.entry(NodeParams.NODE_UPTIME, TEST_UPTIME),
+				Map.entry(NodeParams.NODE_UPTIME, TEST_UPTIME_IN_SECONDS),
 				Map.entry(NodeParams.AVERAGE_LOAD_KEY, TEST_LOAD_AVERAGE.toString())
 		);
 
@@ -61,7 +62,7 @@ class DefaultNodeInfoParserTest {
 				true,
 				true,
 				true,
-				TEST_UPTIME,
+				TEST_UPTIME_IN_SECONDS_FORMATTED,
 				TEST_LOAD_AVERAGE,
 				expectedEndpointInfo
 		);
