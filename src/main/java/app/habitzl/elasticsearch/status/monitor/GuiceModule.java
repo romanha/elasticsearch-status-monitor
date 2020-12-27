@@ -1,5 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor;
 
+import app.habitzl.elasticsearch.status.monitor.presentation.format.DayBasedTimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.presentation.TimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.ElasticsearchStatusMonitor;
 import app.habitzl.elasticsearch.status.monitor.tool.InfoParser;
 import app.habitzl.elasticsearch.status.monitor.tool.ResponseMapper;
@@ -8,8 +10,10 @@ import app.habitzl.elasticsearch.status.monitor.tool.connection.RestClientFactor
 import app.habitzl.elasticsearch.status.monitor.tool.connection.RestClientProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultInfoParser;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultNodeInfoParser;
+import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultTimeParser;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.JsonContentResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.NodeInfoParser;
+import app.habitzl.elasticsearch.status.monitor.tool.mapper.TimeParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
@@ -30,7 +34,11 @@ class GuiceModule extends AbstractModule {
 		// Mapper and parser
 		bind(ObjectMapper.class).toInstance(new ObjectMapper());
 		bind(ResponseMapper.class).to(JsonContentResponseMapper.class).in(Singleton.class);
+		bind(TimeParser.class).to(DefaultTimeParser.class).in(Singleton.class);
 		bind(InfoParser.class).to(DefaultInfoParser.class).in(Singleton.class);
 		bind(NodeInfoParser.class).to(DefaultNodeInfoParser.class).in(Singleton.class);
+
+		// Presentation
+		bind(TimeFormatter.class).to(DayBasedTimeFormatter.class).in(Singleton.class);
 	}
 }

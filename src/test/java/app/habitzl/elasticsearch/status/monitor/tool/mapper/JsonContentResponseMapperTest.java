@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 class JsonContentResponseMapperTest {
 
 	private static final String TEST_DATA = "some test data";
+
 	private JsonContentResponseMapper sut;
 	private ObjectMapper mapper;
 

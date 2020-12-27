@@ -6,11 +6,14 @@ import app.habitzl.elasticsearch.status.monitor.tool.params.NodeParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class DefaultNodeInfoParserTest {
 
@@ -26,19 +29,22 @@ class DefaultNodeInfoParserTest {
 	private static final String TEST_PROCESS_ID = "1234";
 	private static final String TEST_NODE_NAME = "node name";
 	private static final String TEST_UPTIME_IN_SECONDS = "300";
-	private static final String TEST_UPTIME_IN_SECONDS_FORMATTED = "0:00:05 days";
+	private static final Duration TEST_UPTIME_DURATION = Duration.ofSeconds(300);
 	private static final Float TEST_LOAD_AVERAGE = 1.23f;
 
 	private DefaultNodeInfoParser sut;
+	private TimeParser timeParser;
 
 	@BeforeEach
 	void setUp() {
-		sut = new DefaultNodeInfoParser();
+		timeParser = mock(TimeParser.class);
+		sut = new DefaultNodeInfoParser(timeParser);
 	}
 
 	@Test
 	void parse_validNodeInfoData_returnsNodeInfo() {
 		// Given
+		when(timeParser.parse(TEST_UPTIME_IN_SECONDS)).thenReturn(TEST_UPTIME_DURATION);
 		Map<String, Object> map = Map.ofEntries(
 				Map.entry(NodeParams.IP_KEY, TEST_IP),
 				Map.entry(NodeParams.RAM_PERCENT_KEY, TEST_RAM.toString()),
@@ -62,7 +68,7 @@ class DefaultNodeInfoParserTest {
 				true,
 				true,
 				true,
-				TEST_UPTIME_IN_SECONDS_FORMATTED,
+				TEST_UPTIME_DURATION,
 				TEST_LOAD_AVERAGE,
 				expectedEndpointInfo
 		);
