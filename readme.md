@@ -22,5 +22,5 @@ RELEASE NOTES
 * Built for: Java 11 / Elasticsearch 6.8.13
 * Initial release
   * SSL/TLS support
-  * Get cluster health
+  * Get cluster information
   * Get node and endpoint information
