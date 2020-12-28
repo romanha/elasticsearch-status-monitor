@@ -10,6 +10,8 @@ It is able to show
 
 You can start the tool by running the command `java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar`.
 
+To connect to a secured _Elasticsearch_ cluster, make sure that the certificates are added to the JKS of the JRE.
+
 RELEASE NOTES
 =============
 
@@ -19,5 +21,6 @@ RELEASE NOTES
 
 * Built for: Java 11 / Elasticsearch 6.8.13
 * Initial release
+  * SSL/TLS support
   * Get cluster health
   * Get node and endpoint information

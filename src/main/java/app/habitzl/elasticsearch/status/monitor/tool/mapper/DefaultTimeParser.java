@@ -16,13 +16,17 @@ public class DefaultTimeParser implements TimeParser {
 		if (Strings.isNullOrEmpty(durationString)) {
 			duration = Duration.ZERO;
 		} else if (durationString.endsWith("s")) {
-			duration = Duration.ofSeconds(getNumberWithoutSuffix(durationString));
+			float number = getFloatWithoutSuffix(durationString);
+			duration = Duration.ofSeconds((int) number);
 		} else if (durationString.endsWith("m")) {
-			duration = Duration.ofMinutes(getNumberWithoutSuffix(durationString));
+			float number = getFloatWithoutSuffix(durationString);
+			duration = Duration.ofSeconds((int) (number * 60));
 		} else if (durationString.endsWith("h")) {
-			duration = Duration.ofHours(getNumberWithoutSuffix(durationString));
+			float number = getFloatWithoutSuffix(durationString);
+			duration = Duration.ofSeconds((int) (number * 60 * 60));
 		} else if (durationString.endsWith("d")) {
-			duration = Duration.ofDays(getNumberWithoutSuffix(durationString));
+			float number = getFloatWithoutSuffix(durationString);
+			duration = Duration.ofSeconds((int) (number * 60 * 60 * 24));
 		} else {
 			duration = Duration.ZERO;
 			LOG.warn("Could not find any valid time unit for duration '{}'.", durationString);
@@ -31,13 +35,13 @@ public class DefaultTimeParser implements TimeParser {
 		return duration;
 	}
 
-	private int getNumberWithoutSuffix(final String durationString) {
-		int number = 0;
+	private float getFloatWithoutSuffix(final String durationString) {
+		float number = 0.0f;
 		String numberString = durationString.substring(0, durationString.length() - 1);
 		try {
-			number = Integer.parseInt(numberString);
+			number = Float.parseFloat(numberString);
 		} catch (NumberFormatException e) {
-			LOG.error("Could not parse number of duration '" + durationString + "'.", e);
+			LOG.error("Could not parse float number of duration '" + durationString + "'.", e);
 		}
 
 		return number;

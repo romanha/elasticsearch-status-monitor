@@ -59,7 +59,6 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 
 		Request request = new Request(METHOD_GET, "/_cat/nodes");
 		setAcceptedContentToJSON(request);
-		setTimeUnitsToSeconds(request);
 		request.addParameter("h", NodeParams.all());
 
 		try {
@@ -92,15 +91,6 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 		request.setOptions(builder);
 
 		request.addParameter("format", "json");
-	}
-
-	/**
-	 * See time unit options in ES documentation.
-	 *
-	 * @see <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#time-units">Elasticsearch documentation</a>
-	 */
-	private void setTimeUnitsToSeconds(final Request request) {
-		request.addParameter("time", "s");
 	}
 
 	private void logConnectionError(final Exception e) {

@@ -17,7 +17,7 @@ public class Main {
 	private static final Logger LOG = LogManager.getLogger(Main.class);
 
 	public static void main(final String[] args) {
-		LOG.info("Elasticsearch Status Monitor startup.");
+		LOG.info("Starting up the Elasticsearch Status Monitor.");
 
 		Injector injector = Guice.createInjector(new GuiceModule());
 		StatusMonitor statusMonitor = injector.getInstance(StatusMonitor.class);
@@ -47,6 +47,7 @@ public class Main {
 		for (NodeInfo nodeInfo : nodeInfos) {
 			System.out.println("Node: " + nodeInfo.getNodeName() + " (" + nodeInfo.getEndpointInfo().getIpAddress() + ")");
 			System.out.println("  - process ID: " + nodeInfo.getProcessId());
+			System.out.println("  - node ID: " + nodeInfo.getNodeId());
 			System.out.println("  - uptime: " + nodeInfo.getUptime());
 			System.out.println("  - is master: " + nodeInfo.isMasterNode());
 			System.out.println("  - can become master: " + nodeInfo.isMasterEligibleNode());

@@ -27,6 +27,7 @@ class DefaultNodeInfoParserTest {
 	private static final Integer TEST_RAM = 75;
 	private static final Integer TEST_HEAP = 33;
 	private static final String TEST_PROCESS_ID = "1234";
+	private static final String TEST_NODE_ID = "k0zy";
 	private static final String TEST_NODE_NAME = "node name";
 	private static final String TEST_UPTIME_IN_SECONDS = "300";
 	private static final Duration TEST_UPTIME_DURATION = Duration.ofSeconds(300);
@@ -50,6 +51,7 @@ class DefaultNodeInfoParserTest {
 				Map.entry(NodeParams.RAM_PERCENT_KEY, TEST_RAM.toString()),
 				Map.entry(NodeParams.HEAP_PERCENT_KEY, TEST_HEAP.toString()),
 				Map.entry(NodeParams.NODE_PROCESS_ID, TEST_PROCESS_ID),
+				Map.entry(NodeParams.NODE_ID_KEY, TEST_NODE_ID),
 				Map.entry(NodeParams.NODE_NAME_KEY, TEST_NODE_NAME),
 				Map.entry(NodeParams.NODE_MASTER_KEY, DefaultNodeInfoParser.MASTER_NODE_MARKER),
 				Map.entry(NodeParams.NODE_ROLE_KEY, NODE_ROLE_MASTER_DATA_PLUS_UNKNOWN_CHARS),
@@ -64,6 +66,7 @@ class DefaultNodeInfoParserTest {
 		EndpointInfo expectedEndpointInfo = new EndpointInfo(TEST_IP, TEST_RAM, TEST_HEAP);
 		NodeInfo expectedNodeInfo = new NodeInfo(
 				TEST_PROCESS_ID,
+				TEST_NODE_ID,
 				TEST_NODE_NAME,
 				true,
 				true,

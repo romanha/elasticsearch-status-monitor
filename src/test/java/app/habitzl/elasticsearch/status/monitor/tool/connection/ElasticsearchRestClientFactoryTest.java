@@ -44,6 +44,6 @@ class ElasticsearchRestClientFactoryTest {
 		HttpHost host = nodes.iterator().next().getHost();
 		assertThat(host.getHostName(), equalTo(ElasticsearchRestClientFactory.DEFAULT_HOST));
 		assertThat(host.getPort(), equalTo(ElasticsearchRestClientFactory.DEFAULT_PORT));
-		assertThat(host.getSchemeName(), equalTo(ElasticsearchRestClientFactory.DEFAULT_SCHEME));
+		assertThat(host.getSchemeName(), equalTo(ElasticsearchRestClientFactory.HTTPS_SCHEME));
 	}
 }

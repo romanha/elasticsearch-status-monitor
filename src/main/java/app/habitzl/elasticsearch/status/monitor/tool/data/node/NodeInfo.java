@@ -11,6 +11,7 @@ public final class NodeInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private final String processId;
+	private final String nodeId;
 	private final String nodeName;
 	private final boolean isMasterNode;
 	private final boolean isDataNode;
@@ -21,6 +22,7 @@ public final class NodeInfo implements Serializable {
 
 	public NodeInfo(
 			final String processId,
+			final String nodeId,
 			final String nodeName,
 			final boolean isMasterNode,
 			final boolean isDataNode,
@@ -29,6 +31,7 @@ public final class NodeInfo implements Serializable {
 			final float loadAverageLast15Minutes,
 			final EndpointInfo endpointInfo) {
 		this.processId = processId;
+		this.nodeId = nodeId;
 		this.nodeName = nodeName;
 		this.isMasterNode = isMasterNode;
 		this.isDataNode = isDataNode;
@@ -40,6 +43,10 @@ public final class NodeInfo implements Serializable {
 
 	public String getProcessId() {
 		return processId;
+	}
+
+	public String getNodeId() {
+		return nodeId;
 	}
 
 	public String getNodeName() {
@@ -103,6 +110,7 @@ public final class NodeInfo implements Serializable {
 					&& Objects.equals(isMasterEligibleNode, nodeInfo.isMasterEligibleNode)
 					&& Objects.equals(loadAverageLast15Minutes, nodeInfo.loadAverageLast15Minutes)
 					&& Objects.equals(processId, nodeInfo.processId)
+					&& Objects.equals(nodeId, nodeInfo.nodeId)
 					&& Objects.equals(nodeName, nodeInfo.nodeName)
 					&& Objects.equals(uptime, nodeInfo.uptime)
 					&& Objects.equals(endpointInfo, nodeInfo.endpointInfo);
@@ -113,18 +121,19 @@ public final class NodeInfo implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(processId, nodeName, isMasterNode, isDataNode, isMasterEligibleNode, uptime, loadAverageLast15Minutes, endpointInfo);
+		return Objects.hash(processId, nodeId, nodeName, isMasterNode, isDataNode, isMasterEligibleNode, uptime, loadAverageLast15Minutes, endpointInfo);
 	}
 
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", NodeInfo.class.getSimpleName() + "[", "]")
 				.add("processId='" + processId + "'")
+				.add("nodeId='" + nodeId + "'")
 				.add("nodeName='" + nodeName + "'")
 				.add("isMasterNode=" + isMasterNode)
 				.add("isDataNode=" + isDataNode)
 				.add("isMasterEligibleNode=" + isMasterEligibleNode)
-				.add("uptime='" + uptime + "'")
+				.add("uptime=" + uptime)
 				.add("loadAverageLast15Minutes=" + loadAverageLast15Minutes)
 				.add("endpointInfo=" + endpointInfo)
 				.toString();

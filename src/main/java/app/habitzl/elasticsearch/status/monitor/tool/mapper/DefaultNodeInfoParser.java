@@ -27,6 +27,7 @@ public class DefaultNodeInfoParser implements NodeInfoParser {
 		EndpointInfo endpointInfo = parseEndpointInfo(data);
 
 		String processId = getString(data, NODE_PROCESS_ID);
+		String nodeId = getString(data, NODE_ID_KEY);
 		String name = getString(data, NODE_NAME_KEY);
 		boolean isMasterNode = (getString(data, NODE_MASTER_KEY)).equalsIgnoreCase(MASTER_NODE_MARKER);
 		boolean isDataNode = (getString(data, NODE_ROLE_KEY)).contains(DATA_NODE_ROLE_ID);
@@ -35,6 +36,7 @@ public class DefaultNodeInfoParser implements NodeInfoParser {
 		float load15m = getFloat(data, AVERAGE_LOAD_KEY);
 		return new NodeInfo(
 				processId,
+				nodeId,
 				name,
 				isMasterNode,
 				isDataNode,
