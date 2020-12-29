@@ -1,7 +1,11 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.presentation.format.DayBasedTimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.presentation.configuration.FreemarkerConfigurationProvider;
+import app.habitzl.elasticsearch.status.monitor.presentation.FreemarkerHtmlReportGenerator;
 import app.habitzl.elasticsearch.status.monitor.presentation.TimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.presentation.file.ReportFile;
+import app.habitzl.elasticsearch.status.monitor.presentation.file.ReportFileProvider;
+import app.habitzl.elasticsearch.status.monitor.presentation.format.DayBasedTimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.ElasticsearchStatusMonitor;
 import app.habitzl.elasticsearch.status.monitor.tool.InfoParser;
 import app.habitzl.elasticsearch.status.monitor.tool.ResponseMapper;
@@ -14,10 +18,16 @@ import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultTimeParser;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.JsonContentResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.NodeInfoParser;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.TimeParser;
+import app.habitzl.elasticsearch.status.monitor.util.ClockProvider;
+import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+import freemarker.template.Configuration;
 import org.elasticsearch.client.RestHighLevelClient;
+
+import java.io.File;
+import java.time.Clock;
 
 /**
  * A Google Guice module for defining bindings for the projects dependency injection.
@@ -27,7 +37,7 @@ class GuiceModule extends AbstractModule {
 	protected void configure() {
 		bind(StatusMonitor.class).to(ElasticsearchStatusMonitor.class).in(Singleton.class);
 
-		// REST client
+		// Elasticsearch REST client
 		bind(RestHighLevelClient.class).toProvider(RestClientProvider.class).in(Singleton.class);
 		bind(RestClientFactory.class).to(ElasticsearchRestClientFactory.class).in(Singleton.class);
 
@@ -39,6 +49,13 @@ class GuiceModule extends AbstractModule {
 		bind(NodeInfoParser.class).to(DefaultNodeInfoParser.class).in(Singleton.class);
 
 		// Presentation
+		bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);
+		bind(File.class).annotatedWith(ReportFile.class).toProvider(ReportFileProvider.class);
+		bind(Configuration.class).toProvider(FreemarkerConfigurationProvider.class);
 		bind(TimeFormatter.class).to(DayBasedTimeFormatter.class).in(Singleton.class);
+
+		// Utilities
+		bind(Clock.class).toProvider(ClockProvider.class);
+		bind(FileCreator.class).in(Singleton.class);
 	}
 }

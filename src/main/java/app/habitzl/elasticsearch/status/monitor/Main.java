@@ -7,7 +7,6 @@ import com.google.inject.Injector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -20,18 +19,23 @@ public class Main {
 		LOG.info("Starting up the Elasticsearch Status Monitor.");
 
 		Injector injector = Guice.createInjector(new GuiceModule());
-		StatusMonitor statusMonitor = injector.getInstance(StatusMonitor.class);
+//		StatusMonitor statusMonitor = injector.getInstance(StatusMonitor.class);
+//
+//		LOG.info("Loading cluster information.");
+//
+//		printClusterHealth(statusMonitor.getClusterInfo());
+//		printNodeHealth(statusMonitor.getNodeInfo());
+//
+//		try {
+//			statusMonitor.closeConnection();
+//		} catch (IOException e) {
+//			LOG.warn("Could not safely close the connection to the ES cluster.", e);
+//		}
 
-		LOG.info("Loading cluster information.");
+		ReportGenerator generator = injector.getInstance(ReportGenerator.class);
+		generator.generate();
 
-		printClusterHealth(statusMonitor.getClusterInfo());
-		printNodeHealth(statusMonitor.getNodeInfo());
-
-		try {
-			statusMonitor.closeConnection();
-		} catch (IOException e) {
-			LOG.warn("Could not safely close the connection to the ES cluster.", e);
-		}
+		LOG.info("Generated report. Closing Elasticsearch Status Monitor.");
 	}
 
 	private static void printClusterHealth(final ClusterInfo clusterHealth) {

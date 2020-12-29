@@ -10,6 +10,9 @@ It is able to show
 
 You can start the tool by running the command `java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar`.
 
+The tool will create a folder called `Elasticsearch Status Reports` in the directory of the JAR.
+This folder includes all generated reports.
+
 To connect to a secured _Elasticsearch_ cluster, make sure that the certificates are added to the JKS of the JRE.
 
 RELEASE NOTES
@@ -21,6 +24,8 @@ RELEASE NOTES
 
 * Built for: Java 11 / Elasticsearch 6.8.13
 * Initial release
-  * SSL/TLS support
-  * Get cluster information
-  * Get node and endpoint information
+  * Elasticsearch monitoring
+    * Cluster information
+    * Node and endpoint information
+  * HTML report generation
+  * SSL/TLS support for connecting to Elasticsearch
