@@ -22,7 +22,7 @@ import java.util.Optional;
 public class ReportFileProvider implements Provider<File> {
 	private static final Logger LOG = LogManager.getLogger(ReportFileProvider.class);
 
-	static final String REPORT_DIRECTORY_NAME = "Elasticsearch Status Report";
+	static final String REPORT_DIRECTORY_NAME = "Elasticsearch Status Reports";
 	static final String REPORT_FILE_NAME = "report.html";
 	static final String TIMESTAMP_FILE_PATTERN = "yyyy-MM-dd HH-mm-ss";
 
