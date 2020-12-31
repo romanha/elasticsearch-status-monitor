@@ -77,6 +77,9 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 		return nodeInfos;
 	}
 
+	/**
+	 * TODO remove as the client is closed anyway by the main teardown logic
+	 */
 	@Override
 	public void closeConnection() throws IOException {
 		client.close();

@@ -5,5 +5,8 @@ package app.habitzl.elasticsearch.status.monitor;
  */
 public interface ReportGenerator {
 
-	void generate();
+	/**
+	 * Generates a new report based on the provided data model.
+	 */
+	void generate(Object dataModel);
 }

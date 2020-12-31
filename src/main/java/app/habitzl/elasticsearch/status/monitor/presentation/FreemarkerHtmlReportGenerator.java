@@ -2,7 +2,6 @@ package app.habitzl.elasticsearch.status.monitor.presentation;
 
 import app.habitzl.elasticsearch.status.monitor.ReportGenerator;
 import app.habitzl.elasticsearch.status.monitor.presentation.file.ReportFile;
-import app.habitzl.elasticsearch.status.monitor.presentation.model.Example;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -20,7 +19,7 @@ import java.util.Map;
  */
 public class FreemarkerHtmlReportGenerator implements ReportGenerator {
 	private static final Logger LOG = LogManager.getLogger(FreemarkerHtmlReportGenerator.class);
-	private static final String TEMPLATE_FILE_NAME = "test.ftlh";
+	static final String TEMPLATE_FILE_NAME = "report.ftlh";
 
 	private final Configuration configuration;
 	private final File reportFile;
@@ -34,14 +33,14 @@ public class FreemarkerHtmlReportGenerator implements ReportGenerator {
 	}
 
 	@Override
-	public void generate() {
-		createReport();
+	public void generate(final Object dataModel) {
+		createReport(dataModel);
 	}
 
-	private void createReport() {
+	private void createReport(final Object dataModel) {
 		try {
 			Template template = configuration.getTemplate(TEMPLATE_FILE_NAME);
-			writeReport(template);
+			writeReport(template, dataModel);
 		} catch (IOException e) {
 			LOG.error("Could not load template '" + TEMPLATE_FILE_NAME + "'.", e);
 		} catch (TemplateException e) {
@@ -49,23 +48,13 @@ public class FreemarkerHtmlReportGenerator implements ReportGenerator {
 		}
 	}
 
-	private void writeReport(final Template template) throws IOException, TemplateException {
+	private void writeReport(final Template template, final Object dataModel) throws IOException, TemplateException {
 		FileWriter fileWriter = new FileWriter(reportFile);
-		template.process(createExampleDataModel(), fileWriter);
+		template.process(createReportDataModel(dataModel), fileWriter);
 		fileWriter.close();
 	}
 
-	/**
-	 * TODO delete
-	 */
-	private Map<String, Object> createExampleDataModel() {
-		Example product = new Example();
-		product.setName("Test Product");
-		product.setUrl("Test URL");
-
-		return Map.of(
-				"user", "Roman",
-				"latestProduct", product
-		);
+	private Map<String, Object> createReportDataModel(final Object dataModel) {
+		return Map.of("report", dataModel);
 	}
 }

@@ -1,8 +1,10 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.presentation.configuration.FreemarkerConfigurationProvider;
+import app.habitzl.elasticsearch.status.monitor.presentation.DefaultStatusAggregator;
 import app.habitzl.elasticsearch.status.monitor.presentation.FreemarkerHtmlReportGenerator;
+import app.habitzl.elasticsearch.status.monitor.presentation.StatusAggregator;
 import app.habitzl.elasticsearch.status.monitor.presentation.TimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.presentation.configuration.FreemarkerConfigurationProvider;
 import app.habitzl.elasticsearch.status.monitor.presentation.file.ReportFile;
 import app.habitzl.elasticsearch.status.monitor.presentation.file.ReportFileProvider;
 import app.habitzl.elasticsearch.status.monitor.presentation.format.DayBasedTimeFormatter;
@@ -49,6 +51,7 @@ class GuiceModule extends AbstractModule {
 		bind(NodeInfoParser.class).to(DefaultNodeInfoParser.class).in(Singleton.class);
 
 		// Presentation
+		bind(StatusAggregator.class).to(DefaultStatusAggregator.class).in(Singleton.class);
 		bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);
 		bind(File.class).annotatedWith(ReportFile.class).toProvider(ReportFileProvider.class);
 		bind(Configuration.class).toProvider(FreemarkerConfigurationProvider.class);
