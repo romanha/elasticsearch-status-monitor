@@ -16,10 +16,12 @@ public class DefaultNodeInfoParser implements NodeInfoParser {
 	static final String MASTER_ELIGIBLE_NODE_ROLE_ID = "m";
 
 	private final TimeParser timeParser;
+	private final TimeFormatter timeFormatter;
 
 	@Inject
-	public DefaultNodeInfoParser(final TimeParser timeParser) {
+	public DefaultNodeInfoParser(final TimeParser timeParser, final TimeFormatter timeFormatter) {
 		this.timeParser = timeParser;
+		this.timeFormatter = timeFormatter;
 	}
 
 	@Override
@@ -41,7 +43,7 @@ public class DefaultNodeInfoParser implements NodeInfoParser {
 				isMasterNode,
 				isDataNode,
 				isMasterEligibleNode,
-				uptime,
+				timeFormatter.format(uptime),
 				load15m,
 				endpointInfo
 		);

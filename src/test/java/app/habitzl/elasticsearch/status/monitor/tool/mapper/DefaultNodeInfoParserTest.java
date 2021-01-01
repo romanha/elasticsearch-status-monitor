@@ -31,21 +31,25 @@ class DefaultNodeInfoParserTest {
 	private static final String TEST_NODE_NAME = "node name";
 	private static final String TEST_UPTIME_IN_SECONDS = "300";
 	private static final Duration TEST_UPTIME_DURATION = Duration.ofSeconds(300);
+	private static final String TEST_UPTIME_DURATION_FORMATTED = "0:00:05";
 	private static final Float TEST_LOAD_AVERAGE = 1.23f;
 
 	private DefaultNodeInfoParser sut;
 	private TimeParser timeParser;
+	private TimeFormatter timeFormatter;
 
 	@BeforeEach
 	void setUp() {
 		timeParser = mock(TimeParser.class);
-		sut = new DefaultNodeInfoParser(timeParser);
+		timeFormatter = mock(TimeFormatter.class);
+		sut = new DefaultNodeInfoParser(timeParser, timeFormatter);
 	}
 
 	@Test
 	void parse_validNodeInfoData_returnsNodeInfo() {
 		// Given
 		when(timeParser.parse(TEST_UPTIME_IN_SECONDS)).thenReturn(TEST_UPTIME_DURATION);
+		when(timeFormatter.format(TEST_UPTIME_DURATION)).thenReturn(TEST_UPTIME_DURATION_FORMATTED);
 		Map<String, Object> map = Map.ofEntries(
 				Map.entry(NodeParams.IP_KEY, TEST_IP),
 				Map.entry(NodeParams.RAM_PERCENT_KEY, TEST_RAM.toString()),
@@ -71,7 +75,7 @@ class DefaultNodeInfoParserTest {
 				true,
 				true,
 				true,
-				TEST_UPTIME_DURATION,
+				TEST_UPTIME_DURATION_FORMATTED,
 				TEST_LOAD_AVERAGE,
 				expectedEndpointInfo
 		);

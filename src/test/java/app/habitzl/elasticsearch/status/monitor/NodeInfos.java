@@ -24,7 +24,7 @@ public final class NodeInfos {
 				random.nextBoolean(),
 				random.nextBoolean(),
 				random.nextBoolean(),
-				Duration.ofMillis(random.nextInt()),
+				Duration.ofMillis(random.nextInt()).toString(),
 				random.nextFloat(),
 				EndpointInfos.random()
 		);

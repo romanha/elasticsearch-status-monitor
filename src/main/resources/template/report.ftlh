@@ -95,7 +95,7 @@
                 <p>
                     Node ID: ${node.nodeId}<br/>
                     Process ID: ${node.processId}<br/>
-                    Uptime: ${node.uptime}<br/>
+                    Uptime: ${node.uptime} days<br/>
                 </p>
                 <p>
                     <#if node.masterNode>This node is the current master node.<br/></#if>

@@ -61,6 +61,7 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 		Request request = new Request(METHOD_GET, "/_cat/nodes");
 		setAcceptedContentToJSON(request);
 		request.addParameter("h", NodeParams.all());
+//		request.addParameter("full_id", "true");
 
 		try {
 			Response response = client.getLowLevelClient().performRequest(request);

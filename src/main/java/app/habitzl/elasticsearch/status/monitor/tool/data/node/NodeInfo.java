@@ -2,7 +2,6 @@ package app.habitzl.elasticsearch.status.monitor.tool.data.node;
 
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -16,7 +15,7 @@ public final class NodeInfo implements Serializable {
 	private final boolean isMasterNode;
 	private final boolean isDataNode;
 	private final boolean isMasterEligibleNode;
-	private final Duration uptime;
+	private final String uptime;
 	private final float loadAverageLast15Minutes;
 	private final EndpointInfo endpointInfo;
 
@@ -27,7 +26,7 @@ public final class NodeInfo implements Serializable {
 			final boolean isMasterNode,
 			final boolean isDataNode,
 			final boolean isMasterEligibleNode,
-			final Duration uptime,
+			final String uptime,
 			final float loadAverageLast15Minutes,
 			final EndpointInfo endpointInfo) {
 		this.processId = processId;
@@ -65,7 +64,7 @@ public final class NodeInfo implements Serializable {
 		return isMasterEligibleNode;
 	}
 
-	public Duration getUptime() {
+	public String getUptime() {
 		return uptime;
 	}
 

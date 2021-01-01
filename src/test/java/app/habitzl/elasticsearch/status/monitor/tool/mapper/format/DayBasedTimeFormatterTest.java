@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.presentation.format;
+package app.habitzl.elasticsearch.status.monitor.tool.mapper.format;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
