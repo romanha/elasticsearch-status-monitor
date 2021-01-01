@@ -10,7 +10,7 @@ import java.util.Map;
 import static app.habitzl.elasticsearch.status.monitor.tool.mapper.utils.MapUtils.*;
 import static app.habitzl.elasticsearch.status.monitor.tool.params.NodeParams.*;
 
-public class DefaultNodeInfoParser implements NodeInfoParser {
+public class DefaultNodeInfoMapper implements NodeInfoMapper {
 	static final String MASTER_NODE_MARKER = "*";
 	static final String DATA_NODE_ROLE_ID = "d";
 	static final String MASTER_ELIGIBLE_NODE_ROLE_ID = "m";
@@ -19,14 +19,14 @@ public class DefaultNodeInfoParser implements NodeInfoParser {
 	private final TimeFormatter timeFormatter;
 
 	@Inject
-	public DefaultNodeInfoParser(final TimeParser timeParser, final TimeFormatter timeFormatter) {
+	public DefaultNodeInfoMapper(final TimeParser timeParser, final TimeFormatter timeFormatter) {
 		this.timeParser = timeParser;
 		this.timeFormatter = timeFormatter;
 	}
 
 	@Override
-	public NodeInfo parse(final Map<String, Object> data) {
-		EndpointInfo endpointInfo = parseEndpointInfo(data);
+	public NodeInfo map(final Map<String, Object> data) {
+		EndpointInfo endpointInfo = mapEndpointInfo(data);
 
 		String processId = getString(data, NODE_PROCESS_ID);
 		String nodeId = getString(data, NODE_ID_KEY);
@@ -49,7 +49,7 @@ public class DefaultNodeInfoParser implements NodeInfoParser {
 		);
 	}
 
-	private EndpointInfo parseEndpointInfo(final Map<String, Object> data) {
+	private EndpointInfo mapEndpointInfo(final Map<String, Object> data) {
 		String address = getString(data, IP_KEY);
 		int ram = getInteger(data, RAM_PERCENT_KEY);
 		int heap = getInteger(data, HEAP_PERCENT_KEY);

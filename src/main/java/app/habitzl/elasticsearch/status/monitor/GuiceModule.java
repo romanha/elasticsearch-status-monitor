@@ -10,16 +10,16 @@ import app.habitzl.elasticsearch.status.monitor.presentation.file.ReportFileProv
 import app.habitzl.elasticsearch.status.monitor.presentation.file.TemplateProcessor;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.format.DayBasedTimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.ElasticsearchStatusMonitor;
-import app.habitzl.elasticsearch.status.monitor.tool.InfoParser;
+import app.habitzl.elasticsearch.status.monitor.tool.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.ResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.connection.ElasticsearchRestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.connection.RestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.connection.RestClientProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultInfoParser;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultNodeInfoParser;
+import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultInfoMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultNodeInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultTimeParser;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.JsonContentResponseMapper;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.NodeInfoParser;
+import app.habitzl.elasticsearch.status.monitor.tool.mapper.NodeInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.mapper.TimeParser;
 import app.habitzl.elasticsearch.status.monitor.util.ClockProvider;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
@@ -48,8 +48,8 @@ class GuiceModule extends AbstractModule {
 		bind(ObjectMapper.class).toInstance(new ObjectMapper());
 		bind(ResponseMapper.class).to(JsonContentResponseMapper.class).in(Singleton.class);
 		bind(TimeParser.class).to(DefaultTimeParser.class).in(Singleton.class);
-		bind(InfoParser.class).to(DefaultInfoParser.class).in(Singleton.class);
-		bind(NodeInfoParser.class).to(DefaultNodeInfoParser.class).in(Singleton.class);
+		bind(InfoMapper.class).to(DefaultInfoMapper.class).in(Singleton.class);
+		bind(NodeInfoMapper.class).to(DefaultNodeInfoMapper.class).in(Singleton.class);
 
 		// Presentation
 		bind(StatusAggregator.class).to(DefaultStatusAggregator.class).in(Singleton.class);

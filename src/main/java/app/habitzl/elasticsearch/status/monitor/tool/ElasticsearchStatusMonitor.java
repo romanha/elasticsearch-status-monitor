@@ -28,14 +28,14 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 	private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
 	private final RestHighLevelClient client;
-	private final ResponseMapper mapper;
-	private final InfoParser parser;
+	private final ResponseMapper responseMapper;
+	private final InfoMapper infoMapper;
 
 	@Inject
-	public ElasticsearchStatusMonitor(final RestHighLevelClient client, final ResponseMapper mapper, final InfoParser parser) {
+	public ElasticsearchStatusMonitor(final RestHighLevelClient client, final ResponseMapper responseMapper, final InfoMapper infoMapper) {
 		this.client = client;
-		this.mapper = mapper;
-		this.parser = parser;
+		this.responseMapper = responseMapper;
+		this.infoMapper = infoMapper;
 	}
 
 	@Override
@@ -65,12 +65,12 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 
 		try {
 			Response response = client.getLowLevelClient().performRequest(request);
-			List<Map<String, Object>> result = mapper.toMaps(response);
+			List<Map<String, Object>> result = responseMapper.toMaps(response);
 
 			for (Map<String, Object> map : result) {
-				NodeInfo nodeInfo = parser.parseNodeInfo(map);
+				NodeInfo nodeInfo = infoMapper.mapNodeInfo(map);
 				nodeInfos.add(nodeInfo);
-				LOG.debug("Parsed node info: {}", nodeInfo);
+				LOG.debug("Mapped node info: {}", nodeInfo);
 			}
 		} catch (final IOException e) {
 			logConnectionError(e);

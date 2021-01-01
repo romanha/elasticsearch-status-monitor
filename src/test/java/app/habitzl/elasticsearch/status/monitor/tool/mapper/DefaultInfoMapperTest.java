@@ -8,28 +8,28 @@ import java.util.Map;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class DefaultInfoParserTest {
+class DefaultInfoMapperTest {
 
 	private static final Map<String, Object> TEST_MAP = Map.of("key", "value");
 
-	private DefaultInfoParser sut;
-	private NodeInfoParser nodeInfoParser;
+	private DefaultInfoMapper sut;
+	private NodeInfoMapper nodeInfoMapper;
 
 	@BeforeEach
 	void setUp() {
-		nodeInfoParser = mock(NodeInfoParser.class);
-		sut = new DefaultInfoParser(nodeInfoParser);
+		nodeInfoMapper = mock(NodeInfoMapper.class);
+		sut = new DefaultInfoMapper(nodeInfoMapper);
 	}
 
 	@Test
-	void parseNodeInfo_sut_delegatesToNodeInfoParser() {
+	void mapNodeInfo_sut_delegatesToNodeInfoMapper() {
 		// Given
 		Map<String, Object> map = TEST_MAP;
 
 		// When
-		sut.parseNodeInfo(map);
+		sut.mapNodeInfo(map);
 
 		// Then
-		verify(nodeInfoParser).parse(map);
+		verify(nodeInfoMapper).map(map);
 	}
 }

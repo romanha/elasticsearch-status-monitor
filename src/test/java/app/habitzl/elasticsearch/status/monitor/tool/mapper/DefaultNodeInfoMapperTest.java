@@ -15,11 +15,11 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class DefaultNodeInfoParserTest {
+class DefaultNodeInfoMapperTest {
 
 	private static final String NODE_ROLE_MASTER_DATA_PLUS_UNKNOWN_CHARS =
-			"#" + DefaultNodeInfoParser.DATA_NODE_ROLE_ID
-					+ "~" + DefaultNodeInfoParser.MASTER_ELIGIBLE_NODE_ROLE_ID
+			"#" + DefaultNodeInfoMapper.DATA_NODE_ROLE_ID
+					+ "~" + DefaultNodeInfoMapper.MASTER_ELIGIBLE_NODE_ROLE_ID
 					+ "ß";
 	private static final String NODE_ROLE_UNKNOWN_CHARS = "~#ß";
 
@@ -34,7 +34,7 @@ class DefaultNodeInfoParserTest {
 	private static final String TEST_UPTIME_DURATION_FORMATTED = "0:00:05";
 	private static final Float TEST_LOAD_AVERAGE = 1.23f;
 
-	private DefaultNodeInfoParser sut;
+	private DefaultNodeInfoMapper sut;
 	private TimeParser timeParser;
 	private TimeFormatter timeFormatter;
 
@@ -42,11 +42,11 @@ class DefaultNodeInfoParserTest {
 	void setUp() {
 		timeParser = mock(TimeParser.class);
 		timeFormatter = mock(TimeFormatter.class);
-		sut = new DefaultNodeInfoParser(timeParser, timeFormatter);
+		sut = new DefaultNodeInfoMapper(timeParser, timeFormatter);
 	}
 
 	@Test
-	void parse_validNodeInfoData_returnsNodeInfo() {
+	void map_validNodeInfoData_returnsNodeInfo() {
 		// Given
 		when(timeParser.parse(TEST_UPTIME_IN_SECONDS)).thenReturn(TEST_UPTIME_DURATION);
 		when(timeFormatter.format(TEST_UPTIME_DURATION)).thenReturn(TEST_UPTIME_DURATION_FORMATTED);
@@ -57,14 +57,14 @@ class DefaultNodeInfoParserTest {
 				Map.entry(NodeParams.NODE_PROCESS_ID, TEST_PROCESS_ID),
 				Map.entry(NodeParams.NODE_ID_KEY, TEST_NODE_ID),
 				Map.entry(NodeParams.NODE_NAME_KEY, TEST_NODE_NAME),
-				Map.entry(NodeParams.NODE_MASTER_KEY, DefaultNodeInfoParser.MASTER_NODE_MARKER),
+				Map.entry(NodeParams.NODE_MASTER_KEY, DefaultNodeInfoMapper.MASTER_NODE_MARKER),
 				Map.entry(NodeParams.NODE_ROLE_KEY, NODE_ROLE_MASTER_DATA_PLUS_UNKNOWN_CHARS),
 				Map.entry(NodeParams.NODE_UPTIME, TEST_UPTIME_IN_SECONDS),
 				Map.entry(NodeParams.AVERAGE_LOAD_KEY, TEST_LOAD_AVERAGE.toString())
 		);
 
 		// When
-		NodeInfo result = sut.parse(map);
+		NodeInfo result = sut.map(map);
 
 		// Then
 		EndpointInfo expectedEndpointInfo = new EndpointInfo(TEST_IP, TEST_RAM, TEST_HEAP);
@@ -83,14 +83,14 @@ class DefaultNodeInfoParserTest {
 	}
 
 	@Test
-	void parse_notMasterEligibleOrDataNode_returnsNodeInfo() {
+	void map_notMasterEligibleOrDataNode_returnsNodeInfo() {
 		// Given
 		Map<String, Object> map = Map.ofEntries(
 				Map.entry(NodeParams.NODE_ROLE_KEY, NODE_ROLE_UNKNOWN_CHARS)
 		);
 
 		// When
-		NodeInfo result = sut.parse(map);
+		NodeInfo result = sut.map(map);
 
 		// Then
 		assertThat(result.isMasterEligibleNode(), is(false));
@@ -98,14 +98,14 @@ class DefaultNodeInfoParserTest {
 	}
 
 	@Test
-	void parse_notCurrentMasterNode_returnsNodeInfo() {
+	void map_notCurrentMasterNode_returnsNodeInfo() {
 		// Given
 		Map<String, Object> map = Map.ofEntries(
 				Map.entry(NodeParams.NODE_MASTER_KEY, "-")
 		);
 
 		// When
-		NodeInfo result = sut.parse(map);
+		NodeInfo result = sut.map(map);
 
 		// Then
 		assertThat(result.isMasterNode(), is(false));

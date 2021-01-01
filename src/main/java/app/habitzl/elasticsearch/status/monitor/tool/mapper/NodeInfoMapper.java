@@ -5,8 +5,8 @@ import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 import java.util.Map;
 
 /**
- * A parser for data returned via the Elasticsearch {@code /_cat/nodes} API.
+ * A mapper for data returned via the Elasticsearch {@code /_cat/nodes} API.
  */
-public interface NodeInfoParser {
-	NodeInfo parse(Map<String, Object> data);
+public interface NodeInfoMapper {
+	NodeInfo map(Map<String, Object> data);
 }
