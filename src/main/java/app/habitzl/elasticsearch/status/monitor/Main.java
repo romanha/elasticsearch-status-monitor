@@ -31,10 +31,14 @@ public class Main {
 	}
 
 	private static void teardown(final Injector injector) {
+		closeElasticsearchRestClient(injector);
+	}
+
+	private static void closeElasticsearchRestClient(final Injector injector) {
 		RestHighLevelClient client = injector.getInstance(RestHighLevelClient.class);
 		try {
 			client.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			LOG.warn("Could not safely close the connection to the ES cluster.", e);
 		}
 	}

@@ -11,6 +11,21 @@
             background-color: #ececec;
         }
 
+        .error {
+            font-weight: bold;
+            color: red;
+        }
+
+        .warn {
+            font-weight: bold;
+            color: orange;
+        }
+
+        .success {
+            font-weight: bold;
+            color: green;
+        }
+
         .detail-section {
             width: max-content;
             margin-bottom: 2em;
@@ -43,21 +58,6 @@
             width: 100%;
             height: 0;
         }
-
-        .error {
-            font-weight: bold;
-            color: red;
-        }
-
-        .warn {
-            font-weight: bold;
-            color: orange;
-        }
-
-        .success {
-            font-weight: bold;
-            color: green;
-        }
     </style>
 </head>
 <body>
@@ -85,23 +85,22 @@
         <#list report.nodeInfos as node>
             <div class="bordered-detail-section">
                 <h2>Node: ${node.nodeName}</h2>
+                <h3>Endpoint Information</h3>
+                <p>
+                    Address: ${node.endpointInfo.ipAddress}<br/>
+                    RAM usage: ${node.endpointInfo.ramUsageInPercent}&percnt;<br/>
+                    Heap usage: ${node.endpointInfo.heapUsageInPercent}&percnt;<br/>
+                </p>
+                <h3>Node Information</h3>
                 <p>
                     Node ID: ${node.nodeId}<br/>
                     Process ID: ${node.processId}<br/>
                     Uptime: ${node.uptime}<br/>
                 </p>
-
                 <p>
                     <#if node.masterNode>This node is the current master node.<br/></#if>
                     <#if node.masterEligibleNode>This node can become a new master node.<br/></#if>
                     <#if node.dataNode>This node holds search data.<br/></#if>
-                </p>
-
-                <h3>Node Endpoint</h3>
-                <p>
-                    Address: ${node.endpointInfo.ipAddress}<br/>
-                    RAM usage: ${node.endpointInfo.ramUsageInPercent}&percnt;<br/>
-                    Heap usage: ${node.endpointInfo.heapUsageInPercent}&percnt;<br/>
                 </p>
             </div>
         </#list>

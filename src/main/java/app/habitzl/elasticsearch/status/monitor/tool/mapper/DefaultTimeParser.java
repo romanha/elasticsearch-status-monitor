@@ -40,7 +40,7 @@ public class DefaultTimeParser implements TimeParser {
 		String numberString = durationString.substring(0, durationString.length() - 1);
 		try {
 			number = Float.parseFloat(numberString);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			LOG.error("Could not parse float number of duration '" + durationString + "'.", e);
 		}
 

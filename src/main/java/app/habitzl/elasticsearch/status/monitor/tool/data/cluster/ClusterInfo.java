@@ -19,10 +19,6 @@ public final class ClusterInfo implements Serializable {
 	private final int numberOfInitializingShards;
 	private final int numberOfUnassignedShards;
 
-	public static ClusterInfo unknown() {
-		return new ClusterInfo("unknown", ClusterHealthStatus.UNKNOWN, -1, -1, -1, -1, -1);
-	}
-
 	public static ClusterInfo fromClusterHealthResponse(final ClusterHealthResponse response) {
 		return new ClusterInfo(
 				response.getClusterName(),
@@ -35,7 +31,7 @@ public final class ClusterInfo implements Serializable {
 		);
 	}
 
-	private ClusterInfo(
+	public ClusterInfo(
 			final String clusterName,
 			final ClusterHealthStatus healthStatus,
 			final int numberOfNodes,

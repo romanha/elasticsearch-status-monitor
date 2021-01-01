@@ -32,8 +32,9 @@ class ReportFileProviderTest {
 	}
 
 	@Test
-	void get_sut_createsReportFile() throws Exception {
+	void get_reportFileNotYetExisting_createsReportFile() throws Exception {
 		// Given
+		// report file not existing
 
 		// When
 		sut.get();
@@ -44,10 +45,21 @@ class ReportFileProviderTest {
 	}
 
 	@Test
-	void get_sut_returnReportFile() throws Exception {
+	void get_reportFileExists_doNotCreateReportFile() throws Exception {
 		// Given
-		Path path = Paths.get(ReportFileProvider.REPORT_DIRECTORY_NAME, getExpectedFileTimestamp());
-		when(fileCreator.create(path)).thenReturn(path);
+		givenReportFileAlreadyExists();
+
+		// When
+		sut.get();
+
+		// Then
+		verifyNoMoreInteractions(fileCreator);
+	}
+
+	@Test
+	void get_reportFileNotExistingYet_returnNewReportFile() throws Exception {
+		// Given
+		prepareFileCreator();
 
 		// When
 		File result = sut.get();
@@ -56,6 +68,18 @@ class ReportFileProviderTest {
 		File expectedResult = Paths.get(ReportFileProvider.REPORT_DIRECTORY_NAME, getExpectedFileTimestamp(), ReportFileProvider.REPORT_FILE_NAME)
 								   .toFile();
 		assertThat(result, equalTo(expectedResult));
+	}
+
+	@Test
+	void get_reportFileExists_returnSameReportFile() throws Exception {
+		// Given
+		File existingFile = givenReportFileAlreadyExists();
+
+		// When
+		File result = sut.get();
+
+		// Then
+		assertThat(result, equalTo(existingFile));
 	}
 
 	@Test
@@ -70,9 +94,21 @@ class ReportFileProviderTest {
 		assertThat(result, nullValue());
 	}
 
+	private void prepareFileCreator() throws IOException {
+		Path path = Paths.get(ReportFileProvider.REPORT_DIRECTORY_NAME, getExpectedFileTimestamp());
+		when(fileCreator.create(path)).thenReturn(path);
+	}
+
 	private String getExpectedFileTimestamp() {
 		return DateTimeFormatter.ofPattern(ReportFileProvider.TIMESTAMP_FILE_PATTERN)
 								.withZone(clock.getZone())
 								.format(clock.instant());
+	}
+
+	private File givenReportFileAlreadyExists() throws IOException {
+		prepareFileCreator();
+		File file = sut.get();
+		verify(fileCreator).create(any(Path.class));
+		return file;
 	}
 }

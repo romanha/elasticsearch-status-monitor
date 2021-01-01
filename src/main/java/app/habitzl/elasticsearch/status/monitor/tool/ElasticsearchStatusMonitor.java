@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ElasticsearchStatusMonitor implements StatusMonitor {
 
@@ -38,19 +39,19 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 	}
 
 	@Override
-	public ClusterInfo getClusterInfo() {
-		ClusterInfo clusterHealth;
+	public Optional<ClusterInfo> getClusterInfo() {
+		ClusterInfo clusterInfo;
 
 		ClusterHealthRequest request = new ClusterHealthRequest();
 		try {
 			ClusterHealthResponse response = client.cluster().health(request, RequestOptions.DEFAULT);
-			clusterHealth = ClusterInfo.fromClusterHealthResponse(response);
-		} catch (IOException e) {
-			clusterHealth = ClusterInfo.unknown();
+			clusterInfo = ClusterInfo.fromClusterHealthResponse(response);
+		} catch (final IOException e) {
 			logConnectionError(e);
+			clusterInfo = null;
 		}
 
-		return clusterHealth;
+		return Optional.ofNullable(clusterInfo);
 	}
 
 	@Override
@@ -70,19 +71,11 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 				nodeInfos.add(nodeInfo);
 				LOG.debug("Parsed node info: {}", nodeInfo);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logConnectionError(e);
 		}
 
 		return nodeInfos;
-	}
-
-	/**
-	 * TODO remove as the client is closed anyway by the main teardown logic
-	 */
-	@Override
-	public void closeConnection() throws IOException {
-		client.close();
 	}
 
 	/**

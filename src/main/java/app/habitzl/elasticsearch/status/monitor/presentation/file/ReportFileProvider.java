@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -29,6 +30,8 @@ public class ReportFileProvider implements Provider<File> {
 	private final Clock clock;
 	private final FileCreator fileCreator;
 
+	private Path reportFilePath;
+
 	@Inject
 	public ReportFileProvider(final Clock clock, final FileCreator fileCreator) {
 		this.clock = clock;
@@ -37,7 +40,10 @@ public class ReportFileProvider implements Provider<File> {
 
 	@Override
 	public File get() {
-		Optional<Path> reportDirectory = createTimestampReportDirectory();
+		Optional<Path> reportDirectory =
+				Objects.nonNull(reportFilePath)
+						? Optional.of(reportFilePath)
+						: createTimestampReportDirectory();
 		return reportDirectory.map(dir -> dir.resolve(REPORT_FILE_NAME))
 							  .map(Path::toFile)
 							  .orElse(null);
@@ -47,17 +53,16 @@ public class ReportFileProvider implements Provider<File> {
 	 * Creates an overall report directory with a sub-directory of the current timestamp.
 	 */
 	private Optional<Path> createTimestampReportDirectory() {
-		Path path;
 		try {
 			String timestamp = getFormattedTimestamp();
-			path = fileCreator.create(Paths.get(REPORT_DIRECTORY_NAME, timestamp));
-			LOG.info("Created the report directory '{}'.", path);
-		} catch (IOException e) {
+			reportFilePath = fileCreator.create(Paths.get(REPORT_DIRECTORY_NAME, timestamp));
+			LOG.info("Created the report directory '{}'.", reportFilePath);
+		} catch (final IOException e) {
 			LOG.error("Failed to create report directory.", e);
-			path = null;
+			reportFilePath = null;
 		}
 
-		return Optional.ofNullable(path);
+		return Optional.ofNullable(reportFilePath);
 	}
 
 	/**
