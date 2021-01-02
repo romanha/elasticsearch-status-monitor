@@ -1,14 +1,14 @@
 package app.habitzl.elasticsearch.status.monitor.presentation.model;
 
 /**
- * All possible report states.
+ * All possible report progress states.
  */
-public enum ReportStatus {
+public enum ReportProgress {
 
 	/**
 	 * The tool was able to successfully create a full report.
 	 */
-	SUCCESS,
+	FINISHED,
 
 	/**
 	 * The tool was not able to create a full report.
