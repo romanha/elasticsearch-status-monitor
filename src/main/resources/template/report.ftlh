@@ -63,7 +63,7 @@
 <body>
 <h1>Elasticsearch Status Report</h1>
 
-<#if report.connectionStatus == "SUCCESS">
+<#if report.reportStatus == "SUCCESS">
     <div id="cluster-info" class="bordered-detail-section">
         <h2>Cluster: ${report.clusterInfo.clusterName}</h2>
         <p>
@@ -110,9 +110,35 @@
         <span style="font-weight: bold">More information is yet to come!</span>
     </div>
 
-<#else>
+<#elseif report.reportStatus=="ABORTED">
     <div class="error">
-        <p>Could not connect to the Elasticsearch cluster!</p>
+        <p>The status monitor was not able to create a full status report!</p>
+    </div>
+</#if>
+
+<#if report.problems?size gt 0>
+    <div id="problems" class="detail-section">
+        <h2>Problems</h2>
+        <#list report.problems as problem>
+            <div class="bordered-detail-section">
+                <h3>${problem.title}</h3>
+                <p class="error">${problem.description}</p>
+                <p>&rarr; ${problem.solution}</p>
+            </div>
+        </#list>
+    </div>
+</#if>
+
+<#if report.warnings?size gt 0>
+    <div id="warnings" class="detail-section">
+        <h2>Warnings</h2>
+        <#list report.warnings as warning>
+            <div class="bordered-detail-section">
+                <h3>${warning.title}</h3>
+                <p class="warn">${warning.description}</p>
+                <p>&rarr; ${warning.solution}</p>
+            </div>
+        </#list>
     </div>
 </#if>
 

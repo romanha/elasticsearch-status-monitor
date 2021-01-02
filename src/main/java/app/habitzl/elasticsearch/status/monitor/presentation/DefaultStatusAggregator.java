@@ -1,7 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.presentation;
 
 import app.habitzl.elasticsearch.status.monitor.StatusMonitor;
-import app.habitzl.elasticsearch.status.monitor.presentation.model.ConnectionStatus;
+import app.habitzl.elasticsearch.status.monitor.presentation.model.Problem;
 import app.habitzl.elasticsearch.status.monitor.presentation.model.StatusReport;
 import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
@@ -30,10 +30,12 @@ public class DefaultStatusAggregator implements StatusAggregator {
 
 		if (clusterInfo.isEmpty()) {
 			LOG.warn("Failed to retrieve cluster health state. Aborting status report generation.");
-			report = StatusReport.error(ConnectionStatus.UNABLE_TO_CONNECT);
+			report = StatusReport.aborted(List.of(Problem.CONNECTION_FAILURE));
 		} else {
 			List<NodeInfo> nodeInfos = statusMonitor.getNodeInfo();
-			report = StatusReport.create(clusterInfo.get(), nodeInfos);
+
+			// TODO get more info, perform analysis to generate problems and warnings
+			report = StatusReport.create(List.of(), List.of(), clusterInfo.get(), nodeInfos);
 		}
 
 		return report;

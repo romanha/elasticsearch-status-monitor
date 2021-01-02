@@ -18,19 +18,23 @@ import java.util.StringJoiner;
 public final class StatusReport implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private final ConnectionStatus connectionStatus;
+	private final ReportStatus reportStatus;
+	private final List<Problem> problems;
+	private final List<Warning> warnings;
 	private final ClusterInfo clusterInfo;
 	private final List<NodeInfo> nodeInfos;
 
-	public static StatusReport error(final ConnectionStatus status) {
-		return new StatusReport(status, null, List.of());
+	public static StatusReport aborted(final List<Problem> problems) {
+		return new StatusReport(ReportStatus.ABORTED, problems);
 	}
 
 	public static StatusReport create(
+			final List<Problem> problems,
+			final List<Warning> warnings,
 			final ClusterInfo cluster,
 			final List<NodeInfo> nodes) {
 		List<NodeInfo> sortedNodes = sortNodesByName(nodes);
-		return new StatusReport(ConnectionStatus.SUCCESS, cluster, sortedNodes);
+		return new StatusReport(ReportStatus.SUCCESS, problems, warnings, cluster, sortedNodes);
 	}
 
 	private static List<NodeInfo> sortNodesByName(final List<NodeInfo> nodes) {
@@ -39,17 +43,33 @@ public final class StatusReport implements Serializable {
 		return sortedNodes;
 	}
 
-	private StatusReport(
-			final ConnectionStatus connectionStatus,
-			final ClusterInfo clusterInfo,
-			final List<NodeInfo> nodeInfos) {
-		this.connectionStatus = connectionStatus;
-		this.clusterInfo = clusterInfo;
-		this.nodeInfos = nodeInfos;
+	private StatusReport(final ReportStatus reportStatus, final List<Problem> problems) {
+		this(reportStatus, problems, List.of(), null, List.of());
 	}
 
-	public ConnectionStatus getConnectionStatus() {
-		return connectionStatus;
+	private StatusReport(
+			final ReportStatus reportStatus,
+			final List<Problem> problems,
+			final List<Warning> warnings,
+			final ClusterInfo clusterInfo,
+			final List<NodeInfo> nodeInfos) {
+		this.reportStatus = reportStatus;
+		this.problems = List.copyOf(problems);
+		this.warnings = List.copyOf(warnings);
+		this.clusterInfo = clusterInfo;
+		this.nodeInfos = List.copyOf(nodeInfos);
+	}
+
+	public ReportStatus getReportStatus() {
+		return reportStatus;
+	}
+
+	public List<Problem> getProblems() {
+		return problems;
+	}
+
+	public List<Warning> getWarnings() {
+		return warnings;
 	}
 
 	public ClusterInfo getClusterInfo() {
@@ -71,7 +91,9 @@ public final class StatusReport implements Serializable {
 			isEqual = false;
 		} else {
 			StatusReport report = (StatusReport) o;
-			isEqual = Objects.equals(connectionStatus, report.connectionStatus)
+			isEqual = Objects.equals(reportStatus, report.reportStatus)
+					&& Objects.equals(problems, report.problems)
+					&& Objects.equals(warnings, report.warnings)
 					&& Objects.equals(clusterInfo, report.clusterInfo)
 					&& Objects.equals(nodeInfos, report.nodeInfos);
 		}
@@ -81,13 +103,15 @@ public final class StatusReport implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(connectionStatus, clusterInfo, nodeInfos);
+		return Objects.hash(reportStatus, problems, warnings, clusterInfo, nodeInfos);
 	}
 
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", StatusReport.class.getSimpleName() + "[", "]")
-				.add("connectionStatus=" + connectionStatus)
+				.add("reportStatus=" + reportStatus)
+				.add("problems=" + problems)
+				.add("warnings=" + warnings)
 				.add("clusterInfo=" + clusterInfo)
 				.add("nodeInfos=" + nodeInfos)
 				.toString();

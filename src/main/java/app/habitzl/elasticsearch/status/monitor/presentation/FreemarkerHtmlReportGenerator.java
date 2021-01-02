@@ -2,6 +2,7 @@ package app.habitzl.elasticsearch.status.monitor.presentation;
 
 import app.habitzl.elasticsearch.status.monitor.ReportGenerator;
 import app.habitzl.elasticsearch.status.monitor.presentation.file.TemplateProcessor;
+import app.habitzl.elasticsearch.status.monitor.presentation.model.StatusReport;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.logging.log4j.LogManager;
@@ -31,20 +32,20 @@ public class FreemarkerHtmlReportGenerator implements ReportGenerator {
 	}
 
 	@Override
-	public void generate(final Object dataModel) {
+	public void generate(final StatusReport dataModel) {
 		createReport(dataModel);
 	}
 
-	private void createReport(final Object dataModel) {
+	private void createReport(final StatusReport report) {
 		try {
 			Template template = configuration.getTemplate(TEMPLATE_FILE_NAME);
-			templateProcessor.processTemplate(template, createReportDataModel(dataModel));
+			templateProcessor.processTemplate(template, createReportDataModel(report));
 		} catch (final IOException e) {
 			LOG.error("Could not load template '" + TEMPLATE_FILE_NAME + "'.", e);
 		}
 	}
 
-	private Map<String, Object> createReportDataModel(final Object dataModel) {
-		return Map.of(TEMPLATE_DATA_MODEL_REFERENCE, dataModel);
+	private Map<String, StatusReport> createReportDataModel(final StatusReport report) {
+		return Map.of(TEMPLATE_DATA_MODEL_REFERENCE, report);
 	}
 }

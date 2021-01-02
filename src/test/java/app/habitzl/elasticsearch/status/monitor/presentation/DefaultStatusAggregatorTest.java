@@ -3,7 +3,7 @@ package app.habitzl.elasticsearch.status.monitor.presentation;
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.NodeInfos;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitor;
-import app.habitzl.elasticsearch.status.monitor.presentation.model.ConnectionStatus;
+import app.habitzl.elasticsearch.status.monitor.presentation.model.Problem;
 import app.habitzl.elasticsearch.status.monitor.presentation.model.StatusReport;
 import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
@@ -43,7 +43,7 @@ class DefaultStatusAggregatorTest {
 	}
 
 	@Test
-	void createReport_clusterInfoNotAvailable_returnStatusReportWithErrorConnectionStatus() {
+	void createReport_clusterInfoNotAvailable_returnAbortedStatusReportWithConnectionFailureProblem() {
 		// Given
 		// cluster info not available
 
@@ -51,7 +51,7 @@ class DefaultStatusAggregatorTest {
 		StatusReport statusReport = sut.createReport();
 
 		// Then
-		StatusReport expectedStatusReport = StatusReport.error(ConnectionStatus.UNABLE_TO_CONNECT);
+		StatusReport expectedStatusReport = StatusReport.aborted(List.of(Problem.CONNECTION_FAILURE));
 		assertThat(statusReport, equalTo(expectedStatusReport));
 	}
 
@@ -89,6 +89,6 @@ class DefaultStatusAggregatorTest {
 		when(statusMonitor.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
 		List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
 		when(statusMonitor.getNodeInfo()).thenReturn(nodeInfos);
-		return StatusReport.create(clusterInfo, nodeInfos);
+		return StatusReport.create(List.of(), List.of(), clusterInfo, nodeInfos);
 	}
 }
