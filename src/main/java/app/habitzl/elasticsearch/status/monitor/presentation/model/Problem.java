@@ -15,9 +15,13 @@ public enum Problem {
 			"Unauthorized connection",
 			Constants.UNAUTHORIZED_CONNECTION_FAILURE_DESCRIPTION,
 			Constants.UNAUTHORIZED_CONNECTION_FAILURE_SOLUTION
-	);
+	),
 
-	// TODO check if problem for SSL error can be found (remove certificate from keystore)
+	SSL_HANDSHAKE_FAILURE(
+			"SSL handshake failure",
+			Constants.SSL_HANDSHAKE_FAILURE_DESCRIPTION,
+			Constants.SSL_HANDSHAKE_FAILURE_SOLUTION
+	);
 
 	private final String title;
 	private final String description;
@@ -45,11 +49,16 @@ public enum Problem {
 		private static final String GENERAL_CONNECTION_FAILURE_DESCRIPTION =
 				"The tool could not connect to the Elasticsearch cluster.";
 		private static final String GENERAL_CONNECTION_FAILURE_SOLUTION =
-				"Check the used IP address and port. Verify that the required certificates are available in the keystore of the Java runtime.";
+				"Check the used IP address and port.";
 
 		private static final String UNAUTHORIZED_CONNECTION_FAILURE_DESCRIPTION =
 				"The tool is not authorized to connect to the Elasticsearch cluster.";
 		private static final String UNAUTHORIZED_CONNECTION_FAILURE_SOLUTION =
 				"Check username and password for connecting to the cluster.";
+
+		private static final String SSL_HANDSHAKE_FAILURE_DESCRIPTION =
+				"The tool and the Elasticsearch cluster could not negotiate the desired level of security.";
+		private static final String SSL_HANDSHAKE_FAILURE_SOLUTION =
+				" Verify that the required certificates are available in the keystore of the Java runtime.";
 	}
 }

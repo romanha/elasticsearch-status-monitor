@@ -2,6 +2,8 @@ package app.habitzl.elasticsearch.status.monitor.tool;
 
 import app.habitzl.elasticsearch.status.monitor.StatusMonitor;
 import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.connection.ConnectionInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.params.NodeParams;
 import org.apache.logging.log4j.LogManager;
@@ -13,9 +15,9 @@ import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.rest.RestStatus;
 
 import javax.inject.Inject;
+import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,21 +43,24 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 	}
 
 	@Override
-	public Optional<RestStatus> checkConnection() {
-		RestStatus status = RestStatus.OK;
-
+	public ConnectionInfo checkConnection() {
+		ConnectionInfo connectionInfo;
 		ClusterHealthRequest request = new ClusterHealthRequest();
 		try {
-			client.cluster().health(request, RequestOptions.DEFAULT);
-		} catch (final IOException e) {
+			ClusterHealthResponse response = client.cluster().health(request, RequestOptions.DEFAULT);
+			connectionInfo = ConnectionInfo.success(response.status());
+		} catch (final SSLHandshakeException e) {
 			logError(e);
-			status = null;
+			connectionInfo = ConnectionInfo.error(ConnectionStatus.SSL_HANDSHAKE_FAILURE);
 		} catch (final ElasticsearchStatusException e) {
 			logError(e);
-			status = e.status();
+			connectionInfo = ConnectionInfo.success(e.status());
+		} catch (final IOException e) {
+			logError(e);
+			connectionInfo = ConnectionInfo.error(ConnectionStatus.NOT_FOUND);
 		}
 
-		return Optional.ofNullable(status);
+		return connectionInfo;
 	}
 
 	@Override

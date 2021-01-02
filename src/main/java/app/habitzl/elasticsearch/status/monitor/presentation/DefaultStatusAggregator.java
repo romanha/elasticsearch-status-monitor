@@ -4,6 +4,8 @@ import app.habitzl.elasticsearch.status.monitor.StatusMonitor;
 import app.habitzl.elasticsearch.status.monitor.presentation.model.Problem;
 import app.habitzl.elasticsearch.status.monitor.presentation.model.StatusReport;
 import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.connection.ConnectionInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,9 +27,31 @@ public class DefaultStatusAggregator implements StatusAggregator {
 
 	@Override
 	public StatusReport createReport() {
-		Optional<RestStatus> restStatus = statusMonitor.checkConnection();
-		return restStatus.map(this::startStatusMonitoring)
-						 .orElseGet(() -> abortStatusMonitoring(Problem.GENERAL_CONNECTION_FAILURE));
+		ConnectionInfo connectionInfo = statusMonitor.checkConnection();
+		return startStatusMonitoringBasedOnConnection(connectionInfo);
+	}
+
+	/**
+	 * Only starts status monitoring if the connection can be established and the REST status is OK.
+	 */
+	private StatusReport startStatusMonitoringBasedOnConnection(final ConnectionInfo connectionInfo) {
+		StatusReport statusReport;
+		ConnectionStatus connectionStatus = connectionInfo.getConnectionStatus();
+		switch (connectionStatus) {
+			case SUCCESS:
+				statusReport = connectionInfo.getRestStatus()
+											 .map(this::startStatusMonitoring)
+											 .orElseGet(() -> abortStatusMonitoring(Problem.GENERAL_CONNECTION_FAILURE));
+				break;
+			case SSL_HANDSHAKE_FAILURE:
+				statusReport = abortStatusMonitoring(Problem.SSL_HANDSHAKE_FAILURE);
+				break;
+			case NOT_FOUND:
+			default:
+				statusReport = abortStatusMonitoring(Problem.GENERAL_CONNECTION_FAILURE);
+				break;
+		}
+		return statusReport;
 	}
 
 	private StatusReport startStatusMonitoring(final RestStatus restStatus) {
