@@ -1,7 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor;
 
 /**
- * TODO
+ * The status monitor is the single entry point of this tool's functionality.
  */
 public interface StatusMonitor {
 
