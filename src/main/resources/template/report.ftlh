@@ -84,7 +84,7 @@
     <div id="node-list-info" class="multi-child-detail-section">
         <#list report.nodeInfos as node>
             <div class="bordered-detail-section">
-                <h2>Node: ${node.nodeName}</h2>
+                <h2>Node: ${node.nodeName}<#if node.masterNode> &starf;</#if></h2>
                 <h3>Endpoint Information</h3>
                 <p>
                     Address: ${node.endpointInfo.ipAddress}<br/>
@@ -98,16 +98,16 @@
                     Uptime: ${node.uptime} days<br/>
                 </p>
                 <p>
-                    <#if node.masterNode>This node is the current master node.<br/></#if>
-                    <#if node.masterEligibleNode>This node can become a new master node.<br/></#if>
-                    <#if node.dataNode>This node holds search data.<br/></#if>
+                    <#if node.masterNode>&starf; This node is the current master node.<br/></#if>
+                    <#if node.masterEligibleNode>&#10027; This node can become a master node.<br/></#if>
+                    <#if node.dataNode>&#9776; This node holds search data.<br/></#if>
                 </p>
             </div>
         </#list>
     </div>
 
     <div class="detail-section">
-        <span style="font-weight: bold">More information is yet to come!</span>
+        <h2>More information is yet to come!</h2>
     </div>
 
 <#elseif report.reportStatus=="ABORTED">

@@ -17,6 +17,8 @@ public enum Problem {
 			Constants.UNAUTHORIZED_CONNECTION_FAILURE_SOLUTION
 	);
 
+	// TODO check if problem for SSL error can be found (remove certificate from keystore)
+
 	private final String title;
 	private final String description;
 	private final String solution;
