@@ -2,6 +2,7 @@ package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
+import org.elasticsearch.rest.RestStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,12 @@ import java.util.Optional;
  * The status monitor is capable of querying the Elasticsearch cluster for various metrics.
  */
 public interface StatusMonitor {
+
+	/**
+	 * Checks the connection to the ES cluster and returns the status code.
+	 * Returns empty if there are problems with sending the request or parsing the response.
+	 */
+	Optional<RestStatus> checkConnection();
 
 	/**
 	 * Gets information about the whole ES cluster.

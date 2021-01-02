@@ -6,12 +6,14 @@ import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.params.NodeParams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.rest.RestStatus;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -39,6 +41,24 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 	}
 
 	@Override
+	public Optional<RestStatus> checkConnection() {
+		RestStatus status = RestStatus.OK;
+
+		ClusterHealthRequest request = new ClusterHealthRequest();
+		try {
+			client.cluster().health(request, RequestOptions.DEFAULT);
+		} catch (final IOException e) {
+			logError(e);
+			status = null;
+		} catch (final ElasticsearchStatusException e) {
+			logError(e);
+			status = e.status();
+		}
+
+		return Optional.ofNullable(status);
+	}
+
+	@Override
 	public Optional<ClusterInfo> getClusterInfo() {
 		ClusterInfo clusterInfo;
 
@@ -46,8 +66,8 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 		try {
 			ClusterHealthResponse response = client.cluster().health(request, RequestOptions.DEFAULT);
 			clusterInfo = ClusterInfo.fromClusterHealthResponse(response);
-		} catch (final IOException e) {
-			logConnectionError(e);
+		} catch (final IOException | ElasticsearchStatusException e) {
+			logError(e);
 			clusterInfo = null;
 		}
 
@@ -72,8 +92,8 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 				nodeInfos.add(nodeInfo);
 				LOG.debug("Mapped node info: {}", nodeInfo);
 			}
-		} catch (final IOException e) {
-			logConnectionError(e);
+		} catch (final IOException | ElasticsearchStatusException e) {
+			logError(e);
 		}
 
 		return nodeInfos;
@@ -90,7 +110,7 @@ public class ElasticsearchStatusMonitor implements StatusMonitor {
 		request.addParameter("format", "json");
 	}
 
-	private void logConnectionError(final Exception e) {
+	private void logError(final Exception e) {
 		LOG.error("Failed to get cluster information!", e);
 	}
 }

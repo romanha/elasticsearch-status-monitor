@@ -7,6 +7,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.rest.RestStatus;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -24,20 +25,48 @@ public class DefaultStatusAggregator implements StatusAggregator {
 
 	@Override
 	public StatusReport createReport() {
-		StatusReport report;
+		Optional<RestStatus> restStatus = statusMonitor.checkConnection();
+		return restStatus.map(this::startStatusMonitoring)
+						 .orElseGet(() -> abortStatusMonitoring(Problem.GENERAL_CONNECTION_FAILURE));
+	}
 
-		Optional<ClusterInfo> clusterInfo = statusMonitor.getClusterInfo();
-
-		if (clusterInfo.isEmpty()) {
-			LOG.warn("Failed to retrieve cluster health state. Aborting status report generation.");
-			report = StatusReport.aborted(List.of(Problem.CONNECTION_FAILURE));
-		} else {
-			List<NodeInfo> nodeInfos = statusMonitor.getNodeInfo();
-
-			// TODO get more info, perform analysis to generate problems and warnings
-			report = StatusReport.create(List.of(), List.of(), clusterInfo.get(), nodeInfos);
+	private StatusReport startStatusMonitoring(final RestStatus restStatus) {
+		StatusReport statusReport;
+		switch (restStatus) {
+			case OK:
+				statusReport = generateStatusReport();
+				break;
+			case UNAUTHORIZED:
+				statusReport = abortStatusMonitoring(Problem.UNAUTHORIZED_CONNECTION_FAILURE);
+				break;
+			default:
+				statusReport = abortStatusMonitoringForOtherReason(restStatus);
+				break;
 		}
 
-		return report;
+		return statusReport;
+	}
+
+	private StatusReport generateStatusReport() {
+		Optional<ClusterInfo> clusterInfo = statusMonitor.getClusterInfo();
+		List<NodeInfo> nodeInfos = statusMonitor.getNodeInfo();
+
+		// TODO get more info, perform analysis to generate problems and warnings
+		return StatusReport.create(
+				List.of(),
+				List.of(),
+				clusterInfo.orElse(null),
+				nodeInfos
+		);
+	}
+
+	private StatusReport abortStatusMonitoring(final Problem problem) {
+		LOG.warn("Encountered problem while gathering data: '{}'. Aborting status report generation.", problem);
+		return StatusReport.aborted(List.of(problem));
+	}
+
+	private StatusReport abortStatusMonitoringForOtherReason(final RestStatus restStatus) {
+		LOG.warn("Unexpected rest status retrieved: {}", restStatus);
+		return abortStatusMonitoring(Problem.GENERAL_CONNECTION_FAILURE);
 	}
 }

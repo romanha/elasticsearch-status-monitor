@@ -7,6 +7,7 @@ import app.habitzl.elasticsearch.status.monitor.presentation.model.Problem;
 import app.habitzl.elasticsearch.status.monitor.presentation.model.StatusReport;
 import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
+import org.elasticsearch.rest.RestStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -30,28 +31,41 @@ class DefaultStatusAggregatorTest {
 	}
 
 	@Test
-	void createReport_clusterInfoNotAvailable_doNotAttemptMoreStatusRequests() {
+	void createReport_connectionCheckFails_doNotAttemptMoreStatusRequests() {
 		// Given
-		// cluster info not available
+		when(statusMonitor.checkConnection()).thenReturn(Optional.of(RestStatus.UNAUTHORIZED));
 
 		// When
 		sut.createReport();
 
 		// Then
-		verify(statusMonitor).getClusterInfo();
+		verify(statusMonitor).checkConnection();
 		verifyNoMoreInteractions(statusMonitor);
 	}
 
 	@Test
-	void createReport_clusterInfoNotAvailable_returnAbortedStatusReportWithConnectionFailureProblem() {
+	void createReport_connectionStatusNotAvailable_returnAbortedStatusReportWithGeneralConnectionProblem() {
 		// Given
-		// cluster info not available
+		when(statusMonitor.checkConnection()).thenReturn(Optional.empty());
 
 		// When
 		StatusReport statusReport = sut.createReport();
 
 		// Then
-		StatusReport expectedStatusReport = StatusReport.aborted(List.of(Problem.CONNECTION_FAILURE));
+		StatusReport expectedStatusReport = StatusReport.aborted(List.of(Problem.GENERAL_CONNECTION_FAILURE));
+		assertThat(statusReport, equalTo(expectedStatusReport));
+	}
+
+	@Test
+	void createReport_connectionStatusUnauthorized_returnAbortedStatusReportWithUnauthorizedConnectionProblem() {
+		// Given
+		when(statusMonitor.checkConnection()).thenReturn(Optional.of(RestStatus.UNAUTHORIZED));
+
+		// When
+		StatusReport statusReport = sut.createReport();
+
+		// Then
+		StatusReport expectedStatusReport = StatusReport.aborted(List.of(Problem.UNAUTHORIZED_CONNECTION_FAILURE));
 		assertThat(statusReport, equalTo(expectedStatusReport));
 	}
 
@@ -65,12 +79,13 @@ class DefaultStatusAggregatorTest {
 
 		// Then
 		InOrder inOrder = inOrder(statusMonitor);
+		inOrder.verify(statusMonitor).checkConnection();
 		inOrder.verify(statusMonitor).getClusterInfo();
 		inOrder.verify(statusMonitor).getNodeInfo();
 	}
 
 	@Test
-	void createReport_clusterAvailable_returnStatusReportWithErrorConnectionStatus() {
+	void createReport_allStatusRequestsSucceed_returnExpectedStatusReport() {
 		// Given
 		StatusReport expectedStatusReport = givenAllStatusRequestsSucceed();
 
@@ -85,6 +100,7 @@ class DefaultStatusAggregatorTest {
 	 * Returns the expected status report from all status monitor requests.
 	 */
 	private StatusReport givenAllStatusRequestsSucceed() {
+		when(statusMonitor.checkConnection()).thenReturn(Optional.of(RestStatus.OK));
 		ClusterInfo clusterInfo = ClusterInfos.random();
 		when(statusMonitor.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
 		List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
