@@ -1,30 +1,12 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
-import app.habitzl.elasticsearch.status.monitor.tool.data.connection.ConnectionInfo;
-import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
-
-import java.util.List;
-import java.util.Optional;
-
 /**
- * The status monitor is capable of querying the Elasticsearch cluster for various metrics.
+ * TODO
  */
 public interface StatusMonitor {
 
 	/**
-	 * Checks the connection to the ES cluster and returns the status code.
-	 * Returns empty if there are problems with sending the request or parsing the response.
+	 * Creates a monitoring snapshot of the current state of the ES cluster.
 	 */
-	ConnectionInfo checkConnection();
-
-	/**
-	 * Gets information about the whole ES cluster.
-	 */
-	Optional<ClusterInfo> getClusterInfo();
-
-	/**
-	 * Gets information about each node of the ES cluster.
-	 */
-	List<NodeInfo> getNodeInfo();
+	void createSnapshot();
 }

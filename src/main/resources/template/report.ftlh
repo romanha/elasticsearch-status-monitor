@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="report" type="app.habitzl.elasticsearch.status.monitor.presentation.model.StatusReport" -->
+<#-- @ftlvariable name="report" type="app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport" -->
 <!DOCTYPE html>
 <html lang="en">
 <head>

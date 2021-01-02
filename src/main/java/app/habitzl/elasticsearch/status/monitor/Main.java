@@ -1,7 +1,5 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.presentation.StatusAggregator;
-import app.habitzl.elasticsearch.status.monitor.presentation.model.StatusReport;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.logging.log4j.LogManager;
@@ -20,13 +18,10 @@ public class Main {
 		LOG.info("Starting up the Elasticsearch Status Monitor.");
 
 		Injector injector = Guice.createInjector(new GuiceModule());
-		StatusAggregator statusAggregator = injector.getInstance(StatusAggregator.class);
-		ReportGenerator generator = injector.getInstance(ReportGenerator.class);
+		StatusMonitor statusMonitor = injector.getInstance(StatusMonitor.class);
+		statusMonitor.createSnapshot();
 
-		StatusReport report = statusAggregator.createReport();
-		generator.generate(report);
-
-		LOG.info("Generated report. Closing Elasticsearch Status Monitor.");
+		LOG.info("Finished monitoring. Closing Elasticsearch Status Monitor.");
 		teardown(injector);
 	}
 

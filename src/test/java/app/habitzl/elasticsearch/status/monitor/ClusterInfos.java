@@ -1,7 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterHealthStatus;
-import app.habitzl.elasticsearch.status.monitor.tool.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterHealthStatus;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 
 import java.security.SecureRandom;
 

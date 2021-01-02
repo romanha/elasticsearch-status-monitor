@@ -1,26 +1,29 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.presentation.DefaultStatusAggregator;
-import app.habitzl.elasticsearch.status.monitor.presentation.FreemarkerHtmlReportGenerator;
-import app.habitzl.elasticsearch.status.monitor.presentation.StatusAggregator;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.TimeFormatter;
-import app.habitzl.elasticsearch.status.monitor.presentation.configuration.FreemarkerConfigurationProvider;
-import app.habitzl.elasticsearch.status.monitor.presentation.file.ReportFile;
-import app.habitzl.elasticsearch.status.monitor.presentation.file.ReportFileProvider;
-import app.habitzl.elasticsearch.status.monitor.presentation.file.TemplateProcessor;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.format.DayBasedTimeFormatter;
-import app.habitzl.elasticsearch.status.monitor.tool.ElasticsearchStatusMonitor;
-import app.habitzl.elasticsearch.status.monitor.tool.InfoMapper;
-import app.habitzl.elasticsearch.status.monitor.tool.ResponseMapper;
-import app.habitzl.elasticsearch.status.monitor.tool.connection.ElasticsearchRestClientFactory;
-import app.habitzl.elasticsearch.status.monitor.tool.connection.RestClientFactory;
-import app.habitzl.elasticsearch.status.monitor.tool.connection.RestClientProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultInfoMapper;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultNodeInfoMapper;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.DefaultTimeParser;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.JsonContentResponseMapper;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.NodeInfoMapper;
-import app.habitzl.elasticsearch.status.monitor.tool.mapper.TimeParser;
+import app.habitzl.elasticsearch.status.monitor.tool.ReportBasedStatusMonitor;
+import app.habitzl.elasticsearch.status.monitor.tool.ReportGenerator;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.FreemarkerHtmlReportGenerator;
+import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.configuration.FreemarkerConfigurationProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFile;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFileProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.TemplateProcessor;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format.DayBasedTimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearchClient;
+import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.ElasticsearchRestClientFactory;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientFactory;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultInfoMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultNodeInfoMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultTimeParser;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.JsonContentResponseMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.NodeInfoMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeParser;
 import app.habitzl.elasticsearch.status.monitor.util.ClockProvider;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,9 +41,10 @@ import java.time.Clock;
 class GuiceModule extends AbstractModule {
 	@Override
 	protected void configure() {
-		bind(StatusMonitor.class).to(ElasticsearchStatusMonitor.class).in(Singleton.class);
+		bind(StatusMonitor.class).to(ReportBasedStatusMonitor.class).in(Singleton.class);
 
-		// Elasticsearch REST client
+		// Elasticsearch client
+		bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);
 		bind(RestHighLevelClient.class).toProvider(RestClientProvider.class).in(Singleton.class);
 		bind(RestClientFactory.class).to(ElasticsearchRestClientFactory.class).in(Singleton.class);
 
@@ -52,7 +56,7 @@ class GuiceModule extends AbstractModule {
 		bind(NodeInfoMapper.class).to(DefaultNodeInfoMapper.class).in(Singleton.class);
 
 		// Presentation
-		bind(StatusAggregator.class).to(DefaultStatusAggregator.class).in(Singleton.class);
+		bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
 		bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);
 		bind(File.class).annotatedWith(ReportFile.class).toProvider(ReportFileProvider.class);
 		bind(TemplateProcessor.class).in(Singleton.class);

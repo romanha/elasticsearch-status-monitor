@@ -1,6 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.tool.data.node.EndpointInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 
 import java.security.SecureRandom;
 

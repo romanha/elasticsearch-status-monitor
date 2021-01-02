@@ -1,6 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor;
 
-import app.habitzl.elasticsearch.status.monitor.tool.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 
 import java.security.SecureRandom;
 import java.time.Duration;
