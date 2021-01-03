@@ -15,6 +15,7 @@ public final class AnalysisReports {
 
 	public static AnalysisReport random() {
 		return AnalysisReport.create(
+				StatusMonitorConfigurations.random(),
 				List.of(),
 				List.of(),
 				ClusterInfos.random(),

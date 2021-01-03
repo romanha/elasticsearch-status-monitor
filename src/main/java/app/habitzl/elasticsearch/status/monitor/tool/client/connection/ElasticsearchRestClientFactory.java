@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -13,9 +14,12 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 
+import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,16 +29,21 @@ import java.util.Optional;
 public class ElasticsearchRestClientFactory implements RestClientFactory {
 	private static final Logger LOG = LogManager.getLogger(ElasticsearchRestClientFactory.class);
 
-	private static final boolean SECURITY_ENABLED = true;
-
-	static final String DEFAULT_HOST = "localhost";
-	static final int DEFAULT_PORT = 9200;
+	static final String FALLBACK_HOST = "localhost";
+	static final int FALLBACK_PORT = 9200;
 	static final String HTTP_SCHEME = "http";
 	static final String HTTPS_SCHEME = "https";
 
 	static final String DEFAULT_KEYSTORE_PASSWORD = "changeit";
 	static final String DEFAULT_USER = "admin";
 	static final String DEFAULT_PASSWORD = "admin";
+
+	private final StatusMonitorConfiguration configuration;
+
+	@Inject
+	public ElasticsearchRestClientFactory(final StatusMonitorConfiguration configuration) {
+		this.configuration = configuration;
+	}
 
 	@Override
 	public RestHighLevelClient create() {
@@ -46,17 +55,39 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
 	}
 
 	private HttpHost createHttpHost() {
-		return new HttpHost(
-				DEFAULT_HOST,
-				DEFAULT_PORT,
-				SECURITY_ENABLED ? HTTPS_SCHEME : HTTP_SCHEME
-		);
+		HttpHost host;
+
+		String scheme = configuration.isUsingHttps() ? HTTPS_SCHEME : HTTP_SCHEME;
+
+		try {
+			InetAddress address = InetAddress.getByName(configuration.getIpAddress());
+			host = new HttpHost(address, getConfiguredPort(), scheme);
+		} catch (final UnknownHostException e) {
+			LOG.error("Failed to create IP address from '" + configuration.getIpAddress() + "'.", e);
+			LOG.info("Falling back to '{}'.", FALLBACK_HOST);
+			host = new HttpHost(FALLBACK_HOST, getConfiguredPort(), scheme);
+		}
+
+		return host;
+	}
+
+	private int getConfiguredPort() {
+		int port;
+		try {
+			port = Integer.parseInt(configuration.getPort());
+		} catch (final NumberFormatException e) {
+			LOG.error("Failed to parse port from '" + configuration.getPort() + "'.", e);
+			LOG.info("Falling back to '{}'.", FALLBACK_PORT);
+			port = FALLBACK_PORT;
+		}
+
+		return port;
 	}
 
 	private RestClientBuilder.HttpClientConfigCallback createHttpClientConfigCallback() {
 		HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
 
-		if (SECURITY_ENABLED) {
+		if (configuration.isUsingHttps()) {
 			setCredentialsProvider(builder);
 			setSSLContext(builder);
 		}

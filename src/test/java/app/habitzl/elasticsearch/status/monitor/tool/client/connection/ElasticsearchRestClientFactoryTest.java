@@ -1,5 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
+import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -14,10 +16,12 @@ import static org.hamcrest.Matchers.*;
 class ElasticsearchRestClientFactoryTest {
 
 	private ElasticsearchRestClientFactory sut;
+	private StatusMonitorConfiguration configuration;
 
 	@BeforeEach
 	void setUp() {
-		sut = new ElasticsearchRestClientFactory();
+		configuration = StatusMonitorConfigurations.random();
+		sut = new ElasticsearchRestClientFactory(configuration);
 	}
 
 	@Test
@@ -30,9 +34,13 @@ class ElasticsearchRestClientFactoryTest {
 	}
 
 	@Test
-	void create_sut_returnsClientWithDefaultHttpHost() {
+	void create_sut_returnsClientWithConfiguredHttpHost() {
 		// Given
-		// no custom connection defined
+		String configuredAddress = configuration.getIpAddress();
+		int configuredPort = Integer.parseInt(configuration.getPort());
+		String configuredScheme = configuration.isUsingHttps()
+				? ElasticsearchRestClientFactory.HTTPS_SCHEME
+				: ElasticsearchRestClientFactory.HTTP_SCHEME;
 
 		// When
 		RestHighLevelClient client = sut.create();
@@ -42,8 +50,32 @@ class ElasticsearchRestClientFactoryTest {
 		assertThat(nodes, hasSize(1));
 
 		HttpHost host = nodes.iterator().next().getHost();
-		assertThat(host.getHostName(), equalTo(ElasticsearchRestClientFactory.DEFAULT_HOST));
-		assertThat(host.getPort(), equalTo(ElasticsearchRestClientFactory.DEFAULT_PORT));
-		assertThat(host.getSchemeName(), equalTo(ElasticsearchRestClientFactory.HTTPS_SCHEME));
+		assertThat(host.getHostName(), equalTo(configuredAddress));
+		assertThat(host.getPort(), equalTo(configuredPort));
+		assertThat(host.getSchemeName(), equalTo(configuredScheme));
+	}
+
+	@Test
+	void create_invalidConfiguration_returnsClientWithFallbackConfigurationHttpHost() {
+		// Given
+		configuration.setIpAddress("invalid#address");
+		configuration.setPort("invalid#port");
+		String fallbackAddress = ElasticsearchRestClientFactory.FALLBACK_HOST;
+		int configuredPort = ElasticsearchRestClientFactory.FALLBACK_PORT;
+		String configuredScheme = this.configuration.isUsingHttps()
+				? ElasticsearchRestClientFactory.HTTPS_SCHEME
+				: ElasticsearchRestClientFactory.HTTP_SCHEME;
+
+		// When
+		RestHighLevelClient client = sut.create();
+
+		// Then
+		List<Node> nodes = client.getLowLevelClient().getNodes();
+		assertThat(nodes, hasSize(1));
+
+		HttpHost host = nodes.iterator().next().getHost();
+		assertThat(host.getHostName(), equalTo(fallbackAddress));
+		assertThat(host.getPort(), equalTo(configuredPort));
+		assertThat(host.getSchemeName(), equalTo(configuredScheme));
 	}
 }

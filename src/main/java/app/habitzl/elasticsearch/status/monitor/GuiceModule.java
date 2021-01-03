@@ -2,16 +2,9 @@ package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.ReportBasedStatusMonitor;
 import app.habitzl.elasticsearch.status.monitor.tool.ReportGenerator;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
-import app.habitzl.elasticsearch.status.monitor.tool.presentation.FreemarkerHtmlReportGenerator;
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
-import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
-import app.habitzl.elasticsearch.status.monitor.tool.presentation.configuration.FreemarkerConfigurationProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFile;
-import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFileProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.TemplateProcessor;
-import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format.DayBasedTimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
@@ -23,7 +16,16 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultNodeIn
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultTimeParser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.JsonContentResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.NodeInfoMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeParser;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format.DayBasedTimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.DefaultConfigurationLoader;
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.FreemarkerHtmlReportGenerator;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.configuration.FreemarkerConfigurationProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFile;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFileProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.TemplateProcessor;
 import app.habitzl.elasticsearch.status.monitor.util.ClockProvider;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +44,8 @@ class GuiceModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(StatusMonitor.class).to(ReportBasedStatusMonitor.class).in(Singleton.class);
+		bind(StatusMonitorConfiguration.class).in(Singleton.class);
+		bind(ConfigurationLoader.class).to(DefaultConfigurationLoader.class).in(Singleton.class);
 
 		// Elasticsearch client
 		bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);

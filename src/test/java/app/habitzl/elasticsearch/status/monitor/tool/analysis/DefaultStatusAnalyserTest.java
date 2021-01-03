@@ -2,12 +2,14 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.NodeInfos;
+import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import org.elasticsearch.rest.RestStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,12 +25,14 @@ import static org.mockito.Mockito.*;
 class DefaultStatusAnalyserTest {
 
 	private DefaultStatusAnalyser sut;
+	private StatusMonitorConfiguration configuration;
 	private ElasticsearchClient elasticsearchClient;
 
 	@BeforeEach
 	void setUp() {
+		configuration = StatusMonitorConfigurations.random();
 		elasticsearchClient = mock(ElasticsearchClient.class);
-		sut = new DefaultStatusAnalyser(elasticsearchClient);
+		sut = new DefaultStatusAnalyser(configuration, elasticsearchClient);
 	}
 
 	@Test
@@ -66,7 +70,7 @@ class DefaultStatusAnalyserTest {
 		AnalysisReport analysisReport = sut.createReport();
 
 		// Then
-		AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(List.of(Problem.GENERAL_CONNECTION_FAILURE));
+		AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(Problem.GENERAL_CONNECTION_FAILURE));
 		assertThat(analysisReport, equalTo(expectedAnalysisReport));
 	}
 
@@ -79,7 +83,7 @@ class DefaultStatusAnalyserTest {
 		AnalysisReport analysisReport = sut.createReport();
 
 		// Then
-		AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(List.of(Problem.SSL_HANDSHAKE_FAILURE));
+		AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(Problem.SSL_HANDSHAKE_FAILURE));
 		assertThat(analysisReport, equalTo(expectedAnalysisReport));
 	}
 
@@ -92,7 +96,7 @@ class DefaultStatusAnalyserTest {
 		AnalysisReport analysisReport = sut.createReport();
 
 		// Then
-		AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(List.of(Problem.UNAUTHORIZED_CONNECTION_FAILURE));
+		AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(Problem.UNAUTHORIZED_CONNECTION_FAILURE));
 		assertThat(analysisReport, equalTo(expectedAnalysisReport));
 	}
 
@@ -132,6 +136,6 @@ class DefaultStatusAnalyserTest {
 		when(elasticsearchClient.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
 		List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
 		when(elasticsearchClient.getNodeInfo()).thenReturn(nodeInfos);
-		return AnalysisReport.create(List.of(), List.of(), clusterInfo, nodeInfos);
+		return AnalysisReport.create(configuration, List.of(), List.of(), clusterInfo, nodeInfos);
 	}
 }

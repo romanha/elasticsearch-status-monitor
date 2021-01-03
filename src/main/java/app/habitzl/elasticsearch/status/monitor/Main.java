@@ -18,6 +18,10 @@ public class Main {
 		LOG.info("Starting up the Elasticsearch Status Monitor.");
 
 		Injector injector = Guice.createInjector(new GuiceModule());
+
+		ConfigurationLoader configurationLoader = injector.getInstance(ConfigurationLoader.class);
+		configurationLoader.load(args);
+
 		StatusMonitor statusMonitor = injector.getInstance(StatusMonitor.class);
 		statusMonitor.createSnapshot();
 

@@ -63,6 +63,14 @@
 <body>
 <h1>Elasticsearch Status Report</h1>
 
+<div id="configuration" class="bordered-detail-section">
+    <h2>Tool configuration</h2>
+    <p>
+        Endpoint: ${report.configuration.usingHttps?string("https://", "http://")}${report.configuration.ipAddress}:${report.configuration.port}<br/>
+        ${report.configuration.usingHttps?string("Security enabled.", "Security disabled.")}
+    </p>
+</div>
+
 <#if report.reportProgress == "FINISHED">
     <div id="cluster-info" class="bordered-detail-section">
         <h2>Cluster: ${report.clusterInfo.clusterName}</h2>

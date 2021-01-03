@@ -49,7 +49,7 @@ public enum Problem {
 		private static final String GENERAL_CONNECTION_FAILURE_DESCRIPTION =
 				"The tool could not connect to the Elasticsearch cluster.";
 		private static final String GENERAL_CONNECTION_FAILURE_SOLUTION =
-				"Check the used IP address and port.";
+				"Check the IP address and port of the tool configuration. Check if the Elasticsearch cluster requires a secured connection (HTTPS).";
 
 		private static final String UNAUTHORIZED_CONNECTION_FAILURE_DESCRIPTION =
 				"The tool is not authorized to connect to the Elasticsearch cluster.";

@@ -7,6 +7,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.rest.RestStatus;
@@ -18,10 +19,12 @@ import java.util.Optional;
 public class DefaultStatusAnalyser implements StatusAnalyser {
 	private static final Logger LOG = LogManager.getLogger(DefaultStatusAnalyser.class);
 
+	private final StatusMonitorConfiguration configuration;
 	private final ElasticsearchClient elasticsearchClient;
 
 	@Inject
-	public DefaultStatusAnalyser(final ElasticsearchClient elasticsearchClient) {
+	public DefaultStatusAnalyser(final StatusMonitorConfiguration configuration, final ElasticsearchClient elasticsearchClient) {
+		this.configuration = configuration;
 		this.elasticsearchClient = elasticsearchClient;
 	}
 
@@ -77,6 +80,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 
 		// TODO get more info, perform analysis to generate problems and warnings
 		return AnalysisReport.create(
+				configuration,
 				List.of(),
 				List.of(),
 				clusterInfo.orElse(null),
@@ -86,7 +90,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 
 	private AnalysisReport abortStatusMonitoring(final Problem problem) {
 		LOG.warn("Encountered problem while gathering data: '{}'. Aborting status report generation.", problem);
-		return AnalysisReport.aborted(List.of(problem));
+		return AnalysisReport.aborted(configuration, List.of(problem));
 	}
 
 	private AnalysisReport abortStatusMonitoringForOtherReason(final RestStatus restStatus) {
