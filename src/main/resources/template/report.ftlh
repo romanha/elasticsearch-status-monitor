@@ -45,7 +45,7 @@
         /**
          * Reduces the top margin of the first heading in a bordered block.
          */
-        .bordered-detail-section > h1:first-child, .bordered-detail-section > h2:first-child, .bordered-detail-section > h3:first-child  {
+        .bordered-detail-section > h1:first-child, .bordered-detail-section > h2:first-child, .bordered-detail-section > h3:first-child {
             margin-top: 0.2em;
         }
 
@@ -75,7 +75,7 @@
 <div id="configuration" class="bordered-detail-section">
     <h2>Tool Configuration</h2>
     <p>
-        Endpoint: ${report.configuration.usingHttps?string("https://", "http://")}${report.configuration.ipAddress}:${report.configuration.port}<br/>
+        Endpoint: ${report.configuration.usingHttps?string("https://", "http://")}${report.configuration.host}:${report.configuration.port}<br/>
         ${report.configuration.usingHttps?string("Security enabled.", "Security disabled.")}
     </p>
 </div>
@@ -159,6 +159,9 @@
             <div class="bordered-detail-section">
                 <h3>${warning.title}</h3>
                 <p class="warn">${warning.description}</p>
+                <#if warning.additionalInformation?has_content>
+                    <p>Additional information: ${warning.additionalInformation}</p>
+                </#if>
                 <p>&rarr; ${warning.solution}</p>
             </div>
         </#list>

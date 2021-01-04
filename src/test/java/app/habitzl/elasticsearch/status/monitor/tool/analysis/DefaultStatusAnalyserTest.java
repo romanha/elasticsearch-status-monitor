@@ -3,41 +3,46 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.NodeInfos;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeFailure;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.HighRamUsageWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
-import java.util.List;
-import java.util.Optional;
 import org.elasticsearch.rest.RestStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class DefaultStatusAnalyserTest {
 
     private DefaultStatusAnalyser sut;
     private StatusMonitorConfiguration configuration;
     private ElasticsearchClient elasticsearchClient;
+    private EndpointAnalyser endpointAnalyser;
 
     @BeforeEach
     void setUp() {
         configuration = StatusMonitorConfigurations.random();
         elasticsearchClient = mock(ElasticsearchClient.class);
-        sut = new DefaultStatusAnalyser(configuration, elasticsearchClient);
+        endpointAnalyser = mock(EndpointAnalyser.class);
+        when(endpointAnalyser.analyse(anyList())).thenReturn(AnalysisResult.empty());
+        sut = new DefaultStatusAnalyser(configuration, elasticsearchClient, endpointAnalyser);
     }
 
     @Test
@@ -69,8 +74,8 @@ class DefaultStatusAnalyserTest {
     @Test
     void createReport_connectionStatusNotFound_returnAbortedAnalysisReportWithGeneralConnectionProblem() {
         // Given
-		String connectionErrorInformation = "some connection error";
-		when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.NOT_FOUND, connectionErrorInformation));
+        String connectionErrorInformation = "some connection error";
+        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.NOT_FOUND, connectionErrorInformation));
 
         // When
         AnalysisReport analysisReport = sut.createReport();
@@ -89,7 +94,7 @@ class DefaultStatusAnalyserTest {
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
-        AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(SSLHandshakeFailure.create()));
+        AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(SSLHandshakeProblem.create()));
         assertThat(analysisReport, equalTo(expectedAnalysisReport));
     }
 
@@ -109,7 +114,7 @@ class DefaultStatusAnalyserTest {
     @Test
     void createReport_allStatusRequestsSucceed_performStatusRequestsInOrder() {
         // Given
-        givenAllStatusRequestsSucceed();
+        givenAllRequestsSucceed();
 
         // When
         sut.createReport();
@@ -124,7 +129,20 @@ class DefaultStatusAnalyserTest {
     @Test
     void createReport_allStatusRequestsSucceed_returnExpectedAnalysisReport() {
         // Given
-        AnalysisReport expectedAnalysisReport = givenAllStatusRequestsSucceed();
+        AnalysisReport expectedAnalysisReport = givenAllRequestsSucceed();
+
+        // When
+        AnalysisReport analysisReport = sut.createReport();
+
+        // Then
+        assertThat(analysisReport, equalTo(expectedAnalysisReport));
+    }
+
+    @Test
+    void createReport_endpointAnalyserFindsWarning_returnExpectedAnalysisReport() {
+        // Given
+        HighRamUsageWarning warning = givenEndpointAnalyserFindsWarning();
+        AnalysisReport expectedAnalysisReport = givenAllRequestsSucceedWithWarnings(List.of(warning));
 
         // When
         AnalysisReport analysisReport = sut.createReport();
@@ -136,12 +154,33 @@ class DefaultStatusAnalyserTest {
     /**
      * Returns the expected status report from all status monitor requests.
      */
-    private AnalysisReport givenAllStatusRequestsSucceed() {
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success(RestStatus.OK));
+    private AnalysisReport givenAllRequestsSucceed() {
         ClusterInfo clusterInfo = ClusterInfos.random();
-        when(elasticsearchClient.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
-        when(elasticsearchClient.getNodeInfo()).thenReturn(nodeInfos);
+        givenAllRequestsSucceed(clusterInfo, nodeInfos);
         return AnalysisReport.create(configuration, List.of(), List.of(), clusterInfo, nodeInfos);
+    }
+
+    /**
+     * Returns the expected status report from all status monitor requests.
+     */
+    private AnalysisReport givenAllRequestsSucceedWithWarnings(final List<Warning> warnings) {
+        ClusterInfo clusterInfo = ClusterInfos.random();
+        List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
+        givenAllRequestsSucceed(clusterInfo, nodeInfos);
+        return AnalysisReport.create(configuration, List.of(), warnings, clusterInfo, nodeInfos);
+    }
+
+    private void givenAllRequestsSucceed(final ClusterInfo clusterInfo, final List<NodeInfo> nodeInfos) {
+        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success(RestStatus.OK));
+        when(elasticsearchClient.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
+        when(elasticsearchClient.getNodeInfo()).thenReturn(nodeInfos);
+    }
+
+    private HighRamUsageWarning givenEndpointAnalyserFindsWarning() {
+        HighRamUsageWarning warning = HighRamUsageWarning.create(Set.of("endpoint"));
+        when(endpointAnalyser.analyse(anyList()))
+                .thenReturn(AnalysisResult.create(List.of(), List.of(warning)));
+        return warning;
     }
 }

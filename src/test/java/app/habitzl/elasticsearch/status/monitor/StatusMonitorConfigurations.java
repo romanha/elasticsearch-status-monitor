@@ -23,7 +23,7 @@ public final class StatusMonitorConfigurations {
 		boolean isUsingHttps = random.nextBoolean();
 
 		StatusMonitorConfiguration configuration = new StatusMonitorConfiguration();
-		configuration.setIpAddress(LOCAL_IP_ADDRESS);
+		configuration.setHost(LOCAL_IP_ADDRESS);
 		configuration.setPort(Integer.toString(port));
 		configuration.setUsingHttps(isUsingHttps);
 		return configuration;

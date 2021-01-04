@@ -23,7 +23,7 @@ class DefaultConfigurationLoaderTest {
 		String address = "1.2.3.4";
 		String port = "9999";
 		String[] args = {
-				"-" + DefaultConfigurationLoader.IP_OPTION, address,
+				"-" + DefaultConfigurationLoader.HOST_OPTION, address,
 				"-" + DefaultConfigurationLoader.PORT_OPTION, port,
 				"-" + DefaultConfigurationLoader.UNSECURE_OPTION
 		};
@@ -32,7 +32,7 @@ class DefaultConfigurationLoaderTest {
 		sut.load(args);
 
 		// Then
-		assertThat(configuration.getIpAddress(), equalTo(address));
+		assertThat(configuration.getHost(), equalTo(address));
 		assertThat(configuration.getPort(), equalTo(port));
 		assertThat(configuration.isUsingHttps(), equalTo(false));
 	}
@@ -42,14 +42,14 @@ class DefaultConfigurationLoaderTest {
 		// Given
 		String address = "1.2.3.4";
 		String[] args = {
-				"-" + DefaultConfigurationLoader.IP_OPTION, address
+				"-" + DefaultConfigurationLoader.HOST_OPTION, address
 		};
 
 		// When
 		sut.load(args);
 
 		// Then
-		assertThat(configuration.getIpAddress(), equalTo(address));
+		assertThat(configuration.getHost(), equalTo(address));
 		assertThat(configuration.getPort(), equalTo(StatusMonitorConfiguration.DEFAULT_PORT));
 		assertThat(configuration.isUsingHttps(), equalTo(StatusMonitorConfiguration.DEFAULT_USING_HTTPS));
 	}
@@ -60,7 +60,7 @@ class DefaultConfigurationLoaderTest {
 		String address = "1.2.3.4";
 		String port = "9999";
 		String[] args = {
-				"-" + DefaultConfigurationLoader.IP_OPTION, address,
+				"-" + DefaultConfigurationLoader.HOST_OPTION, address,
 				"-unknownOption",
 				"-" + DefaultConfigurationLoader.PORT_OPTION, port,
 				"-" + DefaultConfigurationLoader.UNSECURE_OPTION
@@ -70,7 +70,7 @@ class DefaultConfigurationLoaderTest {
 		sut.load(args);
 
 		// Then
-		assertThat(configuration.getIpAddress(), equalTo(StatusMonitorConfiguration.DEFAULT_IP_ADDRESS));
+		assertThat(configuration.getHost(), equalTo(StatusMonitorConfiguration.DEFAULT_HOST));
 		assertThat(configuration.getPort(), equalTo(StatusMonitorConfiguration.DEFAULT_PORT));
 		assertThat(configuration.isUsingHttps(), equalTo(StatusMonitorConfiguration.DEFAULT_USING_HTTPS));
 	}
@@ -84,7 +84,7 @@ class DefaultConfigurationLoaderTest {
 		sut.load(args);
 
 		// Then
-		assertThat(configuration.getIpAddress(), equalTo(StatusMonitorConfiguration.DEFAULT_IP_ADDRESS));
+		assertThat(configuration.getHost(), equalTo(StatusMonitorConfiguration.DEFAULT_HOST));
 		assertThat(configuration.getPort(), equalTo(StatusMonitorConfiguration.DEFAULT_PORT));
 		assertThat(configuration.isUsingHttps(), equalTo(StatusMonitorConfiguration.DEFAULT_USING_HTTPS));
 	}

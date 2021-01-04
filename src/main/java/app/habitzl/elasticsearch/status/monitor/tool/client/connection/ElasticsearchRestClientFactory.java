@@ -60,10 +60,10 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
 		String scheme = configuration.isUsingHttps() ? HTTPS_SCHEME : HTTP_SCHEME;
 
 		try {
-			InetAddress address = InetAddress.getByName(configuration.getIpAddress());
+			InetAddress address = InetAddress.getByName(configuration.getHost());
 			host = new HttpHost(address, getConfiguredPort(), scheme);
 		} catch (final UnknownHostException e) {
-			LOG.error("Failed to create IP address from '" + configuration.getIpAddress() + "'.", e);
+			LOG.error("Failed to create host from '" + configuration.getHost() + "'.", e);
 			LOG.info("Falling back to '{}'.", FALLBACK_HOST);
 			host = new HttpHost(FALLBACK_HOST, getConfiguredPort(), scheme);
 		}

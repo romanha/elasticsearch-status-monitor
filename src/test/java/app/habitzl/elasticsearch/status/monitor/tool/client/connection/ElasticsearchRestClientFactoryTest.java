@@ -36,7 +36,7 @@ class ElasticsearchRestClientFactoryTest {
 	@Test
 	void create_sut_returnsClientWithConfiguredHttpHost() {
 		// Given
-		String configuredAddress = configuration.getIpAddress();
+		String configuredAddress = configuration.getHost();
 		int configuredPort = Integer.parseInt(configuration.getPort());
 		String configuredScheme = configuration.isUsingHttps()
 				? ElasticsearchRestClientFactory.HTTPS_SCHEME
@@ -58,7 +58,7 @@ class ElasticsearchRestClientFactoryTest {
 	@Test
 	void create_invalidConfiguration_returnsClientWithFallbackConfigurationHttpHost() {
 		// Given
-		configuration.setIpAddress("invalid#address");
+		configuration.setHost("invalid#host");
 		configuration.setPort("invalid#port");
 		String fallbackAddress = ElasticsearchRestClientFactory.FALLBACK_HOST;
 		int configuredPort = ElasticsearchRestClientFactory.FALLBACK_PORT;

@@ -6,6 +6,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
+
 import java.util.Objects;
 
 public class GeneralConnectionProblem implements Problem {
@@ -37,7 +38,7 @@ public class GeneralConnectionProblem implements Problem {
 
     @Override
     public String getSolution() {
-        return "Check the IP address and port of the tool configuration. Check if the Elasticsearch cluster requires a secured connection (HTTPS).";
+        return "Check the host and port of the tool configuration. Check if the Elasticsearch cluster requires a secured connection (HTTPS).";
     }
 
     @Override

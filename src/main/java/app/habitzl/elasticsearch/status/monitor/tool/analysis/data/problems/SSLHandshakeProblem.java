@@ -3,33 +3,33 @@
  *            Registered with Commercial Court Vienna,
  *            reg.no. FN 72.115b.
  */
-package app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings;
+package app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems;
 
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 
-public class HighRamUsage implements Warning {
+public class SSLHandshakeProblem implements Problem {
     private static final long serialVersionUID = 1L;
 
-    public static HighRamUsage create() {
-        return new HighRamUsage();
+    public static SSLHandshakeProblem create() {
+        return new SSLHandshakeProblem();
     }
 
-    private HighRamUsage() {
+    private SSLHandshakeProblem() {
     }
 
     @Override
     public String getTitle() {
-        return "High RAM usage";
+        return "SSL handshake failure";
     }
 
     @Override
     public String getDescription() {
-        return "At least one endpoint has a high RAM usage.";
+        return "The tool and the Elasticsearch cluster could not negotiate the desired level of security.";
     }
 
     @Override
     public String getSolution() {
-        return "Monitor the endpoints. Check running processes for high memory consumption.";
+        return "Verify that the required certificates are available in the keystore of the Java runtime.";
     }
 
     @Override

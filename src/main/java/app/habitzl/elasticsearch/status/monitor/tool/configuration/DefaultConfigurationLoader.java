@@ -14,7 +14,7 @@ import javax.inject.Inject;
 public class DefaultConfigurationLoader implements ConfigurationLoader {
 	private static final Logger LOG = LogManager.getLogger(DefaultConfigurationLoader.class);
 
-	static final String IP_OPTION = "ip";
+	static final String HOST_OPTION = "h";
 	static final String PORT_OPTION = "p";
 	static final String UNSECURE_OPTION = "unsecure";
 
@@ -35,9 +35,9 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
 		DefaultParser cliParser = new DefaultParser();
 		try {
 			CommandLine commandLine = cliParser.parse(allOptions, cliArguments);
-			if (commandLine.hasOption(IP_OPTION)) {
-				LOG.info("Using IP address {} from CLI options.", commandLine.getOptionValue(IP_OPTION));
-				configuration.setIpAddress(commandLine.getOptionValue(IP_OPTION));
+			if (commandLine.hasOption(HOST_OPTION)) {
+				LOG.info("Using host {} from CLI options.", commandLine.getOptionValue(HOST_OPTION));
+				configuration.setHost(commandLine.getOptionValue(HOST_OPTION));
 			}
 			if (commandLine.hasOption(PORT_OPTION)) {
 				LOG.info("Using configured port {} from CLI options.", commandLine.getOptionValue(PORT_OPTION));
@@ -54,18 +54,18 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
 
 	private Options createOptions() {
 		Options allOptions = new Options();
-		allOptions.addOption(createIpOption());
+		allOptions.addOption(createHostOption());
 		allOptions.addOption(createPortOption());
 		allOptions.addOption(createUnsecureOption());
 		return allOptions;
 	}
 
-	private Option createIpOption() {
-		return Option.builder(IP_OPTION)
-					 .longOpt("ipAddress")
+	private Option createHostOption() {
+		return Option.builder(HOST_OPTION)
+					 .longOpt("host")
 					 .hasArg(true)
-					 .argName("endpoint address")
-					 .desc("The IP address of the Elasticsearch endpoint.")
+					 .argName("IP address or host name")
+					 .desc("The IP address or host name of the Elasticsearch endpoint.")
 					 .build();
 	}
 

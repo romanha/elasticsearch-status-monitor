@@ -1,10 +1,13 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeFailure;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
@@ -18,17 +21,23 @@ import org.elasticsearch.rest.RestStatus;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class DefaultStatusAnalyser implements StatusAnalyser {
 	private static final Logger LOG = LogManager.getLogger(DefaultStatusAnalyser.class);
 
 	private final StatusMonitorConfiguration configuration;
 	private final ElasticsearchClient elasticsearchClient;
+	private final EndpointAnalyser endpointAnalyser;
 
 	@Inject
-	public DefaultStatusAnalyser(final StatusMonitorConfiguration configuration, final ElasticsearchClient elasticsearchClient) {
+	public DefaultStatusAnalyser(
+			final StatusMonitorConfiguration configuration,
+			final ElasticsearchClient elasticsearchClient,
+			final EndpointAnalyser endpointAnalyser) {
 		this.configuration = configuration;
 		this.elasticsearchClient = elasticsearchClient;
+		this.endpointAnalyser = endpointAnalyser;
 	}
 
 	@Override
@@ -50,7 +59,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 											   .orElseGet(() -> abortStatusMonitoring(GeneralConnectionProblem.create()));
 				break;
 			case SSL_HANDSHAKE_FAILURE:
-				analysisReport = abortStatusMonitoring(SSLHandshakeFailure.create());
+				analysisReport = abortStatusMonitoring(SSLHandshakeProblem.create());
 				break;
 			case NOT_FOUND:
 			default:
@@ -81,11 +90,14 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 		Optional<ClusterInfo> clusterInfo = elasticsearchClient.getClusterInfo();
 		List<NodeInfo> nodeInfos = elasticsearchClient.getNodeInfo();
 
-		// TODO get more info, perform analysis to generate problems and warnings
+		AnalysisResult endpointAnalysisResult = endpointAnalyser.analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
+		List<Problem> problems = endpointAnalysisResult.getProblems();
+		List<Warning> warnings = endpointAnalysisResult.getWarnings();
+
 		return AnalysisReport.create(
 				configuration,
-				List.of(),
-				List.of(),
+				problems,
+				warnings,
 				clusterInfo.orElse(null),
 				nodeInfos
 		);

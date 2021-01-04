@@ -5,6 +5,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.ReportGenerator;
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
@@ -59,8 +60,11 @@ class GuiceModule extends AbstractModule {
 		bind(InfoMapper.class).to(DefaultInfoMapper.class).in(Singleton.class);
 		bind(NodeInfoMapper.class).to(DefaultNodeInfoMapper.class).in(Singleton.class);
 
-		// Presentation
+		// Analyser
 		bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
+		bind(EndpointAnalyser.class).in(Singleton.class);
+
+		// Presentation
 		bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);
 		bind(File.class).annotatedWith(ReportFile.class).toProvider(ReportFileProvider.class);
 		bind(TemplateProcessor.class).in(Singleton.class);
