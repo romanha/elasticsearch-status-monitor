@@ -47,7 +47,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 			case SUCCESS:
 				analysisReport = connectionInfo.getRestStatus()
 											   .map(this::startStatusMonitoring)
-											   .orElseGet(() -> abortStatusMonitoring(GeneralConnectionProblem.create(null)));
+											   .orElseGet(() -> abortStatusMonitoring(GeneralConnectionProblem.create()));
 				break;
 			case SSL_HANDSHAKE_FAILURE:
 				analysisReport = abortStatusMonitoring(SSLHandshakeFailure.create());
@@ -98,6 +98,6 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 
 	private AnalysisReport abortStatusMonitoringForOtherReason(final RestStatus restStatus) {
 		LOG.warn("Unexpected rest status retrieved: {}", restStatus);
-		return abortStatusMonitoring(GeneralConnectionProblem.create(""));
+		return abortStatusMonitoring(GeneralConnectionProblem.create());
 	}
 }

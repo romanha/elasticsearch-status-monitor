@@ -11,6 +11,10 @@ import java.util.Objects;
 public class GeneralConnectionProblem implements Problem {
     private static final long serialVersionUID = 1L;
 
+    public static GeneralConnectionProblem create() {
+        return new GeneralConnectionProblem("");
+    }
+
     public static GeneralConnectionProblem create(final String additionalInformation) {
         return new GeneralConnectionProblem(additionalInformation);
     }
