@@ -51,13 +51,13 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
 			connectionInfo = ConnectionInfo.success(response.status());
 		} catch (final SSLHandshakeException e) {
 			logError(e);
-			connectionInfo = ConnectionInfo.error(ConnectionStatus.SSL_HANDSHAKE_FAILURE);
+			connectionInfo = ConnectionInfo.error(ConnectionStatus.SSL_HANDSHAKE_FAILURE, e.getMessage());
 		} catch (final ElasticsearchStatusException e) {
 			logError(e);
 			connectionInfo = ConnectionInfo.success(e.status());
 		} catch (final IOException e) {
 			logError(e);
-			connectionInfo = ConnectionInfo.error(ConnectionStatus.NOT_FOUND);
+			connectionInfo = ConnectionInfo.error(ConnectionStatus.NOT_FOUND, e.getMessage());
 		}
 
 		return connectionInfo;

@@ -1,42 +1,19 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.data;
 
+import java.io.Serializable;
+
 /**
- * Defines all possible warnings found by the automatic analysis of this tool.
+ * Defines a warning found by the automatic analysis of this tool.
  */
-public enum Warning {
+public interface Warning extends Serializable {
 
-	HIGH_RAM_USAGE(
-			"High RAM usage",
-			Constants.HIGH_RAM_USAGE_DESCRIPTION,
-			Constants.HIGH_RAM_USAGE_SOLUTION
-	);
+    String getTitle();
 
-	private final String title;
-	private final String description;
-	private final String solution;
+    String getDescription();
 
-	Warning(final String title, final String description, final String solution) {
-		this.title = title;
-		this.description = description;
-		this.solution = solution;
-	}
+    String getSolution();
 
-	public String getTitle() {
-		return title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public String getSolution() {
-		return solution;
-	}
-
-	private static class Constants {
-		private static final String HIGH_RAM_USAGE_DESCRIPTION =
-				"At least one endpoint has a high RAM usage.";
-		private static final String HIGH_RAM_USAGE_SOLUTION =
-				"Monitor the endpoint. Check the running processes for high memory consumption.";
-	}
+    default String getAdditionalInformation() {
+        return "";
+    }
 }

@@ -131,6 +131,9 @@
             <div class="bordered-detail-section">
                 <h3>${problem.title}</h3>
                 <p class="error">${problem.description}</p>
+                <#if problem.additionalInformation?has_content>
+                    <p>Additional information: ${problem.additionalInformation}</p>
+                </#if>
                 <p>&rarr; ${problem.solution}</p>
             </div>
         </#list>

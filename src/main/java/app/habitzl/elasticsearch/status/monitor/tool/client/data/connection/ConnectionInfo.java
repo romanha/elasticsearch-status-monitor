@@ -13,24 +13,29 @@ public final class ConnectionInfo {
 
 	private final ConnectionStatus connectionStatus;
 	private final RestStatus restStatus;
+	private final String connectionErrorInformation;
 
 	/**
 	 * Creates a connection info with a successful connection to the Elasticsearch cluster.
 	 */
 	public static ConnectionInfo success(final RestStatus restStatus) {
-		return new ConnectionInfo(ConnectionStatus.SUCCESS, restStatus);
+		return new ConnectionInfo(ConnectionStatus.SUCCESS, restStatus, null);
 	}
 
 	/**
 	 * Creates a connection info without a REST status, because the connection could not be established.
 	 */
-	public static ConnectionInfo error(final ConnectionStatus connectionStatus) {
-		return new ConnectionInfo(connectionStatus, null);
+	public static ConnectionInfo error(final ConnectionStatus connectionStatus, final String connectionErrorInformation) {
+		return new ConnectionInfo(connectionStatus, null, connectionErrorInformation);
 	}
 
-	private ConnectionInfo(final ConnectionStatus connectionStatus, final @Nullable RestStatus restStatus) {
+	private ConnectionInfo(
+			final ConnectionStatus connectionStatus,
+			final @Nullable RestStatus restStatus,
+			final @Nullable String connectionErrorInformation) {
 		this.connectionStatus = connectionStatus;
 		this.restStatus = restStatus;
+		this.connectionErrorInformation = connectionErrorInformation;
 	}
 
 	public ConnectionStatus getConnectionStatus() {
@@ -39,6 +44,10 @@ public final class ConnectionInfo {
 
 	public Optional<RestStatus> getRestStatus() {
 		return Optional.ofNullable(restStatus);
+	}
+
+	public Optional<String> getConnectionErrorInformation() {
+		return Optional.ofNullable(connectionErrorInformation);
 	}
 
 	@Override

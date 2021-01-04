@@ -3,6 +3,9 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeFailure;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
@@ -44,14 +47,14 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 			case SUCCESS:
 				analysisReport = connectionInfo.getRestStatus()
 											   .map(this::startStatusMonitoring)
-											   .orElseGet(() -> abortStatusMonitoring(Problem.GENERAL_CONNECTION_FAILURE));
+											   .orElseGet(() -> abortStatusMonitoring(GeneralConnectionProblem.create(null)));
 				break;
 			case SSL_HANDSHAKE_FAILURE:
-				analysisReport = abortStatusMonitoring(Problem.SSL_HANDSHAKE_FAILURE);
+				analysisReport = abortStatusMonitoring(SSLHandshakeFailure.create());
 				break;
 			case NOT_FOUND:
 			default:
-				analysisReport = abortStatusMonitoring(Problem.GENERAL_CONNECTION_FAILURE);
+				analysisReport = abortStatusMonitoring(GeneralConnectionProblem.create(connectionInfo.getConnectionErrorInformation().orElse("")));
 				break;
 		}
 		return analysisReport;
@@ -64,7 +67,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 				analysisReport = createAnalysisReport();
 				break;
 			case UNAUTHORIZED:
-				analysisReport = abortStatusMonitoring(Problem.UNAUTHORIZED_CONNECTION_FAILURE);
+				analysisReport = abortStatusMonitoring(UnauthorizedConnectionProblem.create());
 				break;
 			default:
 				analysisReport = abortStatusMonitoringForOtherReason(restStatus);
@@ -95,6 +98,6 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 
 	private AnalysisReport abortStatusMonitoringForOtherReason(final RestStatus restStatus) {
 		LOG.warn("Unexpected rest status retrieved: {}", restStatus);
-		return abortStatusMonitoring(Problem.GENERAL_CONNECTION_FAILURE);
+		return abortStatusMonitoring(GeneralConnectionProblem.create(""));
 	}
 }
