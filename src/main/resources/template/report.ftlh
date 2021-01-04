@@ -8,7 +8,7 @@
         body {
             font-family: Calibri, sans-serif;
             margin: 2em 4em;
-            background-color: #ececec;
+            background-color: #f4f3f1;
         }
 
         .error {
@@ -34,10 +34,18 @@
         .bordered-detail-section {
             width: max-content;
             padding: 1em;
-            border: solid 2px black;
-            border-radius: 2em;
+            border: solid 2px darkgray;
+            border-radius: 1em;
+            box-shadow: 0.5em 0.5em 1em rgba(0, 0, 0, 0.1);
 
             margin-bottom: 2em;
+        }
+
+        /**
+         * Reduces the top margin of the first heading in a bordered block.
+         */
+        .bordered-detail-section > h1:first-child, .bordered-detail-section > h2:first-child, .bordered-detail-section > h3:first-child  {
+            margin-top: 0.2em;
         }
 
         .multi-child-detail-section > div {
@@ -64,7 +72,7 @@
 <h1>Elasticsearch Status Report</h1>
 
 <div id="configuration" class="bordered-detail-section">
-    <h2>Tool configuration</h2>
+    <h2>Tool Configuration</h2>
     <p>
         Endpoint: ${report.configuration.usingHttps?string("https://", "http://")}${report.configuration.ipAddress}:${report.configuration.port}<br/>
         ${report.configuration.usingHttps?string("Security enabled.", "Security disabled.")}
@@ -73,7 +81,10 @@
 
 <#if report.reportProgress == "FINISHED">
     <div id="cluster-info" class="bordered-detail-section">
-        <h2>Cluster: ${report.clusterInfo.clusterName}</h2>
+        <h2>Cluster</h2>
+        <p>
+            Name: ${report.clusterInfo.clusterName}
+        </p>
         <p>
             Health status:
             <span <#if report.clusterInfo.healthStatus == "RED">class="error"
