@@ -34,7 +34,8 @@
         .bordered-detail-section {
             width: max-content;
             padding: 1em;
-            border: solid 2px darkgray;
+            background: white;
+            border: solid 1px darkgray;
             border-radius: 1em;
             box-shadow: 0.5em 0.5em 1em rgba(0, 0, 0, 0.1);
 
