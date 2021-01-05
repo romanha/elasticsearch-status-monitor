@@ -27,71 +27,71 @@ import java.security.KeyStore;
 import java.util.Optional;
 
 public class ElasticsearchRestClientFactory implements RestClientFactory {
-	private static final Logger LOG = LogManager.getLogger(ElasticsearchRestClientFactory.class);
+    private static final Logger LOG = LogManager.getLogger(ElasticsearchRestClientFactory.class);
 
-	static final String FALLBACK_HOST = "localhost";
-	static final int FALLBACK_PORT = 9200;
-	static final String HTTP_SCHEME = "http";
-	static final String HTTPS_SCHEME = "https";
+    static final String FALLBACK_HOST = "localhost";
+    static final int FALLBACK_PORT = 9200;
+    static final String HTTP_SCHEME = "http";
+    static final String HTTPS_SCHEME = "https";
 
-	static final String DEFAULT_KEYSTORE_PASSWORD = "changeit";
+	private static final String DEFAULT_KEYSTORE_PASSWORD = "changeit";
 
-	private final StatusMonitorConfiguration configuration;
+    private final StatusMonitorConfiguration configuration;
 
-	@Inject
-	public ElasticsearchRestClientFactory(final StatusMonitorConfiguration configuration) {
-		this.configuration = configuration;
-	}
+    @Inject
+    public ElasticsearchRestClientFactory(final StatusMonitorConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-	@Override
-	public RestHighLevelClient create() {
-		RestClientBuilder builder = RestClient.builder(createHttpHost());
+    @Override
+    public RestHighLevelClient create() {
+        RestClientBuilder builder = RestClient.builder(createHttpHost());
 
-		builder.setHttpClientConfigCallback(createHttpClientConfigCallback());
+        builder.setHttpClientConfigCallback(createHttpClientConfigCallback());
 
-		return new RestHighLevelClient(builder);
-	}
+        return new RestHighLevelClient(builder);
+    }
 
-	private HttpHost createHttpHost() {
-		HttpHost host;
+    private HttpHost createHttpHost() {
+        HttpHost host;
 
-		String scheme = configuration.isUsingHttps() ? HTTPS_SCHEME : HTTP_SCHEME;
+        String scheme = configuration.isUsingHttps() ? HTTPS_SCHEME : HTTP_SCHEME;
 
-		try {
-			InetAddress address = InetAddress.getByName(configuration.getHost());
-			host = new HttpHost(address, getConfiguredPort(), scheme);
-		} catch (final UnknownHostException e) {
-			LOG.error("Failed to create host from '" + configuration.getHost() + "'.", e);
-			LOG.info("Falling back to '{}'.", FALLBACK_HOST);
-			host = new HttpHost(FALLBACK_HOST, getConfiguredPort(), scheme);
-		}
+        try {
+            InetAddress address = InetAddress.getByName(configuration.getHost());
+            host = new HttpHost(address, getConfiguredPort(), scheme);
+        } catch (final UnknownHostException e) {
+            LOG.error("Failed to create host from '" + configuration.getHost() + "'.", e);
+            LOG.info("Falling back to '{}'.", FALLBACK_HOST);
+            host = new HttpHost(FALLBACK_HOST, getConfiguredPort(), scheme);
+        }
 
-		return host;
-	}
+        return host;
+    }
 
-	private int getConfiguredPort() {
-		int port;
-		try {
-			port = Integer.parseInt(configuration.getPort());
-		} catch (final NumberFormatException e) {
-			LOG.error("Failed to parse port from '" + configuration.getPort() + "'.", e);
-			LOG.info("Falling back to '{}'.", FALLBACK_PORT);
-			port = FALLBACK_PORT;
-		}
+    private int getConfiguredPort() {
+        int port;
+        try {
+            port = Integer.parseInt(configuration.getPort());
+        } catch (final NumberFormatException e) {
+            LOG.error("Failed to parse port from '" + configuration.getPort() + "'.", e);
+            LOG.info("Falling back to '{}'.", FALLBACK_PORT);
+            port = FALLBACK_PORT;
+        }
 
-		return port;
-	}
+        return port;
+    }
 
-	private RestClientBuilder.HttpClientConfigCallback createHttpClientConfigCallback() {
-		HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
+    private RestClientBuilder.HttpClientConfigCallback createHttpClientConfigCallback() {
+        HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
 
-		if (configuration.isUsingHttps()) {
-			setCredentialsProvider(builder);
-			setSSLContext(builder);
-		}
+        if (configuration.isUsingHttps()) {
+            setCredentialsProvider(builder);
+            setSSLContext(builder);
+        }
 
-		return callback -> builder;
-	}
+        return callback -> builder;
+    }
 
 	private void setCredentialsProvider(final HttpAsyncClientBuilder builder) {
 		final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -101,47 +101,47 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
 		);
 		credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
-		builder.setDefaultCredentialsProvider(credentialsProvider);
-	}
+        builder.setDefaultCredentialsProvider(credentialsProvider);
+    }
 
-	private void setSSLContext(final HttpAsyncClientBuilder builder) {
-		Optional<SSLContext> sslContext = getSslContext();
-		sslContext.ifPresent(builder::setSSLContext);
-	}
+    private void setSSLContext(final HttpAsyncClientBuilder builder) {
+        Optional<SSLContext> sslContext = getSslContext();
+        sslContext.ifPresent(builder::setSSLContext);
+    }
 
-	/**
-	 * Get the SSL context from the default Java KeyStore.
-	 */
-	private Optional<SSLContext> getSslContext() {
-		SSLContext sslContext = null;
-		try {
-			KeyStore truststore = KeyStore.getInstance("jks");
+    /**
+     * Get the SSL context from the default Java KeyStore.
+     */
+    private Optional<SSLContext> getSslContext() {
+        SSLContext sslContext = null;
+        try {
+            KeyStore truststore = KeyStore.getInstance("jks");
 
-			Path keyStorePath = getDefaultKeystorePath();
-			try (InputStream is = Files.newInputStream(keyStorePath)) {
-				truststore.load(is, DEFAULT_KEYSTORE_PASSWORD.toCharArray());
-				LOG.info("Loaded the Java KeyStore from the path {}.", keyStorePath);
-			}
+            Path keyStorePath = getDefaultKeystorePath();
+            try (InputStream is = Files.newInputStream(keyStorePath)) {
+                truststore.load(is, DEFAULT_KEYSTORE_PASSWORD.toCharArray());
+                LOG.info("Loaded the Java KeyStore from the path {}.", keyStorePath);
+            }
 
-			sslContext = SSLContexts.custom()
-									.loadTrustMaterial(truststore, null)
-									.build();
-		} catch (final Exception e) {
-			LOG.error("Failed to create SSL context.", e);
-		}
+            sslContext = SSLContexts.custom()
+                                    .loadTrustMaterial(truststore, null)
+                                    .build();
+        } catch (final Exception e) {
+            LOG.error("Failed to create SSL context.", e);
+        }
 
-		return Optional.ofNullable(sslContext);
-	}
+        return Optional.ofNullable(sslContext);
+    }
 
-	/**
-	 * Gets the default keystore path located at {@code %JAVA_HOME%/lib/security/cacerts}.
-	 */
-	private Path getDefaultKeystorePath() {
-		return Paths.get(
-				System.getProperties().getProperty("java.home") + File.separator
-						+ "lib" + File.separator
-						+ "security" + File.separator
-						+ "cacerts"
-		);
-	}
+    /**
+     * Gets the default keystore path located at {@code %JAVA_HOME%/lib/security/cacerts}.
+     */
+    private Path getDefaultKeystorePath() {
+        return Paths.get(
+                System.getProperties().getProperty("java.home") + File.separator
+                        + "lib" + File.separator
+                        + "security" + File.separator
+                        + "cacerts"
+        );
+    }
 }

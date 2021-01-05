@@ -1,10 +1,10 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.data;
 
-import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Holds all problems and warnings found by an analyser.

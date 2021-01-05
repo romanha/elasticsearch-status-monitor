@@ -33,46 +33,45 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import freemarker.template.Configuration;
-import org.elasticsearch.client.RestHighLevelClient;
-
 import java.io.File;
 import java.time.Clock;
+import org.elasticsearch.client.RestHighLevelClient;
 
 /**
  * A Google Guice module for defining bindings for the projects dependency injection.
  */
 class GuiceModule extends AbstractModule {
-	@Override
-	protected void configure() {
-		bind(StatusMonitor.class).to(ReportBasedStatusMonitor.class).in(Singleton.class);
-		bind(StatusMonitorConfiguration.class).in(Singleton.class);
-		bind(ConfigurationLoader.class).to(DefaultConfigurationLoader.class).in(Singleton.class);
+    @Override
+    protected void configure() {
+        bind(StatusMonitor.class).to(ReportBasedStatusMonitor.class).in(Singleton.class);
+        bind(StatusMonitorConfiguration.class).in(Singleton.class);
+        bind(ConfigurationLoader.class).to(DefaultConfigurationLoader.class).in(Singleton.class);
 
-		// Elasticsearch client
-		bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);
-		bind(RestHighLevelClient.class).toProvider(RestClientProvider.class).in(Singleton.class);
-		bind(RestClientFactory.class).to(ElasticsearchRestClientFactory.class).in(Singleton.class);
+        // Elasticsearch client
+        bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);
+        bind(RestHighLevelClient.class).toProvider(RestClientProvider.class).in(Singleton.class);
+        bind(RestClientFactory.class).to(ElasticsearchRestClientFactory.class).in(Singleton.class);
 
-		// Mapper and parser
-		bind(ObjectMapper.class).toInstance(new ObjectMapper());
-		bind(ResponseMapper.class).to(JsonContentResponseMapper.class).in(Singleton.class);
-		bind(TimeParser.class).to(DefaultTimeParser.class).in(Singleton.class);
-		bind(InfoMapper.class).to(DefaultInfoMapper.class).in(Singleton.class);
-		bind(NodeInfoMapper.class).to(DefaultNodeInfoMapper.class).in(Singleton.class);
+        // Mapper and parser
+        bind(ObjectMapper.class).toInstance(new ObjectMapper());
+        bind(ResponseMapper.class).to(JsonContentResponseMapper.class).in(Singleton.class);
+        bind(TimeParser.class).to(DefaultTimeParser.class).in(Singleton.class);
+        bind(InfoMapper.class).to(DefaultInfoMapper.class).in(Singleton.class);
+        bind(NodeInfoMapper.class).to(DefaultNodeInfoMapper.class).in(Singleton.class);
 
-		// Analyser
-		bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
-		bind(EndpointAnalyser.class).in(Singleton.class);
+        // Analyser
+        bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
+        bind(EndpointAnalyser.class).in(Singleton.class);
 
-		// Presentation
-		bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);
-		bind(File.class).annotatedWith(ReportFile.class).toProvider(ReportFileProvider.class);
-		bind(TemplateProcessor.class).in(Singleton.class);
-		bind(Configuration.class).toProvider(FreemarkerConfigurationProvider.class).in(Singleton.class);
-		bind(TimeFormatter.class).to(DayBasedTimeFormatter.class).in(Singleton.class);
+        // Presentation
+        bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);
+        bind(File.class).annotatedWith(ReportFile.class).toProvider(ReportFileProvider.class);
+        bind(TemplateProcessor.class).in(Singleton.class);
+        bind(Configuration.class).toProvider(FreemarkerConfigurationProvider.class).in(Singleton.class);
+        bind(TimeFormatter.class).to(DayBasedTimeFormatter.class).in(Singleton.class);
 
-		// Utilities
-		bind(Clock.class).toProvider(ClockProvider.class).in(Singleton.class);
-		bind(FileCreator.class).in(Singleton.class);
-	}
+        // Utilities
+        bind(Clock.class).toProvider(ClockProvider.class).in(Singleton.class);
+        bind(FileCreator.class).in(Singleton.class);
+    }
 }

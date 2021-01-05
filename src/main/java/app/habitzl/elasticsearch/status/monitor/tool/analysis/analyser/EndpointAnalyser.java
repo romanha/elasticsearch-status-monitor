@@ -4,14 +4,13 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResul
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.HighRamUsageWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Analyses data of the endpoints to find problems.

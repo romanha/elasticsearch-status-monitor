@@ -1,7 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
-
 import java.util.Map;
 
 /**
@@ -10,8 +9,8 @@ import java.util.Map;
  */
 public interface InfoMapper {
 
-	/**
-	 * Maps data returned via the ES {@code /_cat/nodes} API.
-	 */
-	NodeInfo mapNodeInfo(Map<String, Object> data);
+    /**
+     * Maps data returned via the ES {@code /_cat/nodes} API.
+     */
+    NodeInfo mapNodeInfo(Map<String, Object> data);
 }

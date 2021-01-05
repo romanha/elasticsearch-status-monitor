@@ -5,8 +5,8 @@ package app.habitzl.elasticsearch.status.monitor;
  */
 public interface StatusMonitor {
 
-	/**
-	 * Creates a monitoring snapshot of the current state of the ES cluster.
-	 */
-	void createSnapshot();
+    /**
+     * Creates a monitoring snapshot of the current state of the ES cluster.
+     */
+    void createSnapshot();
 }

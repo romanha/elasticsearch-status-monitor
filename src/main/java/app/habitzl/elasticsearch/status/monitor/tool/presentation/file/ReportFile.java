@@ -1,7 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.presentation.file;
 
 import com.google.inject.BindingAnnotation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,5 +13,5 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.PARAMETER, ElementType.FIELD})
 @BindingAnnotation
 public @interface ReportFile {
-	// marker interface for injection
+    // marker interface for injection
 }

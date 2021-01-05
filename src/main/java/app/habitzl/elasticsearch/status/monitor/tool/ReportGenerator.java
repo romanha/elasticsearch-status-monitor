@@ -7,8 +7,8 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisRepor
  */
 public interface ReportGenerator {
 
-	/**
-	 * Generates a new report based on the provided data model.
-	 */
-	void generate(AnalysisReport report);
+    /**
+     * Generates a new report based on the provided data model.
+     */
+    void generate(AnalysisReport report);
 }

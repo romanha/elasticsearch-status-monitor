@@ -7,8 +7,8 @@ import org.elasticsearch.client.RestHighLevelClient;
  */
 public interface RestClientFactory {
 
-	/**
-	 * Creates a new high-level REST client.
-	 */
-	RestHighLevelClient create();
+    /**
+     * Creates a new high-level REST client.
+     */
+    RestHighLevelClient create();
 }

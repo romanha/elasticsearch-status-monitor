@@ -74,31 +74,51 @@
 
 <div id="configuration" class="bordered-detail-section">
     <h2>Tool Configuration</h2>
-    <p>
-        Endpoint: ${report.configuration.usingHttps?string("https://", "http://")}${report.configuration.host}:${report.configuration.port}<br/>
-        ${report.configuration.usingHttps?string("Security enabled.", "Security disabled.")}
-    </p>
+    <table>
+        <tbody>
+        <tr>
+            <td>Endpoint:</td>
+            <td>${report.configuration.usingHttps?string("https://", "http://")}${report.configuration.host}:${report.configuration.port}</td>
+        </tr>
+        <tr>
+            <td>Security:</td>
+            <td>${report.configuration.usingHttps?string("enabled", "disabled")}</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 <#if report.reportProgress == "FINISHED">
     <div id="cluster-info" class="bordered-detail-section">
         <h2>Cluster</h2>
-        <p>
-            Name: ${report.clusterInfo.clusterName}
-        </p>
-        <p>
-            Health status:
-            <span <#if report.clusterInfo.healthStatus == "RED">class="error"
-                  <#elseif report.clusterInfo.healthStatus == "YELLOW">class="warn"
-                  <#elseif report.clusterInfo.healthStatus == "GREEN">class="success"</#if>
-            >${report.clusterInfo.healthStatus}</span>
-        </p>
-        <p>
-            Shards:
-            ${report.clusterInfo.numberOfActiveShards} active /
-            <span <#if report.clusterInfo.numberOfUnassignedShards gt 0>class="warn"</#if>
-            >${report.clusterInfo.numberOfUnassignedShards} unassigned</span>
-        </p>
+
+        <table>
+            <tbody>
+            <tr>
+                <td>Name:</td>
+                <td>${report.clusterInfo.clusterName}</td>
+            </tr>
+            <tr>
+                <td>Health status:</td>
+                <td>
+                    <span <#if report.clusterInfo.healthStatus == "RED">class="error"
+                          <#elseif report.clusterInfo.healthStatus == "YELLOW">class="warn"
+                          <#elseif report.clusterInfo.healthStatus == "GREEN">class="success"</#if>>
+                            ${report.clusterInfo.healthStatus}
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>Shards:</td>
+                <td>
+                    ${report.clusterInfo.numberOfActiveShards} active /
+                    <span <#if report.clusterInfo.numberOfUnassignedShards gt 0>class="warn"</#if>>
+                        ${report.clusterInfo.numberOfUnassignedShards} unassigned
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
     <div id="node-list-info" class="multi-child-detail-section">
@@ -106,17 +126,41 @@
             <div class="bordered-detail-section">
                 <h2>Node: ${node.nodeName}<#if node.masterNode> &starf;</#if></h2>
                 <h3>Endpoint Information</h3>
-                <p>
-                    Address: ${node.endpointInfo.ipAddress}<br/>
-                    RAM usage: ${node.endpointInfo.ramUsageInPercent}&percnt;<br/>
-                    Heap usage: ${node.endpointInfo.heapUsageInPercent}&percnt;<br/>
-                </p>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>IP address:</td>
+                        <td>${node.endpointInfo.ipAddress}</td>
+                    </tr>
+                    <tr>
+                        <td>RAM usage:</td>
+                        <td>${node.endpointInfo.ramUsageInPercent}&percnt;</td>
+                    </tr>
+                    <tr>
+                        <td>Heap usage:</td>
+                        <td>${node.endpointInfo.heapUsageInPercent}&percnt;</td>
+                    </tr>
+                    </tbody>
+                </table>
+
                 <h3>Node Information</h3>
-                <p>
-                    Node ID: ${node.nodeId}<br/>
-                    Process ID: ${node.processId}<br/>
-                    Uptime: ${node.uptime} days<br/>
-                </p>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>Node ID:</td>
+                        <td>${node.nodeId}</td>
+                    </tr>
+                    <tr>
+                        <td>Process ID:</td>
+                        <td>${node.processId}</td>
+                    </tr>
+                    <tr>
+                        <td>Uptime:</td>
+                        <td>${node.uptime}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
                 <p>
                     <#if node.masterNode>&starf; This node is the current master node.<br/></#if>
                     <#if node.masterEligibleNode>&#10027; This node can become a master node.<br/></#if>
