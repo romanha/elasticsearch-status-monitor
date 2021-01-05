@@ -7,5 +7,5 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisRepor
  */
 public interface StatusAnalyser {
 
-	AnalysisReport createReport();
+    AnalysisReport createReport();
 }

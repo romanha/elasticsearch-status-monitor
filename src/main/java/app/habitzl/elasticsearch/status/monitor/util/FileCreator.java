@@ -9,13 +9,13 @@ import java.nio.file.Path;
  */
 public class FileCreator {
 
-	/**
-	 * Creates the directory or file based on the path.
-	 * It also creates all the required parent directories.
-	 *
-	 * @return the path to created file.
-	 */
-	public Path create(final Path path) throws IOException {
-		return Files.createDirectories(path);
-	}
+    /**
+     * Creates the directory or file based on the path.
+     * It also creates all the required parent directories.
+     *
+     * @return the path to created file.
+     */
+    public Path create(final Path path) throws IOException {
+        return Files.createDirectories(path);
+    }
 }

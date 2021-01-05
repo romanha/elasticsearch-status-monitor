@@ -5,8 +5,8 @@ package app.habitzl.elasticsearch.status.monitor;
  */
 public interface ConfigurationLoader {
 
-	/**
-	 * Loads all available configuration, including the options passed as CLI arguments.
-	 */
-	void load(String[] cliArguments);
+    /**
+     * Loads all available configuration, including the options passed as CLI arguments.
+     */
+    void load(String[] cliArguments);
 }

@@ -6,7 +6,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
-
 import java.util.Objects;
 import java.util.Set;
 

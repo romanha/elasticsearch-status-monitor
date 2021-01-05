@@ -7,8 +7,8 @@ import java.time.Duration;
  */
 public interface TimeFormatter {
 
-	/**
-	 * Converts a Java duration into a general string representation.
-	 */
-	String format(Duration duration);
+    /**
+     * Converts a Java duration into a general string representation.
+     */
+    String format(Duration duration);
 }
