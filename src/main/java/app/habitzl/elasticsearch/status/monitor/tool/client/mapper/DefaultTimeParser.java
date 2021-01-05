@@ -1,9 +1,10 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 
 import com.google.common.base.Strings;
-import java.time.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.time.Duration;
 
 public class DefaultTimeParser implements TimeParser {
     private static final Logger LOG = LogManager.getLogger(DefaultTimeParser.class);

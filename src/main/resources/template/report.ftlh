@@ -84,6 +84,12 @@
             <td>Security:</td>
             <td>${report.configuration.usingHttps?string("enabled", "disabled")}</td>
         </tr>
+        <#if report.configuration.usingHttps>
+            <tr>
+                <td>Username:</td>
+                <td>${report.configuration.username}</td>
+            </tr>
+        </#if>
         </tbody>
     </table>
 </div>

@@ -34,7 +34,7 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
     static final String HTTP_SCHEME = "http";
     static final String HTTPS_SCHEME = "https";
 
-	private static final String DEFAULT_KEYSTORE_PASSWORD = "changeit";
+    private static final String DEFAULT_KEYSTORE_PASSWORD = "changeit";
 
     private final StatusMonitorConfiguration configuration;
 
@@ -93,13 +93,13 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
         return callback -> builder;
     }
 
-	private void setCredentialsProvider(final HttpAsyncClientBuilder builder) {
-		final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-				configuration.getUsername(),
-				configuration.getPassword()
-		);
-		credentialsProvider.setCredentials(AuthScope.ANY, credentials);
+    private void setCredentialsProvider(final HttpAsyncClientBuilder builder) {
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+                configuration.getUsername(),
+                configuration.getPassword()
+        );
+        credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
         builder.setDefaultCredentialsProvider(credentialsProvider);
     }

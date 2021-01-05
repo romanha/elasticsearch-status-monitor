@@ -1,9 +1,10 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
-import java.util.Objects;
+import org.elasticsearch.client.RestHighLevelClient;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
-import org.elasticsearch.client.RestHighLevelClient;
+import java.util.Objects;
 
 /**
  * A provider responsible for returning a single instance of an Elasticsearch high-level REST client.

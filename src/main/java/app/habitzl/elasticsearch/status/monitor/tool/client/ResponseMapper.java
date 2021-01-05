@@ -1,9 +1,10 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client;
 
+import org.elasticsearch.client.Response;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import org.elasticsearch.client.Response;
 
 /**
  * A mapper for converting Elasticsearch responses to maps with key-value pairs.

@@ -6,6 +6,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
+
 import java.util.Objects;
 
 public class GeneralConnectionProblem implements Problem {

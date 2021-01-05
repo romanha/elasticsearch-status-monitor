@@ -2,8 +2,9 @@ package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
-import java.util.Map;
+
 import javax.inject.Inject;
+import java.util.Map;
 
 public class DefaultInfoMapper implements InfoMapper {
 

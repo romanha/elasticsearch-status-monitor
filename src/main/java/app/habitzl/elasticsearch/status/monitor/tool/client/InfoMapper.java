@@ -1,6 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+
 import java.util.Map;
 
 /**

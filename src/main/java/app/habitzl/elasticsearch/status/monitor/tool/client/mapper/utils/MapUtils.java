@@ -1,6 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils;
 
 import com.google.common.base.Strings;
+
 import java.util.Map;
 import java.util.Objects;
 

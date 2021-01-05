@@ -1,9 +1,9 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.data.node;
 
+import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.StringJoiner;
-import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public final class NodeInfo implements Serializable {

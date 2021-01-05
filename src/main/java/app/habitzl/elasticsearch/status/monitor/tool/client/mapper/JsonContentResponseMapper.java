@@ -2,13 +2,14 @@ package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Response;
+
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
-import org.apache.http.util.EntityUtils;
-import org.elasticsearch.client.Response;
 
 public class JsonContentResponseMapper implements ResponseMapper {
 

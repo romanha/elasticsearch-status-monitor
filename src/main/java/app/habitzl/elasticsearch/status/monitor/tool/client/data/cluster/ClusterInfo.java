@@ -1,10 +1,11 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster;
 
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+
+import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.StringJoiner;
-import javax.annotation.concurrent.Immutable;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 
 @Immutable
 public final class ClusterInfo implements Serializable {

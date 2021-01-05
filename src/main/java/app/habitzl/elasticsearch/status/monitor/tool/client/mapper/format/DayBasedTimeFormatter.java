@@ -1,6 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
+
 import java.time.Duration;
 
 /**

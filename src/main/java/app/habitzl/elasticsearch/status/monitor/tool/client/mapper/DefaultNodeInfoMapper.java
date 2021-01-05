@@ -2,23 +2,13 @@ package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+
+import javax.inject.Inject;
 import java.time.Duration;
 import java.util.Map;
-import javax.inject.Inject;
 
-import static app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils.MapUtils.getFloat;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils.MapUtils.getInteger;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils.MapUtils.getString;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.AVERAGE_LOAD_KEY;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.HEAP_PERCENT_KEY;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.IP_KEY;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.NODE_ID_KEY;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.NODE_MASTER_KEY;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.NODE_NAME_KEY;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.NODE_PROCESS_ID;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.NODE_ROLE_KEY;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.NODE_UPTIME;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.RAM_PERCENT_KEY;
+import static app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils.MapUtils.*;
+import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.*;
 
 public class DefaultNodeInfoMapper implements NodeInfoMapper {
     static final String MASTER_NODE_MARKER = "*";

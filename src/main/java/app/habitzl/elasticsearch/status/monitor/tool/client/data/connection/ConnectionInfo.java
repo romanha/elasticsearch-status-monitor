@@ -1,11 +1,12 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.data.connection;
 
+import org.elasticsearch.rest.RestStatus;
+
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import org.elasticsearch.rest.RestStatus;
 
 @Immutable
 public final class ConnectionInfo {
