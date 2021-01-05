@@ -1,6 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
@@ -14,13 +15,15 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.Conn
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.rest.RestStatus;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class DefaultStatusAnalyser implements StatusAnalyser {
     private static final Logger LOG = LogManager.getLogger(DefaultStatusAnalyser.class);
@@ -28,15 +31,18 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
     private final StatusMonitorConfiguration configuration;
     private final ElasticsearchClient elasticsearchClient;
     private final EndpointAnalyser endpointAnalyser;
+    private final ClusterAnalyser clusterAnalyser;
 
     @Inject
     public DefaultStatusAnalyser(
             final StatusMonitorConfiguration configuration,
             final ElasticsearchClient elasticsearchClient,
-            final EndpointAnalyser endpointAnalyser) {
+            final EndpointAnalyser endpointAnalyser,
+            final ClusterAnalyser clusterAnalyser) {
         this.configuration = configuration;
         this.elasticsearchClient = elasticsearchClient;
         this.endpointAnalyser = endpointAnalyser;
+        this.clusterAnalyser = clusterAnalyser;
     }
 
     @Override
@@ -90,16 +96,32 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
         List<NodeInfo> nodeInfos = elasticsearchClient.getNodeInfo();
 
         AnalysisResult endpointAnalysisResult = endpointAnalyser.analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
-        List<Problem> problems = endpointAnalysisResult.getProblems();
-        List<Warning> warnings = endpointAnalysisResult.getWarnings();
+        AnalysisResult clusterAnalysisResult = clusterAnalyser.analyse(nodeInfos);
+
+        AnalysisResult analysisResult = combineAnalysisResults(
+                endpointAnalysisResult,
+                clusterAnalysisResult
+        );
 
         return AnalysisReport.create(
                 configuration,
-                problems,
-                warnings,
+                analysisResult.getProblems(),
+                analysisResult.getWarnings(),
                 clusterInfo.orElse(null),
                 nodeInfos
         );
+    }
+
+    private AnalysisResult combineAnalysisResults(final AnalysisResult... analysisResults) {
+        List<Problem> allProblems = Arrays.stream(analysisResults)
+                                          .map(AnalysisResult::getProblems)
+                                          .flatMap(List::stream)
+                                          .collect(Collectors.toList());
+        List<Warning> allWarnings = Arrays.stream(analysisResults)
+                                          .map(AnalysisResult::getWarnings)
+                                          .flatMap(List::stream)
+                                          .collect(Collectors.toList());
+        return AnalysisResult.create(allProblems, allWarnings);
     }
 
     private AnalysisReport abortStatusMonitoring(final Problem problem) {

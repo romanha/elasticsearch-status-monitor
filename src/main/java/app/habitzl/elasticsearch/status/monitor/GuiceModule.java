@@ -5,6 +5,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.ReportGenerator;
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
@@ -33,9 +34,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import freemarker.template.Configuration;
+import org.elasticsearch.client.RestHighLevelClient;
+
 import java.io.File;
 import java.time.Clock;
-import org.elasticsearch.client.RestHighLevelClient;
 
 /**
  * A Google Guice module for defining bindings for the projects dependency injection.
@@ -62,6 +64,7 @@ class GuiceModule extends AbstractModule {
         // Analyser
         bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
         bind(EndpointAnalyser.class).in(Singleton.class);
+        bind(ClusterAnalyser.class).in(Singleton.class);
 
         // Presentation
         bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);

@@ -35,7 +35,7 @@ class EndpointAnalyserTest {
     }
 
     @Test
-    void analyse_endpointsWithHighRamUsage_returnsResultWithAffectedEndpoints() {
+    void analyse_endpointsWithHighRamUsage_returnsHighRamUsageWarningWithAffectedEndpoints() {
         // Given
         EndpointInfo badEndpoint1 = new EndpointInfo("1.1.1.1", 80, 0);
         EndpointInfo badEndpoint2 = new EndpointInfo("2.2.2.2", 100, 0);

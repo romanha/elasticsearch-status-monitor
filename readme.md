@@ -11,6 +11,7 @@ It is able to show
 The automated analysis can find
 
 * connection issues,
+* cluster setup issues (redundancy, possibilities for split brain scenarios)
 * high RAM usage on endpoints.
 
 This tool is developed by Roman Habitzl.
@@ -60,6 +61,7 @@ RELEASE NOTES
     * Node and endpoint information
   * Automatic problem analysis
     * Connection issues
+    * Cluster not being redundant
     * High RAM usage on endpoints
   * HTML report generation
   * Tool configuration via CLI options (host, port, security)

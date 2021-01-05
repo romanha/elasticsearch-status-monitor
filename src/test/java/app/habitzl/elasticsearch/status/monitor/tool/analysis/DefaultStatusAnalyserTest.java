@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.NodeInfos;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
@@ -10,6 +11,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.ClusterNotRedundantWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.HighRamUsageWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
@@ -35,14 +37,15 @@ class DefaultStatusAnalyserTest {
     private StatusMonitorConfiguration configuration;
     private ElasticsearchClient elasticsearchClient;
     private EndpointAnalyser endpointAnalyser;
+    private ClusterAnalyser clusterAnalyser;
 
     @BeforeEach
     void setUp() {
         configuration = StatusMonitorConfigurations.random();
         elasticsearchClient = mock(ElasticsearchClient.class);
-        endpointAnalyser = mock(EndpointAnalyser.class);
-        when(endpointAnalyser.analyse(anyList())).thenReturn(AnalysisResult.empty());
-        sut = new DefaultStatusAnalyser(configuration, elasticsearchClient, endpointAnalyser);
+        mockEndpointAnalyser();
+        mockClusterAnalyser();
+        sut = new DefaultStatusAnalyser(configuration, elasticsearchClient, endpointAnalyser, clusterAnalyser);
     }
 
     @Test
@@ -141,7 +144,7 @@ class DefaultStatusAnalyserTest {
     @Test
     void createReport_endpointAnalyserFindsWarning_returnExpectedAnalysisReport() {
         // Given
-        HighRamUsageWarning warning = givenEndpointAnalyserFindsWarning();
+        Warning warning = givenEndpointAnalyserFindsWarning();
         AnalysisReport expectedAnalysisReport = givenAllRequestsSucceedWithWarnings(List.of(warning));
 
         // When
@@ -149,6 +152,43 @@ class DefaultStatusAnalyserTest {
 
         // Then
         assertThat(analysisReport, equalTo(expectedAnalysisReport));
+    }
+
+    @Test
+    void createReport_clusterAnalyserFindsWarning_returnExpectedAnalysisReport() {
+        // Given
+        Warning warning = givenClusterAnalyserFindsWarning();
+        AnalysisReport expectedAnalysisReport = givenAllRequestsSucceedWithWarnings(List.of(warning));
+
+        // When
+        AnalysisReport analysisReport = sut.createReport();
+
+        // Then
+        assertThat(analysisReport, equalTo(expectedAnalysisReport));
+    }
+
+    @Test
+    void createReport_everyAnalyserFindsWarning_returnExpectedAnalysisReport() {
+        // Given
+        Warning warning1 = givenEndpointAnalyserFindsWarning();
+        Warning warning2 = givenClusterAnalyserFindsWarning();
+        AnalysisReport expectedAnalysisReport = givenAllRequestsSucceedWithWarnings(List.of(warning1, warning2));
+
+        // When
+        AnalysisReport analysisReport = sut.createReport();
+
+        // Then
+        assertThat(analysisReport, equalTo(expectedAnalysisReport));
+    }
+
+    private void mockEndpointAnalyser() {
+        endpointAnalyser = mock(EndpointAnalyser.class);
+        when(endpointAnalyser.analyse(anyList())).thenReturn(AnalysisResult.empty());
+    }
+
+    private void mockClusterAnalyser() {
+        clusterAnalyser = mock(ClusterAnalyser.class);
+        when(clusterAnalyser.analyse(anyList())).thenReturn(AnalysisResult.empty());
     }
 
     /**
@@ -177,9 +217,16 @@ class DefaultStatusAnalyserTest {
         when(elasticsearchClient.getNodeInfo()).thenReturn(nodeInfos);
     }
 
-    private HighRamUsageWarning givenEndpointAnalyserFindsWarning() {
+    private Warning givenEndpointAnalyserFindsWarning() {
         HighRamUsageWarning warning = HighRamUsageWarning.create(Set.of("endpoint"));
         when(endpointAnalyser.analyse(anyList()))
+                .thenReturn(AnalysisResult.create(List.of(), List.of(warning)));
+        return warning;
+    }
+
+    private Warning givenClusterAnalyserFindsWarning() {
+        ClusterNotRedundantWarning warning = ClusterNotRedundantWarning.create();
+        when(clusterAnalyser.analyse(anyList()))
                 .thenReturn(AnalysisResult.create(List.of(), List.of(warning)));
         return warning;
     }
