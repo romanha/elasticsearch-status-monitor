@@ -13,10 +13,14 @@ public class StatusMonitorConfiguration implements Serializable {
     static final Boolean DEFAULT_USING_HTTPS = true;
     static final String DEFAULT_HOST = "127.0.0.1";
     static final String DEFAULT_PORT = "9200";
+    static final String DEFAULT_USERNAME = "admin";
+    static final String DEFAULT_PASSWORD = "admin";
 
     private Boolean usingHttps;
     private String host;
     private String port;
+    private String username;
+    private String password;
 
     public boolean isUsingHttps() {
         return Objects.nonNull(usingHttps) ? usingHttps : DEFAULT_USING_HTTPS;
@@ -48,6 +52,28 @@ public class StatusMonitorConfiguration implements Serializable {
         this.port = port;
     }
 
+    /**
+     * Gets the user name of the Elasticsearch user.
+     */
+    public String getUsername() {
+        return Objects.nonNull(username) ? username : DEFAULT_USERNAME;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+    /**
+     * Gets the password of the Elasticsearch user.
+     */
+    public String getPassword() {
+        return Objects.nonNull(password) ? password : DEFAULT_PASSWORD;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
+    }
+
     @Override
     @SuppressWarnings("CyclomaticComplexity")
     public boolean equals(final Object o) {
@@ -61,7 +87,9 @@ public class StatusMonitorConfiguration implements Serializable {
             StatusMonitorConfiguration that = (StatusMonitorConfiguration) o;
             isEqual = Objects.equals(usingHttps, that.usingHttps)
                     && Objects.equals(host, that.host)
-                    && Objects.equals(port, that.port);
+                    && Objects.equals(port, that.port)
+                    && Objects.equals(username, that.username)
+                    && Objects.equals(password, that.password);
         }
 
         return isEqual;
@@ -69,7 +97,7 @@ public class StatusMonitorConfiguration implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(usingHttps, host, port);
+        return Objects.hash(usingHttps, host, port, username, password);
     }
 
     @Override
@@ -77,7 +105,13 @@ public class StatusMonitorConfiguration implements Serializable {
         return new StringJoiner(", ", StatusMonitorConfiguration.class.getSimpleName() + "[", "]")
                 .add("usingHttps=" + usingHttps)
                 .add("host='" + host + "'")
-                .add("port=" + port)
+                .add("port='" + port + "'")
+                .add("username='" + username + "'")
+                .add("password='" + toStringPassword() + "'")
                 .toString();
+    }
+
+    private String toStringPassword() {
+        return Objects.isNull(password) ? null : Integer.toString(Objects.hash(password));
     }
 }

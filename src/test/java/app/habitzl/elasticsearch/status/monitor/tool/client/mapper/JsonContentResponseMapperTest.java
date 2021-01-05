@@ -20,67 +20,67 @@ import static org.mockito.Mockito.when;
 
 class JsonContentResponseMapperTest {
 
-	private static final String TEST_DATA = "some test data";
+    private static final String TEST_DATA = "some test data";
 
-	private JsonContentResponseMapper sut;
-	private ObjectMapper mapper;
+    private JsonContentResponseMapper sut;
+    private ObjectMapper mapper;
 
-	@BeforeEach
-	void setUp() {
-		mapper = mock(ObjectMapper.class);
-		sut = new JsonContentResponseMapper(mapper);
-	}
+    @BeforeEach
+    void setUp() {
+        mapper = mock(ObjectMapper.class);
+        sut = new JsonContentResponseMapper(mapper);
+    }
 
-	@Test
-	void toMap_response_returnsMap() throws IOException {
-		// Given
-		Response response = prepareResponse();
-		Map<String, String> map = prepareMapperForSingleMap();
+    @Test
+    void toMap_response_returnsMap() throws IOException {
+        // Given
+        Response response = prepareResponse();
+        Map<String, String> map = prepareMapperForSingleMap();
 
-		// When
-		Map<String, Object> result = sut.toMap(response);
+        // When
+        Map<String, Object> result = sut.toMap(response);
 
-		// Then
-		assertThat(result, equalTo(map));
-	}
+        // Then
+        assertThat(result, equalTo(map));
+    }
 
-	@Test
-	void toMaps_response_returnsMaps() throws IOException {
-		// Given
-		Response response = prepareResponse();
-		List<Map<String, String>> maps = prepareMapperForMultipleMaps();
+    @Test
+    void toMaps_response_returnsMaps() throws IOException {
+        // Given
+        Response response = prepareResponse();
+        List<Map<String, String>> maps = prepareMapperForMultipleMaps();
 
-		// When
-		List<Map<String, Object>> result = sut.toMaps(response);
+        // When
+        List<Map<String, Object>> result = sut.toMaps(response);
 
-		// Then
-		assertThat(result, equalTo(maps));
-	}
+        // Then
+        assertThat(result, equalTo(maps));
+    }
 
-	private Response prepareResponse() throws IOException {
-		HttpEntity httpEntity = mock(HttpEntity.class);
-		when(httpEntity.getContent()).thenReturn(testInputStream());
-		Response response = mock(Response.class);
-		when(response.getEntity()).thenReturn(httpEntity);
-		return response;
-	}
+    private Response prepareResponse() throws IOException {
+        HttpEntity httpEntity = mock(HttpEntity.class);
+        when(httpEntity.getContent()).thenReturn(testInputStream());
+        Response response = mock(Response.class);
+        when(response.getEntity()).thenReturn(httpEntity);
+        return response;
+    }
 
-	private InputStream testInputStream() {
-		return new ByteArrayInputStream(TEST_DATA.getBytes());
-	}
+    private InputStream testInputStream() {
+        return new ByteArrayInputStream(TEST_DATA.getBytes());
+    }
 
-	private Map<String, String> prepareMapperForSingleMap() throws IOException {
-		Map<String, String> map = Map.of("key", "value");
-		when(mapper.readValue(TEST_DATA, Map.class)).thenReturn(map);
-		return map;
-	}
+    private Map<String, String> prepareMapperForSingleMap() throws IOException {
+        Map<String, String> map = Map.of("key", "value");
+        when(mapper.readValue(TEST_DATA, Map.class)).thenReturn(map);
+        return map;
+    }
 
-	@SuppressWarnings("unchecked")
-	private List<Map<String, String>> prepareMapperForMultipleMaps() throws IOException {
-		Map<String, String> map1 = Map.of("key1", "value1");
-		Map<String, String> map2 = Map.of("key2", "value2");
-		Map<String, String>[] maps = new Map[]{map1, map2};
-		when(mapper.readValue(TEST_DATA, Map[].class)).thenReturn(maps);
-		return Arrays.asList(maps);
-	}
+    @SuppressWarnings("unchecked")
+    private List<Map<String, String>> prepareMapperForMultipleMaps() throws IOException {
+        Map<String, String> map1 = Map.of("key1", "value1");
+        Map<String, String> map2 = Map.of("key2", "value2");
+        Map<String, String>[] maps = new Map[]{map1, map2};
+        when(mapper.readValue(TEST_DATA, Map[].class)).thenReturn(maps);
+        return Arrays.asList(maps);
+    }
 }

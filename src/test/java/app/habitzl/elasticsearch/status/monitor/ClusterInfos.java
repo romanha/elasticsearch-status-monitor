@@ -10,21 +10,21 @@ import java.security.SecureRandom;
  */
 public final class ClusterInfos {
 
-	private ClusterInfos() {
-		// instantiation protection
-	}
+    private ClusterInfos() {
+        // instantiation protection
+    }
 
-	public static ClusterInfo random() {
-		SecureRandom random = new SecureRandom();
+    public static ClusterInfo random() {
+        SecureRandom random = new SecureRandom();
 
-		return new ClusterInfo(
-				"test-cluster-" + random.nextInt(),
-				ClusterHealthStatus.GREEN,
-				random.nextInt(),
-				random.nextInt(),
-				random.nextInt(),
-				random.nextInt(),
-				random.nextInt()
-		);
-	}
+        return new ClusterInfo(
+                "test-cluster-" + random.nextInt(),
+                ClusterHealthStatus.GREEN,
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt()
+        );
+    }
 }

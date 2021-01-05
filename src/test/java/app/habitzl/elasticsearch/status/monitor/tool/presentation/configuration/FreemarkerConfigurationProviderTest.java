@@ -10,38 +10,38 @@ import static org.hamcrest.Matchers.notNullValue;
 
 class FreemarkerConfigurationProviderTest {
 
-	private FreemarkerConfigurationProvider sut;
+    private FreemarkerConfigurationProvider sut;
 
-	@BeforeEach
-	void setUp() {
-		sut = new FreemarkerConfigurationProvider();
-	}
+    @BeforeEach
+    void setUp() {
+        sut = new FreemarkerConfigurationProvider();
+    }
 
-	@Test
-	void get_configurationNotYetExisting_returnsConfiguration() {
-		// Given
-		// configuration does not exist yet
+    @Test
+    void get_configurationNotYetExisting_returnsConfiguration() {
+        // Given
+        // configuration does not exist yet
 
-		// When
-		Configuration configuration = sut.get();
+        // When
+        Configuration configuration = sut.get();
 
-		// Then
-		assertThat(configuration, notNullValue());
-	}
+        // Then
+        assertThat(configuration, notNullValue());
+    }
 
-	@Test
-	void get_configurationAlreadyExists_returnExistingConfiguration() {
-		// Given
-		Configuration existingConfiguration = givenConfigurationAlreadyExists();
+    @Test
+    void get_configurationAlreadyExists_returnExistingConfiguration() {
+        // Given
+        Configuration existingConfiguration = givenConfigurationAlreadyExists();
 
-		// When
-		Configuration configuration = sut.get();
+        // When
+        Configuration configuration = sut.get();
 
-		// Then
-		assertThat(configuration, is(existingConfiguration));
-	}
+        // Then
+        assertThat(configuration, is(existingConfiguration));
+    }
 
-	private Configuration givenConfigurationAlreadyExists() {
-		return sut.get();
-	}
+    private Configuration givenConfigurationAlreadyExists() {
+        return sut.get();
+    }
 }

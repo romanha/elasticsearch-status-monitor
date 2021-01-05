@@ -30,15 +30,21 @@ Command Line Options
 
 The tool supports following CLI options:
 
-Option   | Alternative | Arguments | Required | Default   | Description                                                                                   | Example
----      | ---         | ---       | ---      | ---       | ---                                                                                           | ---
-h        | host        | 1         | no       | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                    | `-h 127.0.0.1`
-p        | port        | 1         | no       | 9200      | The HTTP port of the Elasticsearch endpoint.                                                  | `-p 9200`
-unsecure | -           | 0         | no       | -         | Disables security for the tool. The tool will not use HTTPS when connecting to Elasticsearch. | `-unsecure`
+Option   | Alternative | Arguments | Required | Default   | Description                                                                                                           | Example
+---      | ---         | ---       | ---      | ---       | ---                                                                                                                   | ---
+h        | host        | 1         | no       | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                            | `-h 127.0.0.1`
+p        | port        | 1         | no       | 9200      | The HTTP port of the Elasticsearch endpoint.                                                                          | `-p 9200`
+s        | security    | 1         | no       | true      | Enables or disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `-s false`
+u        | username    | 1         | no       | admin     | The user name of the Elasticsearch user.                                                                              | `-u admin`
+x        | password    | 1         | no       | admin     | The password of the Elasticsearch user.                                                                               | `-x admin`
 
 Here is an example with some options:
 
-`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar -h 127.0.0.1 -p 9200`
+`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar -h 127.0.0.1 -p 9200 -u admin -x admin`
+
+This is the same example using the long alternative option names:
+
+`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --host 127.0.0.1 --port 9200 --username admin --password admin`
 
 RELEASE NOTES
 =============

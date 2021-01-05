@@ -8,42 +8,42 @@ import static org.mockito.Mockito.*;
 
 class RestClientProviderTest {
 
-	private RestClientProvider sut;
-	private RestClientFactory factory;
+    private RestClientProvider sut;
+    private RestClientFactory factory;
 
-	@BeforeEach
-	void setUp() {
-		factory = mock(RestClientFactory.class);
-		sut = new RestClientProvider(factory);
-	}
+    @BeforeEach
+    void setUp() {
+        factory = mock(RestClientFactory.class);
+        sut = new RestClientProvider(factory);
+    }
 
-	@Test
-	void get_clientNotYetExisting_createNewClient() {
-		// Given
-		// client does not exist yet
+    @Test
+    void get_clientNotYetExisting_createNewClient() {
+        // Given
+        // client does not exist yet
 
-		// When
-		sut.get();
+        // When
+        sut.get();
 
-		// Then
-		verify(factory).create();
-	}
+        // Then
+        verify(factory).create();
+    }
 
-	@Test
-	void get_clientAlreadyExists_doNotCreateNewClient() {
-		// Given
-		givenClientAlreadyExists();
+    @Test
+    void get_clientAlreadyExists_doNotCreateNewClient() {
+        // Given
+        givenClientAlreadyExists();
 
-		// When
-		sut.get();
+        // When
+        sut.get();
 
-		// Then
-		verifyNoMoreInteractions(factory);
-	}
+        // Then
+        verifyNoMoreInteractions(factory);
+    }
 
-	private void givenClientAlreadyExists() {
-		when(factory.create()).thenReturn(mock(RestHighLevelClient.class));
-		sut.get();
-		verify(factory).create();
-	}
+    private void givenClientAlreadyExists() {
+        when(factory.create()).thenReturn(mock(RestHighLevelClient.class));
+        sut.get();
+        verify(factory).create();
+    }
 }

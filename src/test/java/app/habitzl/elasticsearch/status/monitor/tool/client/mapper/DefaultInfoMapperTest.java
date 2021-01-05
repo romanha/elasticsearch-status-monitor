@@ -10,26 +10,26 @@ import static org.mockito.Mockito.verify;
 
 class DefaultInfoMapperTest {
 
-	private static final Map<String, Object> TEST_MAP = Map.of("key", "value");
+    private static final Map<String, Object> TEST_MAP = Map.of("key", "value");
 
-	private DefaultInfoMapper sut;
-	private NodeInfoMapper nodeInfoMapper;
+    private DefaultInfoMapper sut;
+    private NodeInfoMapper nodeInfoMapper;
 
-	@BeforeEach
-	void setUp() {
-		nodeInfoMapper = mock(NodeInfoMapper.class);
-		sut = new DefaultInfoMapper(nodeInfoMapper);
-	}
+    @BeforeEach
+    void setUp() {
+        nodeInfoMapper = mock(NodeInfoMapper.class);
+        sut = new DefaultInfoMapper(nodeInfoMapper);
+    }
 
-	@Test
-	void mapNodeInfo_sut_delegatesToNodeInfoMapper() {
-		// Given
-		Map<String, Object> map = TEST_MAP;
+    @Test
+    void mapNodeInfo_sut_delegatesToNodeInfoMapper() {
+        // Given
+        Map<String, Object> map = TEST_MAP;
 
-		// When
-		sut.mapNodeInfo(map);
+        // When
+        sut.mapNodeInfo(map);
 
-		// Then
-		verify(nodeInfoMapper).map(map);
-	}
+        // Then
+        verify(nodeInfoMapper).map(map);
+    }
 }

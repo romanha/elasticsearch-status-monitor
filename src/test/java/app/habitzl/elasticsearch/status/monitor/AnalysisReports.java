@@ -9,17 +9,17 @@ import java.util.List;
  */
 public final class AnalysisReports {
 
-	private AnalysisReports() {
-		// instantiation protection
-	}
+    private AnalysisReports() {
+        // instantiation protection
+    }
 
-	public static AnalysisReport random() {
-		return AnalysisReport.create(
-				StatusMonitorConfigurations.random(),
-				List.of(),
-				List.of(),
-				ClusterInfos.random(),
-				List.of(NodeInfos.random(), NodeInfos.random(), NodeInfos.random())
-		);
-	}
+    public static AnalysisReport random() {
+        return AnalysisReport.create(
+                StatusMonitorConfigurations.random(),
+                List.of(),
+                List.of(),
+                ClusterInfos.random(),
+                List.of(NodeInfos.random(), NodeInfos.random(), NodeInfos.random())
+        );
+    }
 }

@@ -10,23 +10,23 @@ import java.time.Duration;
  */
 public final class NodeInfos {
 
-	private NodeInfos() {
-		// instantiation protection
-	}
+    private NodeInfos() {
+        // instantiation protection
+    }
 
-	public static NodeInfo random() {
-		SecureRandom random = new SecureRandom();
+    public static NodeInfo random() {
+        SecureRandom random = new SecureRandom();
 
-		return new NodeInfo(
-				"P" + random.nextInt(),
-				"node-id-" + random.nextInt(),
-				"node-name-" + random.nextInt(),
-				random.nextBoolean(),
-				random.nextBoolean(),
-				random.nextBoolean(),
-				Duration.ofMillis(random.nextInt()).toString(),
-				random.nextFloat(),
-				EndpointInfos.random()
-		);
-	}
+        return new NodeInfo(
+                "P" + random.nextInt(),
+                "node-id-" + random.nextInt(),
+                "node-name-" + random.nextInt(),
+                random.nextBoolean(),
+                random.nextBoolean(),
+                random.nextBoolean(),
+                Duration.ofMillis(random.nextInt()).toString(),
+                random.nextFloat(),
+                EndpointInfos.random()
+        );
+    }
 }

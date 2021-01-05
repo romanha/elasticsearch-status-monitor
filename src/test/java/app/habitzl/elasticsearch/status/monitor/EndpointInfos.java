@@ -9,17 +9,17 @@ import java.security.SecureRandom;
  */
 public final class EndpointInfos {
 
-	private EndpointInfos() {
-		// instantiation protection
-	}
+    private EndpointInfos() {
+        // instantiation protection
+    }
 
-	public static EndpointInfo random() {
-		SecureRandom random = new SecureRandom();
+    public static EndpointInfo random() {
+        SecureRandom random = new SecureRandom();
 
-		return new EndpointInfo(
-				"Address " + random.nextInt(),
-				(int) (Math.random() * 100),
-				(int) (Math.random() * 100)
-		);
-	}
+        return new EndpointInfo(
+                "Address " + random.nextInt(),
+                (int) (Math.random() * 100),
+                (int) (Math.random() * 100)
+        );
+    }
 }
