@@ -11,6 +11,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.Gene
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
@@ -92,11 +93,12 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
     }
 
     private AnalysisReport createAnalysisReport() {
+        ClusterSettings clusterSettings = elasticsearchClient.getClusterSettings().orElse(ClusterSettings.createDefault());
         Optional<ClusterInfo> clusterInfo = elasticsearchClient.getClusterInfo();
         List<NodeInfo> nodeInfos = elasticsearchClient.getNodeInfo();
 
         AnalysisResult endpointAnalysisResult = endpointAnalyser.analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
-        AnalysisResult clusterAnalysisResult = clusterAnalyser.analyse(nodeInfos);
+        AnalysisResult clusterAnalysisResult = clusterAnalyser.analyse(clusterSettings, nodeInfos);
 
         AnalysisResult analysisResult = combineAnalysisResults(
                 endpointAnalysisResult,

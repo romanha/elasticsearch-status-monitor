@@ -16,10 +16,10 @@ public final class NodeInfos {
     }
 
     public static NodeInfo random() {
-        return random(EndpointInfos.random());
+        return randomMasterEligible(EndpointInfos.random());
     }
 
-    public static NodeInfo random(final EndpointInfo endpoint) {
+    public static NodeInfo randomMasterEligible(final EndpointInfo endpoint) {
         SecureRandom random = new SecureRandom();
         return new NodeInfo(
                 "P" + random.nextInt(),
@@ -27,10 +27,33 @@ public final class NodeInfos {
                 "node-name-" + random.nextInt(),
                 random.nextBoolean(),
                 random.nextBoolean(),
-                random.nextBoolean(),
+                true,
                 Duration.ofMillis(random.nextInt()).toString(),
                 random.nextFloat(),
                 endpoint
+        );
+    }
+
+    public static NodeInfo randomMasterEligible() {
+        return random(true);
+    }
+
+    public static NodeInfo randomNotMasterEligible() {
+        return random(false);
+    }
+
+    private static NodeInfo random(final boolean isMasterEligible) {
+        SecureRandom random = new SecureRandom();
+        return new NodeInfo(
+                "P" + random.nextInt(),
+                "node-id-" + random.nextInt(),
+                "node-name-" + random.nextInt(),
+                random.nextBoolean(),
+                random.nextBoolean(),
+                isMasterEligible,
+                Duration.ofMillis(random.nextInt()).toString(),
+                random.nextFloat(),
+                EndpointInfos.random()
         );
     }
 }

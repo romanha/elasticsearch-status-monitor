@@ -29,7 +29,7 @@ public class ClusterNotRedundantWarning implements Warning {
 
     @Override
     public String getSolution() {
-        return "Start at least 2 nodes on different endpoints.";
+        return "Start at least 2 master-eligible nodes on different endpoints.";
     }
 
     @Override

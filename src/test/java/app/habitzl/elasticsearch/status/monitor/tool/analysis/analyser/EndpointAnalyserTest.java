@@ -11,6 +11,7 @@ import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 
 class EndpointAnalyserTest {
 
@@ -22,7 +23,7 @@ class EndpointAnalyserTest {
     }
 
     @Test
-    void analyse_emptyList_returnsEmptyResult() {
+    void analyse_noEndpoints_returnsEmptyResult() {
         // Given
         List<EndpointInfo> noEndpoints = List.of();
 
@@ -49,7 +50,6 @@ class EndpointAnalyserTest {
         // Then
         Set<String> badEndpointAddresses = Set.of(badEndpoint1.getIpAddress(), badEndpoint2.getIpAddress());
         HighRamUsageWarning expectedWarning = HighRamUsageWarning.create(badEndpointAddresses);
-        AnalysisResult expected = AnalysisResult.create(List.of(), List.of(expectedWarning));
-        assertThat(result, equalTo(expected));
+        assertThat(result.getWarnings(), hasItem(expectedWarning));
     }
 }

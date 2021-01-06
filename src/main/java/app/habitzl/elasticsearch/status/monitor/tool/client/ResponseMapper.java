@@ -11,6 +11,11 @@ import java.util.Map;
  */
 public interface ResponseMapper {
     /**
+     * Gets the content of an ES response as String representation.
+     */
+    String getContentAsString(Response response) throws IOException;
+
+    /**
      * Maps an ES response with a single data object to a map of key-value pairs.
      */
     Map<String, Object> toMap(Response response) throws IOException;

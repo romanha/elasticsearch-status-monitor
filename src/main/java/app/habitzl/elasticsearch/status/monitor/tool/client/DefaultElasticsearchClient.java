@@ -2,6 +2,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.client;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
@@ -61,6 +62,26 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         }
 
         return connectionInfo;
+    }
+
+    @Override
+    public Optional<ClusterSettings> getClusterSettings() {
+        ClusterSettings clusterSettings;
+
+        Request request = new Request(METHOD_GET, "/_cluster/settings");
+        request.addParameter("include_defaults", "true");
+
+        try {
+            Response response = client.getLowLevelClient().performRequest(request);
+            String result = responseMapper.getContentAsString(response);
+            clusterSettings = infoMapper.mapClusterSettings(result);
+            LOG.debug("Mapped cluster settings: {}", clusterSettings);
+        } catch (final IOException | ElasticsearchStatusException e) {
+            logError(e);
+            clusterSettings = null;
+        }
+
+        return Optional.ofNullable(clusterSettings);
     }
 
     @Override

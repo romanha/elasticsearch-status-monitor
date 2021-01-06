@@ -10,15 +10,30 @@ import static org.mockito.Mockito.verify;
 
 class DefaultInfoMapperTest {
 
+    private static final String TEST_STRING = "value";
     private static final Map<String, Object> TEST_MAP = Map.of("key", "value");
 
     private DefaultInfoMapper sut;
+    private ClusterSettingsMapper clusterSettingsMapper;
     private NodeInfoMapper nodeInfoMapper;
 
     @BeforeEach
     void setUp() {
+        clusterSettingsMapper = mock(ClusterSettingsMapper.class);
         nodeInfoMapper = mock(NodeInfoMapper.class);
-        sut = new DefaultInfoMapper(nodeInfoMapper);
+        sut = new DefaultInfoMapper(clusterSettingsMapper, nodeInfoMapper);
+    }
+
+    @Test
+    void mapClusterSettings_sut_delegatesToClusterSettingsMapper() {
+        // Given
+        // test string
+
+        // When
+        sut.mapClusterSettings(TEST_STRING);
+
+        // Then
+        verify(clusterSettingsMapper).map(TEST_STRING);
     }
 
     @Test

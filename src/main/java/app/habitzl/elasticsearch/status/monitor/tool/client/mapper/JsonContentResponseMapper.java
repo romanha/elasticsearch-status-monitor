@@ -21,6 +21,11 @@ public class JsonContentResponseMapper implements ResponseMapper {
     }
 
     @Override
+    public String getContentAsString(final Response response) throws IOException {
+        return getContent(response);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Map<String, Object> toMap(final Response response) throws IOException {
         String body = getContent(response);

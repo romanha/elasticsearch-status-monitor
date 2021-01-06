@@ -14,6 +14,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.Unau
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.ClusterNotRedundantWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.HighRamUsageWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
@@ -188,7 +189,7 @@ class DefaultStatusAnalyserTest {
 
     private void mockClusterAnalyser() {
         clusterAnalyser = mock(ClusterAnalyser.class);
-        when(clusterAnalyser.analyse(anyList())).thenReturn(AnalysisResult.empty());
+        when(clusterAnalyser.analyse(any(ClusterSettings.class), anyList())).thenReturn(AnalysisResult.empty());
     }
 
     /**
@@ -226,7 +227,7 @@ class DefaultStatusAnalyserTest {
 
     private Warning givenClusterAnalyserFindsWarning() {
         ClusterNotRedundantWarning warning = ClusterNotRedundantWarning.create();
-        when(clusterAnalyser.analyse(anyList()))
+        when(clusterAnalyser.analyse(any(ClusterSettings.class), anyList()))
                 .thenReturn(AnalysisResult.create(List.of(), List.of(warning)));
         return warning;
     }

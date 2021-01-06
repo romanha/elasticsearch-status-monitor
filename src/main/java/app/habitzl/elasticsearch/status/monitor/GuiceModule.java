@@ -13,6 +13,8 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.ElasticsearchRestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterSettingsMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultClusterSettingsMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultNodeInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultTimeParser;
@@ -59,6 +61,7 @@ class GuiceModule extends AbstractModule {
         bind(ResponseMapper.class).to(JsonContentResponseMapper.class).in(Singleton.class);
         bind(TimeParser.class).to(DefaultTimeParser.class).in(Singleton.class);
         bind(InfoMapper.class).to(DefaultInfoMapper.class).in(Singleton.class);
+        bind(ClusterSettingsMapper.class).to(DefaultClusterSettingsMapper.class).in(Singleton.class);
         bind(NodeInfoMapper.class).to(DefaultNodeInfoMapper.class).in(Singleton.class);
 
         // Analyser
