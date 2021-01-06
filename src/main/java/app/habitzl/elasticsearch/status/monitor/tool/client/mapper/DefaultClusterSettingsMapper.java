@@ -16,7 +16,7 @@ public class DefaultClusterSettingsMapper implements ClusterSettingsMapper {
     private static final String TRANSIENT_SETTINGS_PATH_PREFIX = "/transient/";
     private static final String PERSISTENT_SETTINGS_PATH_PREFIX = "/persistent/";
     private static final String DEFAULT_SETTINGS_PATH_PREFIX = "/defaults/";
-    private static final String PATH_MINIMUM_MASTER_NODES = "cluster/discovery/minimum_master_nodes";
+    private static final String PATH_MINIMUM_MASTER_NODES = "discovery/zen/minimum_master_nodes";
 
     private final ObjectMapper mapper;
 
@@ -27,10 +27,13 @@ public class DefaultClusterSettingsMapper implements ClusterSettingsMapper {
 
     @Override
     public ClusterSettings map(final String jsonData) {
+        // TODO replace creation of cluster settings with builder
         int minimumMasterNodes = getValueFromAnySettingsType(jsonData, PATH_MINIMUM_MASTER_NODES, Integer.class)
-                .orElse(0);
+                .orElse(ClusterSettings.ES_DEFAULT_MINIMUM_REQUIRED_MASTER_NODES_FOR_ELECTION);
         return new ClusterSettings(minimumMasterNodes);
     }
+
+
 
     /**
      * Attempts to get the value of the given type from the given path.

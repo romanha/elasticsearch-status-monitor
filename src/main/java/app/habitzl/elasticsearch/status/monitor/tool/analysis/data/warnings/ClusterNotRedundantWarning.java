@@ -19,7 +19,7 @@ public class ClusterNotRedundantWarning implements Warning {
 
     @Override
     public String getTitle() {
-        return "Cluster not redundant";
+        return "Cluster is not redundant";
     }
 
     @Override

@@ -7,14 +7,23 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
 
+import java.util.Objects;
+
 public class SplitBrainPossibleWarning implements Warning {
     private static final long serialVersionUID = 1L;
 
-    public static SplitBrainPossibleWarning create() {
-        return new SplitBrainPossibleWarning();
+    private final int configuredQuorum;
+    private final int requiredQuorum;
+    private final int numberOfMasterEligibleNodes;
+
+    public static SplitBrainPossibleWarning create(final int configuredQuorum, final int requiredQuorum, final int numberOfMasterEligibleNodes) {
+        return new SplitBrainPossibleWarning(configuredQuorum, requiredQuorum, numberOfMasterEligibleNodes);
     }
 
-    private SplitBrainPossibleWarning() {
+    private SplitBrainPossibleWarning(final int configuredQuorum, final int requiredQuorum, final int numberOfMasterEligibleNodes) {
+        this.configuredQuorum = configuredQuorum;
+        this.requiredQuorum = requiredQuorum;
+        this.numberOfMasterEligibleNodes = numberOfMasterEligibleNodes;
     }
 
     @Override
@@ -29,21 +38,41 @@ public class SplitBrainPossibleWarning implements Warning {
 
     @Override
     public String getSolution() {
-        return "Start enough master-eligible nodes. The setting 'discovery.zen.minimum_master_nodes' should be "
-                + "higher than 1 and a quorum of master-eligible nodes: (master-eligible nodes / 2) + 1";
+        return "The setting 'discovery.zen.minimum_master_nodes' should be set to a quorum of master-eligible nodes: (master-eligible nodes / 2) + 1";
     }
 
     @Override
+    public String getAdditionalInformation() {
+        return String.format(
+                "The cluster has %d master-eligible nodes. This requires a quorum of %d. The configured quorum is %d.",
+                numberOfMasterEligibleNodes,
+                requiredQuorum,
+                configuredQuorum
+        );
+    }
+
+    @Override
+    @SuppressWarnings("CyclomaticComplexity")
     public boolean equals(final Object o) {
         boolean isEqual;
 
         if (this == o) {
             isEqual = true;
+        } else if (o == null || getClass() != o.getClass()) {
+            isEqual = false;
         } else {
-            isEqual = o != null && getClass() == o.getClass();
+            SplitBrainPossibleWarning warning = (SplitBrainPossibleWarning) o;
+            isEqual = Objects.equals(configuredQuorum, warning.configuredQuorum)
+                    && Objects.equals(requiredQuorum, warning.requiredQuorum)
+                    && Objects.equals(numberOfMasterEligibleNodes, warning.numberOfMasterEligibleNodes);
         }
 
         return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(configuredQuorum, requiredQuorum, numberOfMasterEligibleNodes);
     }
 
     @Override

@@ -115,21 +115,62 @@ class ClusterAnalyserTest {
         AnalysisResult result = sut.analyse(settings, nodes);
 
         // Then
-        SplitBrainPossibleWarning unexpectedWarning = SplitBrainPossibleWarning.create();
-        assertThat(result.getWarnings(), not(hasItem(unexpectedWarning)));
+        assertThat(result.getWarnings(), not(hasItem(any(SplitBrainPossibleWarning.class))));
     }
 
     @Test
     void analyse_twoMasterEligibleNodesButOnlyOneRequiredMasterForElection_returnsSplitBrainPossibleWarning() {
         // Given
         ClusterSettings settings = new ClusterSettings(1);
-        List<NodeInfo> twoNodes = List.of(NodeInfos.randomMasterEligible(), NodeInfos.randomMasterEligible());
+        List<NodeInfo> twoNodes = List.of(
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible()
+        );
 
         // When
         AnalysisResult result = sut.analyse(settings, twoNodes);
 
         // Then
-        SplitBrainPossibleWarning expectedWarning = SplitBrainPossibleWarning.create();
+        SplitBrainPossibleWarning expectedWarning = SplitBrainPossibleWarning.create(1, 2, 2);
         assertThat(result.getWarnings(), hasItem(expectedWarning));
+    }
+
+    @Test
+    void analyse_fiveMasterEligibleNodesButOnlyTwoRequiredMasterForElection_returnsSplitBrainPossibleWarning() {
+        // Given
+        ClusterSettings settings = new ClusterSettings(2);
+        List<NodeInfo> twoNodes = List.of(
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible()
+        );
+
+        // When
+        AnalysisResult result = sut.analyse(settings, twoNodes);
+
+        // Then
+        SplitBrainPossibleWarning expectedWarning = SplitBrainPossibleWarning.create(2, 3, 5);
+        assertThat(result.getWarnings(), hasItem(expectedWarning));
+    }
+
+    @Test
+    void analyse_fiveMasterEligibleNodesAndThreeRequiredMasterForElection_doesNotReturnSplitBrainPossibleWarning() {
+        // Given
+        ClusterSettings settings = new ClusterSettings(3);
+        List<NodeInfo> twoNodes = List.of(
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible(),
+                NodeInfos.randomMasterEligible()
+        );
+
+        // When
+        AnalysisResult result = sut.analyse(settings, twoNodes);
+
+        // Then
+        assertThat(result.getWarnings(), not(hasItem(any(SplitBrainPossibleWarning.class))));
     }
 }

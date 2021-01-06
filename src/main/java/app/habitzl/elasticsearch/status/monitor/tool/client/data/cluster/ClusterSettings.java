@@ -9,10 +9,13 @@ import java.util.StringJoiner;
 public final class ClusterSettings implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    public static final int ES_DEFAULT_MINIMUM_REQUIRED_MASTER_NODES_FOR_ELECTION = 1;
+
     private final int minimumOfRequiredMasterNodesForElection;
 
+    // TODO create builder for this class and set defaults automatically if not defined by builder
     public static ClusterSettings createDefault() {
-        return new ClusterSettings(0);
+        return new ClusterSettings(ES_DEFAULT_MINIMUM_REQUIRED_MASTER_NODES_FOR_ELECTION);
     }
 
     public ClusterSettings(final int minimumOfRequiredMasterNodesForElection) {
