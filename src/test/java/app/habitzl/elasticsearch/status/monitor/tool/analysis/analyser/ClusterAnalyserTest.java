@@ -42,30 +42,65 @@ class ClusterAnalyserTest {
     @Test
     void analyse_onlyOneNode_returnsClusterNotRedundantWarning() {
         // Given
-        List<NodeInfo> singleNode = List.of(NodeInfos.randomMasterEligible());
+        List<NodeInfo> singleNode = List.of(NodeInfos.randomMasterEligibleDataNode());
 
         // When
-        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(), singleNode);
+        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(1), singleNode);
 
         // Then
-        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create();
+        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create(true, true, true);
         assertThat(result.getWarnings(), hasItem(expectedWarning));
     }
 
     @Test
-    void analyse_multipleNodesOnDifferentEndpointsButOnlyOneMasterEligibleNode_returnsClusterNotRedundantWarning() {
+    void analyse_multipleDataNodesOnDifferentEndpointsButOnlyOneMasterEligibleNode_returnsClusterNotRedundantWarning() {
         // Given
-        List<NodeInfo> singleNode = List.of(
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomNotMasterEligible(),
-                NodeInfos.randomNotMasterEligible()
+        List<NodeInfo> nodes = List.of(
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomNotMasterEligibleDataNode(),
+                NodeInfos.randomNotMasterEligibleDataNode()
         );
 
         // When
-        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(), singleNode);
+        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(2), nodes);
 
         // Then
-        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create();
+        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create(true, false, false);
+        assertThat(result.getWarnings(), hasItem(expectedWarning));
+    }
+
+    @Test
+    void analyse_multipleMasterEligibleNodesOnDifferentEndpointsButOnlyOneDataNode_returnsClusterNotRedundantWarning() {
+        // Given
+        List<NodeInfo> nodes = List.of(
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleNode(EndpointInfos.random(), false),
+                NodeInfos.randomMasterEligibleNode(EndpointInfos.random(), false)
+        );
+
+        // When
+        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(2), nodes);
+
+        // Then
+        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create(false, true, false);
+        assertThat(result.getWarnings(), hasItem(expectedWarning));
+    }
+
+    @Test
+    void analyse_requiredMasterNodesForElectionIsSameAsMasterEligibleNodes_returnsClusterNotRedundantWarning() {
+        // Given
+        ClusterSettings settings = ClusterSettingsUtils.random(3);
+        List<NodeInfo> nodes = List.of(
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode()
+        );
+
+        // When
+        AnalysisResult result = sut.analyse(settings, nodes);
+
+        // Then
+        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create(false, false, true);
         assertThat(result.getWarnings(), hasItem(expectedWarning));
     }
 
@@ -74,42 +109,59 @@ class ClusterAnalyserTest {
         // Given
         EndpointInfo endpoint = EndpointInfos.random();
         List<NodeInfo> nodes = List.of(
-                NodeInfos.randomMasterEligible(endpoint),
-                NodeInfos.randomMasterEligible(endpoint),
-                NodeInfos.randomNotMasterEligible()
+                NodeInfos.randomMasterEligibleDataNode(endpoint),
+                NodeInfos.randomMasterEligibleDataNode(endpoint),
+                NodeInfos.randomNotMasterEligibleDataNode()
         );
 
         // When
-        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(), nodes);
+        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(2), nodes);
 
         // Then
-        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create();
+        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create(true, false, true);
         assertThat(result.getWarnings(), hasItem(expectedWarning));
     }
 
     @Test
-    void analyse_multipleNodesOnDifferentEndpoints_doesNotReturnClusterNotRedundantWarning() {
+    void analyse_twoDataNodesOnSameEndpoint_returnsClusterNotRedundantWarning() {
         // Given
         EndpointInfo endpoint = EndpointInfos.random();
         List<NodeInfo> nodes = List.of(
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible(endpoint),
-                NodeInfos.randomMasterEligible(endpoint)
+                NodeInfos.randomMasterEligibleDataNode(endpoint),
+                NodeInfos.randomMasterEligibleDataNode(endpoint),
+                NodeInfos.randomMasterEligibleNode(EndpointInfos.random(), false)
         );
 
         // When
-        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(), nodes);
+        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(2), nodes);
 
         // Then
-        ClusterNotRedundantWarning unexpectedWarning = ClusterNotRedundantWarning.create();
-        assertThat(result.getWarnings(), not(hasItem(unexpectedWarning)));
+        ClusterNotRedundantWarning expectedWarning = ClusterNotRedundantWarning.create(false, true, false);
+        assertThat(result.getWarnings(), hasItem(expectedWarning));
     }
 
     @Test
-    void analyse_oneMasterEligibleNodesAndOneRequiredMasterForElection_doesNotReturnSplitBrainPossibleWarning() {
+    void analyse_multipleMasterEligibleDataNodesOnDifferentEndpoints_doesNotReturnClusterNotRedundantWarning() {
+        // Given
+        EndpointInfo endpoint = EndpointInfos.random();
+        List<NodeInfo> nodes = List.of(
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode(endpoint),
+                NodeInfos.randomMasterEligibleDataNode(endpoint)
+        );
+
+        // When
+        AnalysisResult result = sut.analyse(ClusterSettingsUtils.random(2), nodes);
+
+        // Then
+        assertThat(result.getWarnings(), not(hasItem(any(ClusterNotRedundantWarning.class))));
+    }
+
+    @Test
+    void analyse_oneMasterEligibleNodesAndOneRequiredMasterNodeForElection_doesNotReturnSplitBrainPossibleWarning() {
         // Given
         ClusterSettings settings = ClusterSettingsUtils.random(1);
-        List<NodeInfo> nodes = List.of(NodeInfos.randomMasterEligible());
+        List<NodeInfo> nodes = List.of(NodeInfos.randomMasterEligibleDataNode());
 
         // When
         AnalysisResult result = sut.analyse(settings, nodes);
@@ -119,12 +171,12 @@ class ClusterAnalyserTest {
     }
 
     @Test
-    void analyse_twoMasterEligibleNodesButOnlyOneRequiredMasterForElection_returnsSplitBrainPossibleWarning() {
+    void analyse_twoMasterEligibleNodesButOnlyOneRequiredMasterNodeForElection_returnsSplitBrainPossibleWarning() {
         // Given
         ClusterSettings settings = ClusterSettingsUtils.random(1);
         List<NodeInfo> twoNodes = List.of(
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible()
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode()
         );
 
         // When
@@ -136,15 +188,15 @@ class ClusterAnalyserTest {
     }
 
     @Test
-    void analyse_fiveMasterEligibleNodesButOnlyTwoRequiredMasterForElection_returnsSplitBrainPossibleWarning() {
+    void analyse_fiveMasterEligibleNodesButOnlyTwoRequiredMasterNodeForElection_returnsSplitBrainPossibleWarning() {
         // Given
         ClusterSettings settings = ClusterSettingsUtils.random(2);
         List<NodeInfo> twoNodes = List.of(
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible()
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode()
         );
 
         // When
@@ -156,15 +208,15 @@ class ClusterAnalyserTest {
     }
 
     @Test
-    void analyse_fiveMasterEligibleNodesAndThreeRequiredMasterForElection_doesNotReturnSplitBrainPossibleWarning() {
+    void analyse_fiveMasterEligibleNodesAndThreeRequiredMasterNodeForElection_doesNotReturnSplitBrainPossibleWarning() {
         // Given
         ClusterSettings settings = ClusterSettingsUtils.random(3);
         List<NodeInfo> twoNodes = List.of(
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible(),
-                NodeInfos.randomMasterEligible()
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode(),
+                NodeInfos.randomMasterEligibleDataNode()
         );
 
         // When

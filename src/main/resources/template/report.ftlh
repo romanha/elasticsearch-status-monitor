@@ -7,8 +7,17 @@
     <style>
         body {
             font-family: Calibri, sans-serif;
+            max-width: 100%;
             margin: 2em 4em;
+            padding: 0 4em;
             background-color: #f4f3f1;
+        }
+
+        /*
+         * All the main div elements should have the max-width of 80%.
+         */
+        body > div {
+            max-width: 80% !important;
         }
 
         .error {
@@ -26,13 +35,19 @@
             color: green;
         }
 
+        .bold {
+            font-weight: bold;
+        }
+
         .detail-section {
-            width: max-content;
+            width: max-content; /* To nicely wrap the content if it is smaller than the parent's max-width. */
+            max-width: 100%; /* To set a maximum if max-content is bigger than the parent's max-width. */
             margin-bottom: 2em;
         }
 
         .bordered-detail-section {
             width: max-content;
+            max-width: 100%;
             padding: 1em;
             background: white;
             border: solid 1px darkgray;
@@ -42,15 +57,27 @@
             margin-bottom: 2em;
         }
 
-        /**
-         * Reduces the top margin of the first heading in a bordered block.
+        /*
+         * Reduces the top margin of the first heading in a bordered section.
          */
-        .bordered-detail-section > h1:first-child, .bordered-detail-section > h2:first-child, .bordered-detail-section > h3:first-child {
+        .bordered-detail-section > h1:first-child,
+        .bordered-detail-section > h2:first-child,
+        .bordered-detail-section > h3:first-child,
+        .bordered-detail-section > h4:first-child,
+        .bordered-detail-section > h5:first-child {
             margin-top: 0.2em;
+        }
+
+        /*
+         * Elements that float next to each other should not be restricted in width.
+         */
+        .multi-child-detail-section {
+            max-width: none !important;
         }
 
         .multi-child-detail-section > div {
             width: max-content;
+            max-width: 100%;
             margin-right: 6em;
             float: left;
             margin-bottom: 2em;
@@ -194,9 +221,15 @@
                 <h3>${problem.title}</h3>
                 <p class="error">${problem.description}</p>
                 <#if problem.additionalInformation?has_content>
-                    <p>Additional information: ${problem.additionalInformation}</p>
+                    <p>
+                        <span class="bold">Additional information:</span><br/>
+                        ${problem.additionalInformation}
+                    </p>
                 </#if>
-                <p>&rarr; ${problem.solution}</p>
+                <p>
+                    <span class="bold">Solution:</span><br/>
+                    ${problem.solution}
+                </p>
             </div>
         </#list>
     </div>
@@ -210,9 +243,15 @@
                 <h3>${warning.title}</h3>
                 <p class="warn">${warning.description}</p>
                 <#if warning.additionalInformation?has_content>
-                    <p>Additional information: ${warning.additionalInformation}</p>
+                    <p>
+                        <span class="bold">Additional information:</span><br/>
+                        ${warning.additionalInformation}
+                    </p>
                 </#if>
-                <p>&rarr; ${warning.solution}</p>
+                <p>
+                    <span class="bold">Solution:</span><br/>
+                    ${warning.solution}
+                </p>
             </div>
         </#list>
     </div>

@@ -197,7 +197,7 @@ class DefaultStatusAnalyserTest {
      */
     private AnalysisReport givenAllRequestsSucceed() {
         ClusterInfo clusterInfo = ClusterInfos.random();
-        List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
+        List<NodeInfo> nodeInfos = List.of(NodeInfos.randomNode());
         givenAllRequestsSucceed(clusterInfo, nodeInfos);
         return AnalysisReport.create(configuration, List.of(), List.of(), clusterInfo, nodeInfos);
     }
@@ -207,7 +207,7 @@ class DefaultStatusAnalyserTest {
      */
     private AnalysisReport givenAllRequestsSucceedWithWarnings(final List<Warning> warnings) {
         ClusterInfo clusterInfo = ClusterInfos.random();
-        List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
+        List<NodeInfo> nodeInfos = List.of(NodeInfos.randomNode());
         givenAllRequestsSucceed(clusterInfo, nodeInfos);
         return AnalysisReport.create(configuration, List.of(), warnings, clusterInfo, nodeInfos);
     }
@@ -226,7 +226,7 @@ class DefaultStatusAnalyserTest {
     }
 
     private Warning givenClusterAnalyserFindsWarning() {
-        ClusterNotRedundantWarning warning = ClusterNotRedundantWarning.create();
+        ClusterNotRedundantWarning warning = ClusterNotRedundantWarning.create(true, true, true);
         when(clusterAnalyser.analyse(any(ClusterSettings.class), anyList()))
                 .thenReturn(AnalysisResult.create(List.of(), List.of(warning)));
         return warning;
