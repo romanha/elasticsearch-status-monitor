@@ -1,7 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
-
 import java.security.SecureRandom;
 
 /**
@@ -17,10 +16,12 @@ public final class ClusterSettingsUtils {
 
     public static ClusterSettings random() {
         SecureRandom random = new SecureRandom();
-        return new ClusterSettings(random.nextInt(ONE_HUNDRED));
+        return random(random.nextInt(ONE_HUNDRED));
     }
 
     public static ClusterSettings random(final int minimumMasterNodes) {
-        return new ClusterSettings(minimumMasterNodes);
+        return ClusterSettings.builder()
+                              .withMinimumOfRequiredMasterNodesForElection(minimumMasterNodes)
+                              .build();
     }
 }

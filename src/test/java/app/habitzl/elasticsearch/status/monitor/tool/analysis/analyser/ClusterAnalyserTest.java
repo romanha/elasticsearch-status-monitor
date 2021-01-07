@@ -108,7 +108,7 @@ class ClusterAnalyserTest {
     @Test
     void analyse_oneMasterEligibleNodesAndOneRequiredMasterForElection_doesNotReturnSplitBrainPossibleWarning() {
         // Given
-        ClusterSettings settings = new ClusterSettings(1);
+        ClusterSettings settings = ClusterSettingsUtils.random(1);
         List<NodeInfo> nodes = List.of(NodeInfos.randomMasterEligible());
 
         // When
@@ -121,7 +121,7 @@ class ClusterAnalyserTest {
     @Test
     void analyse_twoMasterEligibleNodesButOnlyOneRequiredMasterForElection_returnsSplitBrainPossibleWarning() {
         // Given
-        ClusterSettings settings = new ClusterSettings(1);
+        ClusterSettings settings = ClusterSettingsUtils.random(1);
         List<NodeInfo> twoNodes = List.of(
                 NodeInfos.randomMasterEligible(),
                 NodeInfos.randomMasterEligible()
@@ -138,7 +138,7 @@ class ClusterAnalyserTest {
     @Test
     void analyse_fiveMasterEligibleNodesButOnlyTwoRequiredMasterForElection_returnsSplitBrainPossibleWarning() {
         // Given
-        ClusterSettings settings = new ClusterSettings(2);
+        ClusterSettings settings = ClusterSettingsUtils.random(2);
         List<NodeInfo> twoNodes = List.of(
                 NodeInfos.randomMasterEligible(),
                 NodeInfos.randomMasterEligible(),
@@ -158,7 +158,7 @@ class ClusterAnalyserTest {
     @Test
     void analyse_fiveMasterEligibleNodesAndThreeRequiredMasterForElection_doesNotReturnSplitBrainPossibleWarning() {
         // Given
-        ClusterSettings settings = new ClusterSettings(3);
+        ClusterSettings settings = ClusterSettingsUtils.random(3);
         List<NodeInfo> twoNodes = List.of(
                 NodeInfos.randomMasterEligible(),
                 NodeInfos.randomMasterEligible(),

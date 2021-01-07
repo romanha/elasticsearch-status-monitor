@@ -13,12 +13,15 @@ public final class ClusterSettings implements Serializable {
 
     private final int minimumOfRequiredMasterNodesForElection;
 
-    // TODO create builder for this class and set defaults automatically if not defined by builder
     public static ClusterSettings createDefault() {
         return new ClusterSettings(ES_DEFAULT_MINIMUM_REQUIRED_MASTER_NODES_FOR_ELECTION);
     }
 
-    public ClusterSettings(final int minimumOfRequiredMasterNodesForElection) {
+    public static ClusterSettingsBuilder builder() {
+        return ClusterSettingsBuilder.create();
+    }
+
+    ClusterSettings(final int minimumOfRequiredMasterNodesForElection) {
         this.minimumOfRequiredMasterNodesForElection = minimumOfRequiredMasterNodesForElection;
     }
 

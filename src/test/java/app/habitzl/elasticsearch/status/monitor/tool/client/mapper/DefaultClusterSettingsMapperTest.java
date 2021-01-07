@@ -74,7 +74,9 @@ class DefaultClusterSettingsMapperTest {
         ClusterSettings result = sut.map(jsonData);
 
         // Then
-        ClusterSettings expected = new ClusterSettings(MINIMUM_MASTER_NODES);
+        ClusterSettings expected = ClusterSettings.builder()
+                                                  .withMinimumOfRequiredMasterNodesForElection(MINIMUM_MASTER_NODES)
+                                                  .build();
         assertThat(result, equalTo(expected));
     }
 
