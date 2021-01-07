@@ -33,7 +33,7 @@ public class SplitBrainPossibleWarning implements Warning {
 
     @Override
     public String getDescription() {
-        return "The cluster can run into a split brain scenario with the current setup. This can cause data loss and an inconsistent search behaviour.";
+        return "The cluster can run into a split brain scenario with the current setup. This can cause data loss and inconsistent search behaviour.";
     }
 
     @Override

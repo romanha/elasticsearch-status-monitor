@@ -1,6 +1,19 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.util.Optional;
+import javax.inject.Inject;
+import javax.net.ssl.SSLContext;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -14,18 +27,6 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 
-import javax.inject.Inject;
-import javax.net.ssl.SSLContext;
-import java.io.File;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.util.Optional;
-
 public class ElasticsearchRestClientFactory implements RestClientFactory {
     private static final Logger LOG = LogManager.getLogger(ElasticsearchRestClientFactory.class);
 
@@ -34,7 +35,7 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
     static final String HTTP_SCHEME = "http";
     static final String HTTPS_SCHEME = "https";
 
-    private static final String DEFAULT_KEYSTORE_PASSWORD = "changeit";
+    private static final String DEFAULT_TRUST_STORE_PASSWORD = "changeit";
 
     private final StatusMonitorConfiguration configuration;
 
@@ -87,7 +88,8 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
 
         if (configuration.isUsingHttps()) {
             setCredentialsProvider(builder);
-            setSSLContext(builder);
+            setDefaultSSLContext(builder);
+//            setCustomSSLContext(builder);
         }
 
         return callback -> builder;
@@ -104,29 +106,44 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
         builder.setDefaultCredentialsProvider(credentialsProvider);
     }
 
-    private void setSSLContext(final HttpAsyncClientBuilder builder) {
-        Optional<SSLContext> sslContext = getSslContext();
+    /**
+     * Set the SSL context based on the standard JSSE trust material (from {@code %JAVA_HOME%/lib/security/cacerts}).
+     * System properties are not taken into consideration.
+     */
+    private void setDefaultSSLContext(final HttpAsyncClientBuilder builder) {
+        SSLContext sslContext = SSLContexts.createDefault();
+        builder.setSSLContext(sslContext);
+    }
+
+    /**
+     * Set the SSL context based on a custom trust material.
+     * For now, this also takes the default Java trust store ({@code %JAVA_HOME%/lib/security/cacerts}).
+     */
+    @SuppressWarnings("unused")
+    private void setCustomSSLContext(final HttpAsyncClientBuilder builder) {
+        Optional<SSLContext> sslContext = getCustomSslContext();
         sslContext.ifPresent(builder::setSSLContext);
     }
 
     /**
-     * Get the SSL context from the default Java KeyStore.
+     * Get the SSL context from the default Java trust store ({@code %JAVA_HOME%/lib/security/cacerts}).
      */
-    private Optional<SSLContext> getSslContext() {
+    private Optional<SSLContext> getCustomSslContext() {
         SSLContext sslContext = null;
         try {
-            KeyStore truststore = KeyStore.getInstance("jks");
+            String trustStoreType = KeyStore.getDefaultType();
+            KeyStore trustStore = KeyStore.getInstance(trustStoreType);
 
-            Path keyStorePath = getDefaultKeystorePath();
-            try (InputStream is = Files.newInputStream(keyStorePath)) {
-                truststore.load(is, DEFAULT_KEYSTORE_PASSWORD.toCharArray());
-                LOG.info("Loaded the Java KeyStore from the path {}.", keyStorePath);
+            Path trustStorePath = getDefaultTrustStorePath();
+            try (InputStream file = Files.newInputStream(trustStorePath)) {
+                trustStore.load(file, DEFAULT_TRUST_STORE_PASSWORD.toCharArray());
+                LOG.info("Loaded the Java trust store from the path '{}'.", trustStorePath);
             }
 
             sslContext = SSLContexts.custom()
-                                    .loadTrustMaterial(truststore, null)
+                                    .loadTrustMaterial(trustStore, null)
                                     .build();
-        } catch (final Exception e) {
+        } catch (final GeneralSecurityException | IOException e) {
             LOG.error("Failed to create SSL context.", e);
         }
 
@@ -134,9 +151,9 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
     }
 
     /**
-     * Gets the default keystore path located at {@code %JAVA_HOME%/lib/security/cacerts}.
+     * Gets the default trust store path located at {@code %JAVA_HOME%/lib/security/cacerts}.
      */
-    private Path getDefaultKeystorePath() {
+    private Path getDefaultTrustStorePath() {
         return Paths.get(
                 System.getProperties().getProperty("java.home") + File.separator
                         + "lib" + File.separator
