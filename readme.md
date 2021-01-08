@@ -11,7 +11,7 @@ It is able to show
 The automated analysis can find
 
 * connection issues,
-* cluster setup issues (redundancy, possibilities for split brain scenarios)
+* cluster setup issues (redundancy, possibility for split brain scenarios)
 * high RAM usage on endpoints.
 
 This tool is developed by Roman Habitzl.
@@ -23,8 +23,8 @@ You can start the tool by running the command `java -jar elasticsearch-status-mo
 
 The tool will create a folder called `Elasticsearch Status Reports` in the directory of the JAR. This folder includes all generated reports.
 
-To connect to a secured _Elasticsearch_ cluster, make sure that the certificates are added to the JKS of the JRE.
-The tool uses the default keystore located at `%JAVA_HOME%/lib/security/cacerts`.
+To connect to a secured _Elasticsearch_ cluster, make sure that the certificates are added to the trust store of the JRE.
+The tool uses the default trust store located at `%JAVA_HOME%/lib/security/cacerts`.
 
 Command Line Options
 --------------------
@@ -62,7 +62,8 @@ RELEASE NOTES
   * Automatic problem analysis
     * Connection issues
     * Cluster not being redundant
+    * Possibility of split brain scenarios
     * High RAM usage on endpoints
   * HTML report generation
-  * Tool configuration via CLI options (host, port, security)
+  * Tool configuration via CLI options (host, port, security, username, password)
   * SSL/TLS support for connecting to Elasticsearch
