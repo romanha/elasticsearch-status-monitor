@@ -14,11 +14,11 @@ import static org.hamcrest.Matchers.equalTo;
 
 class ClusterSettingsBuilderTest {
 
-    private ClusterSettingsBuilder sut;
+    private ClusterSettings.Builder sut;
 
     @BeforeEach
     void init() {
-        sut = ClusterSettingsBuilder.create();
+        sut = ClusterSettings.builder();
     }
 
     @Test

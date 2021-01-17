@@ -14,15 +14,15 @@ public final class ClusterSettings implements Serializable {
     private final int minimumOfRequiredMasterNodesForElection;
 
     public static ClusterSettings createDefault() {
-        return new ClusterSettings(ES_DEFAULT_MINIMUM_REQUIRED_MASTER_NODES_FOR_ELECTION);
+        return builder().build();
     }
 
-    public static ClusterSettingsBuilder builder() {
-        return ClusterSettingsBuilder.create();
+    public static ClusterSettings.Builder builder() {
+        return new ClusterSettings.Builder();
     }
 
-    ClusterSettings(final int minimumOfRequiredMasterNodesForElection) {
-        this.minimumOfRequiredMasterNodesForElection = minimumOfRequiredMasterNodesForElection;
+    private ClusterSettings(final ClusterSettings.Builder builder) {
+        this.minimumOfRequiredMasterNodesForElection = builder.minimumOfRequiredMasterNodesForElection;
     }
 
     public int getMinimumOfRequiredMasterNodesForElection() {
@@ -56,5 +56,21 @@ public final class ClusterSettings implements Serializable {
         return new StringJoiner(", ", ClusterSettings.class.getSimpleName() + "[", "]")
                 .add("minimumOfRequiredMasterNodesForElection=" + minimumOfRequiredMasterNodesForElection)
                 .toString();
+    }
+
+    public static final class Builder {
+        private int minimumOfRequiredMasterNodesForElection = ClusterSettings.ES_DEFAULT_MINIMUM_REQUIRED_MASTER_NODES_FOR_ELECTION;
+
+        private Builder() {
+        }
+
+        public ClusterSettings.Builder withMinimumOfRequiredMasterNodesForElection(int minimumOfRequiredMasterNodesForElection) {
+            this.minimumOfRequiredMasterNodesForElection = minimumOfRequiredMasterNodesForElection;
+            return this;
+        }
+
+        public ClusterSettings build() {
+            return new ClusterSettings(this);
+        }
     }
 }

@@ -21,7 +21,7 @@ Usage
 
 You can start the tool by running the command `java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar`.
 
-The tool will create a folder called `Elasticsearch Status Reports` in the directory of the JAR. This folder includes all generated reports.
+The tool will create a folder called `reports` in the directory of the JAR. This folder includes all generated reports.
 
 To connect to a secured _Elasticsearch_ cluster, make sure that the certificates are added to the trust store of the JRE.
 The tool uses the default trust store located at `%JAVA_HOME%/lib/security/cacerts`.
@@ -33,19 +33,26 @@ The tool supports following CLI options:
 
 Option   | Alternative | Arguments | Required | Default   | Description                                                                                                           | Example
 ---      | ---         | ---       | ---      | ---       | ---                                                                                                                   | ---
-h        | host        | 1         | no       | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                            | `-h 127.0.0.1`
+h        | help        | 0         | no       | -         | Print a help message for using this tool. **By using this option no analysis is started.**                            | `-h`
+v        | version     | 0         | no       | -         | Print the version number of this tool. **By using this option no analysis is started.**                               | `-v`
+a        | address     | 1         | no       | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                            | `-a 127.0.0.1`
 p        | port        | 1         | no       | 9200      | The HTTP port of the Elasticsearch endpoint.                                                                          | `-p 9200`
 s        | security    | 1         | no       | true      | Enables or disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `-s false`
 u        | username    | 1         | no       | admin     | The user name of the Elasticsearch user.                                                                              | `-u admin`
 x        | password    | 1         | no       | admin     | The password of the Elasticsearch user.                                                                               | `-x admin`
 
+Note that by using one of the help options (`h`, `v`) no analysis is started.
+These options only print information on how to use this tool.
+
+If any unknown option or invalid argument is passed, no analysis is started.
+
 Here is an example with some options:
 
-`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar -h 127.0.0.1 -p 9200 -u admin -x admin`
+`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar -a 127.0.0.1 -p 9200 -u admin -x admin`
 
 This is the same example using the long alternative option names:
 
-`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --host 127.0.0.1 --port 9200 --username admin --password admin`
+`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --address 127.0.0.1 --port 9200 --username admin --password admin`
 
 RELEASE NOTES
 =============
@@ -65,5 +72,6 @@ RELEASE NOTES
     * Possibility of split brain scenarios
     * High RAM usage on endpoints
   * HTML report generation
-  * Tool configuration via CLI options (host, port, security, username, password)
+  * Help output via CLI options (help, version)
+  * Tool configuration via CLI options (address, port, security, username, password)
   * SSL/TLS support for connecting to Elasticsearch

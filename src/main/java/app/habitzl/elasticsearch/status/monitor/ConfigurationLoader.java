@@ -8,5 +8,5 @@ public interface ConfigurationLoader {
     /**
      * Loads all available configuration, including the options passed as CLI arguments.
      */
-    void load(String[] cliArguments);
+    AnalysisStartOption load(String[] cliArguments);
 }

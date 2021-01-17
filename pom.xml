@@ -126,6 +126,8 @@
 										app.habitzl.elasticsearch.status.monitor.Main
 									</mainClass>
 									<addClasspath>true</addClasspath>
+<!--									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
+<!--									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>-->
 								</manifest>
 							</archive>
 							<descriptorRefs>

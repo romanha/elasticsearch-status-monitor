@@ -1,10 +1,15 @@
 package app.habitzl.elasticsearch.status.monitor.tool.configuration;
 
+import app.habitzl.elasticsearch.status.monitor.AnalysisStartOption;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 class DefaultConfigurationLoaderTest {
 
@@ -18,45 +23,121 @@ class DefaultConfigurationLoaderTest {
     }
 
     @Test
-    void load_validArguments_setConfiguration() {
+    void load_oneInvalidOption_returnAnalysisNotPossible() {
         // Given
-        String address = "1.2.3.4";
-        String port = "9999";
-        String username = "username";
-        String password = "password";
-        String[] args = {
-                "-" + DefaultConfigurationLoader.HOST_OPTION, address,
-                "-" + DefaultConfigurationLoader.PORT_OPTION, port,
-                "-" + DefaultConfigurationLoader.SECURITY_OPTION, "false",
-                "-" + DefaultConfigurationLoader.USER_OPTION, username,
-                "-" + DefaultConfigurationLoader.PASSWORD_OPTION, password
-        };
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withLongOption("unknown")
+                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .build();
 
         // When
-        sut.load(args);
+        AnalysisStartOption result = sut.load(args);
 
         // Then
-        assertThat(configuration.getHost(), equalTo(address));
-        assertThat(configuration.getPort(), equalTo(port));
-        assertThat(configuration.isUsingHttps(), equalTo(false));
-        assertThat(configuration.getUsername(), equalTo(username));
-        assertThat(configuration.getPassword(), equalTo(password));
+        assertThat(result, is(AnalysisStartOption.ANALYSIS_NOT_POSSIBLE));
     }
 
     @Test
-    void load_validLongArguments_setConfiguration() {
+    void load_noHelpOptions_returnAnalysisPossible() {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .build();
+
+        // When
+        AnalysisStartOption result = sut.load(args);
+
+        // Then
+        assertThat(result, is(AnalysisStartOption.ANALYSIS_POSSIBLE));
+    }
+
+    @Test
+    void load_containsHelpOption_returnAnalysisNotRequested() {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .withShortOption(DefaultConfigurationLoader.HELP_OPTION)
+                .build();
+
+        // When
+        AnalysisStartOption result = sut.load(args);
+
+        // Then
+        assertThat(result, is(AnalysisStartOption.ANALYSIS_NOT_REQUESTED));
+    }
+
+    @Test
+    void load_containsLongHelpOption_returnAnalysisNotRequested() {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .withLongOption(DefaultConfigurationLoader.HELP_OPTION_LONG)
+                .build();
+
+        // When
+        AnalysisStartOption result = sut.load(args);
+
+        // Then
+        assertThat(result, is(AnalysisStartOption.ANALYSIS_NOT_REQUESTED));
+    }
+
+    @Test
+    void load_containsVersionOption_returnAnalysisNotRequested() {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .withShortOption(DefaultConfigurationLoader.VERSION_OPTION)
+                .build();
+
+        // When
+        AnalysisStartOption result = sut.load(args);
+
+        // Then
+        assertThat(result, is(AnalysisStartOption.ANALYSIS_NOT_REQUESTED));
+    }
+
+    @Test
+    void load_containsLongVersionOption_returnAnalysisNotRequested() {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .withLongOption(DefaultConfigurationLoader.VERSION_OPTION_LONG)
+                .build();
+
+        // When
+        AnalysisStartOption result = sut.load(args);
+
+        // Then
+        assertThat(result, is(AnalysisStartOption.ANALYSIS_NOT_REQUESTED));
+    }
+
+    @Test
+    void load_validOption_setConfiguration() {
         // Given
         String address = "1.2.3.4";
         String port = "9999";
         String username = "username";
         String password = "password";
-        String[] args = {
-                "--" + DefaultConfigurationLoader.HOST_OPTION_LONG, address,
-                "--" + DefaultConfigurationLoader.PORT_OPTION_LONG, port,
-                "--" + DefaultConfigurationLoader.SECURITY_OPTION_LONG, "true",
-                "--" + DefaultConfigurationLoader.USER_OPTION_LONG, username,
-                "--" + DefaultConfigurationLoader.PASSWORD_OPTION_LONG, password
-        };
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, address)
+                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, port)
+                .withShortOption(DefaultConfigurationLoader.SECURITY_OPTION, "true")
+                .withShortOption(DefaultConfigurationLoader.USER_OPTION, username)
+                .withShortOption(DefaultConfigurationLoader.PASSWORD_OPTION, password)
+                .build();
 
         // When
         sut.load(args);
@@ -70,12 +151,40 @@ class DefaultConfigurationLoaderTest {
     }
 
     @Test
-    void load_oneValidArgument_setConfigurationForOnlyThisArgument() {
+    void load_validLongOption_setConfiguration() {
         // Given
         String address = "1.2.3.4";
-        String[] args = {
-                "-" + DefaultConfigurationLoader.HOST_OPTION, address
-        };
+        String port = "9999";
+        String username = "username";
+        String password = "password";
+        String[] args = ArgumentBuilder
+                .create()
+                .withLongOption(DefaultConfigurationLoader.ADDRESS_OPTION_LONG, address)
+                .withLongOption(DefaultConfigurationLoader.PORT_OPTION_LONG, port)
+                .withLongOption(DefaultConfigurationLoader.SECURITY_OPTION_LONG, "true")
+                .withLongOption(DefaultConfigurationLoader.USER_OPTION_LONG, username)
+                .withLongOption(DefaultConfigurationLoader.PASSWORD_OPTION_LONG, password)
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.getHost(), equalTo(address));
+        assertThat(configuration.getPort(), equalTo(port));
+        assertThat(configuration.isUsingHttps(), equalTo(true));
+        assertThat(configuration.getUsername(), equalTo(username));
+        assertThat(configuration.getPassword(), equalTo(password));
+    }
+
+    @Test
+    void load_oneValidOption_setConfigurationForOnlyThisOption() {
+        // Given
+        String address = "1.2.3.4";
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, address)
+                .build();
 
         // When
         sut.load(args);
@@ -89,15 +198,14 @@ class DefaultConfigurationLoaderTest {
     }
 
     @Test
-    void load_oneInvalidArgument_useDefaultConfiguration() {
+    void load_oneInvalidOption_useDefaultConfiguration() {
         // Given
-        String address = "1.2.3.4";
-        String port = "9999";
-        String[] args = {
-                "-" + DefaultConfigurationLoader.HOST_OPTION, address,
-                "--unknown",
-                "-" + DefaultConfigurationLoader.PORT_OPTION, port
-        };
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withLongOption("unknown")
+                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .build();
 
         // When
         sut.load(args);
@@ -107,7 +215,7 @@ class DefaultConfigurationLoaderTest {
     }
 
     @Test
-    void load_noArguments_useDefaultConfiguration() {
+    void load_noOptions_useDefaultConfiguration() {
         // Given
         String[] args = {};
 
@@ -121,9 +229,10 @@ class DefaultConfigurationLoaderTest {
     @Test
     void load_securityOptionWithUnknownValue_enableSecurity() {
         // Given
-        String[] args = {
-                "-" + DefaultConfigurationLoader.SECURITY_OPTION, "unknown"
-        };
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(DefaultConfigurationLoader.SECURITY_OPTION, "unknown")
+                .build();
 
         // When
         sut.load(args);
@@ -138,5 +247,43 @@ class DefaultConfigurationLoaderTest {
         assertThat(configuration.isUsingHttps(), equalTo(StatusMonitorConfiguration.DEFAULT_USING_HTTPS));
         assertThat(configuration.getUsername(), equalTo(StatusMonitorConfiguration.DEFAULT_USERNAME));
         assertThat(configuration.getPassword(), equalTo(StatusMonitorConfiguration.DEFAULT_PASSWORD));
+    }
+
+    private static final class ArgumentBuilder {
+        private final List<String> arguments;
+
+        private static ArgumentBuilder create() {
+            return new ArgumentBuilder();
+        }
+
+        private ArgumentBuilder() {
+            arguments = new ArrayList<>();
+        }
+
+        private ArgumentBuilder withShortOption(final String option) {
+            arguments.add("-" + option);
+            return this;
+        }
+
+        private ArgumentBuilder withShortOption(final String option, final String value) {
+            arguments.add("-" + option);
+            arguments.add(value);
+            return this;
+        }
+
+        private ArgumentBuilder withLongOption(final String option) {
+            arguments.add("--" + option);
+            return this;
+        }
+
+        private ArgumentBuilder withLongOption(final String option, final String value) {
+            arguments.add("--" + option);
+            arguments.add(value);
+            return this;
+        }
+
+        private String[] build() {
+            return arguments.toArray(new String[0]);
+        }
     }
 }

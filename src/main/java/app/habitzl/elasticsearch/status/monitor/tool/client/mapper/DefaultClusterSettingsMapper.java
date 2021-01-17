@@ -1,14 +1,14 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
-import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettingsBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Optional;
-import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
+import java.util.Optional;
 
 public class DefaultClusterSettingsMapper implements ClusterSettingsMapper {
     private static final Logger LOG = LogManager.getLogger(DefaultClusterSettingsMapper.class);
@@ -27,7 +27,7 @@ public class DefaultClusterSettingsMapper implements ClusterSettingsMapper {
 
     @Override
     public ClusterSettings map(final String jsonData) {
-        ClusterSettingsBuilder builder = ClusterSettings.builder();
+        ClusterSettings.Builder builder = ClusterSettings.builder();
         getValueFromAnySettingsType(jsonData, PATH_MINIMUM_MASTER_NODES, Integer.class).ifPresent(builder::withMinimumOfRequiredMasterNodesForElection);
         return builder.build();
     }

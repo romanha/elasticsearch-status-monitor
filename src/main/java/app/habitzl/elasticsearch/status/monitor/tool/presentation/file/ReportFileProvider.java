@@ -1,6 +1,11 @@
 package app.habitzl.elasticsearch.status.monitor.tool.presentation.file;
 
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,10 +15,6 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * A provider responsible for returning the file of the report to generate.
@@ -22,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 public class ReportFileProvider implements Provider<File> {
     private static final Logger LOG = LogManager.getLogger(ReportFileProvider.class);
 
-    static final String REPORT_DIRECTORY_NAME = "Elasticsearch Status Reports";
+    static final String REPORT_DIRECTORY_NAME = "reports";
     static final String REPORT_FILE_NAME = "report.html";
     static final String TIMESTAMP_FILE_PATTERN = "yyyy-MM-dd HH-mm-ss";
 
