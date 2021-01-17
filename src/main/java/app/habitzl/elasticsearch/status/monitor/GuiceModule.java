@@ -23,6 +23,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.NodeInfoMappe
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeParser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format.DayBasedTimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.CliOptions;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.DefaultConfigurationLoader;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.tool.presentation.FreemarkerHtmlReportGenerator;
@@ -48,8 +49,11 @@ class GuiceModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(StatusMonitor.class).to(ReportBasedStatusMonitor.class).in(Singleton.class);
+
+        // Configuration
         bind(StatusMonitorConfiguration.class).in(Singleton.class);
         bind(ConfigurationLoader.class).to(DefaultConfigurationLoader.class).in(Singleton.class);
+        bind(CliOptions.class).in(Singleton.class);
 
         // Elasticsearch client
         bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);

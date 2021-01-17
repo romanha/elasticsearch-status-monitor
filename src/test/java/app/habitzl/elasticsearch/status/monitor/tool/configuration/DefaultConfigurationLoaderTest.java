@@ -19,7 +19,8 @@ class DefaultConfigurationLoaderTest {
     @BeforeEach
     void setUp() {
         configuration = new StatusMonitorConfiguration();
-        sut = new DefaultConfigurationLoader(configuration);
+        CliOptions cliOptions = new CliOptions();
+        sut = new DefaultConfigurationLoader(configuration, cliOptions);
     }
 
     @Test
@@ -27,9 +28,9 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
                 .withLongOption("unknown")
-                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.PORT_OPTION, "9999")
                 .build();
 
         // When
@@ -44,8 +45,8 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.PORT_OPTION, "9999")
                 .build();
 
         // When
@@ -60,9 +61,9 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
-                .withShortOption(DefaultConfigurationLoader.HELP_OPTION)
+                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.HELP_OPTION)
                 .build();
 
         // When
@@ -77,9 +78,9 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
-                .withLongOption(DefaultConfigurationLoader.HELP_OPTION_LONG)
+                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withLongOption(CliOptions.HELP_OPTION_LONG)
                 .build();
 
         // When
@@ -94,9 +95,9 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
-                .withShortOption(DefaultConfigurationLoader.VERSION_OPTION)
+                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.VERSION_OPTION)
                 .build();
 
         // When
@@ -111,9 +112,9 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
-                .withLongOption(DefaultConfigurationLoader.VERSION_OPTION_LONG)
+                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withLongOption(CliOptions.VERSION_OPTION_LONG)
                 .build();
 
         // When
@@ -132,11 +133,11 @@ class DefaultConfigurationLoaderTest {
         String password = "password";
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, address)
-                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, port)
-                .withShortOption(DefaultConfigurationLoader.SECURITY_OPTION, "true")
-                .withShortOption(DefaultConfigurationLoader.USER_OPTION, username)
-                .withShortOption(DefaultConfigurationLoader.PASSWORD_OPTION, password)
+                .withShortOption(CliOptions.ADDRESS_OPTION, address)
+                .withShortOption(CliOptions.PORT_OPTION, port)
+                .withShortOption(CliOptions.SECURITY_OPTION, "true")
+                .withShortOption(CliOptions.USER_OPTION, username)
+                .withShortOption(CliOptions.PASSWORD_OPTION, password)
                 .build();
 
         // When
@@ -159,11 +160,11 @@ class DefaultConfigurationLoaderTest {
         String password = "password";
         String[] args = ArgumentBuilder
                 .create()
-                .withLongOption(DefaultConfigurationLoader.ADDRESS_OPTION_LONG, address)
-                .withLongOption(DefaultConfigurationLoader.PORT_OPTION_LONG, port)
-                .withLongOption(DefaultConfigurationLoader.SECURITY_OPTION_LONG, "true")
-                .withLongOption(DefaultConfigurationLoader.USER_OPTION_LONG, username)
-                .withLongOption(DefaultConfigurationLoader.PASSWORD_OPTION_LONG, password)
+                .withLongOption(CliOptions.ADDRESS_OPTION_LONG, address)
+                .withLongOption(CliOptions.PORT_OPTION_LONG, port)
+                .withLongOption(CliOptions.SECURITY_OPTION_LONG, "true")
+                .withLongOption(CliOptions.USER_OPTION_LONG, username)
+                .withLongOption(CliOptions.PASSWORD_OPTION_LONG, password)
                 .build();
 
         // When
@@ -183,7 +184,7 @@ class DefaultConfigurationLoaderTest {
         String address = "1.2.3.4";
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, address)
+                .withShortOption(CliOptions.ADDRESS_OPTION, address)
                 .build();
 
         // When
@@ -202,9 +203,9 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
                 .withLongOption("unknown")
-                .withShortOption(DefaultConfigurationLoader.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.PORT_OPTION, "9999")
                 .build();
 
         // When
@@ -231,7 +232,7 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(DefaultConfigurationLoader.SECURITY_OPTION, "unknown")
+                .withShortOption(CliOptions.SECURITY_OPTION, "unknown")
                 .build();
 
         // When
