@@ -3,18 +3,24 @@ ELASTICSEARCH-STATUS-MONITOR
 
 The _Elasticsearch Status Monitor_ provides a quick overview of an _Elasticsearch_ cluster and analyses the data for potential problems.
 
-It is able to show
+The generated report shows
 
 * the cluster health status,
-* the node and endpoint information.
+* the node and endpoint information and
+* all problems and warnings found by the analysis.
 
-The automated analysis can find
+The analysis can find
 
-* connection issues,
+* connection issues (from the tool to the _Elasticsearch_ cluster),
 * cluster setup issues (redundancy, possibility for split brain scenarios)
 * high RAM usage on endpoints.
 
-This tool is developed by Roman Habitzl.
+The tool does not manipulate or change the _Elasticsearch_ cluster or its data.
+
+Development
+-----------
+
+The _Elasticsearch Status Monitor_ is developed by Roman Habitzl.
 
 Usage
 -----
@@ -31,17 +37,17 @@ Command Line Options
 
 The tool supports following CLI options:
 
-Option   | Alternative | Arguments | Required | Default   | Description                                                                                                           | Example
----      | ---         | ---       | ---      | ---       | ---                                                                                                                   | ---
-h        | help        | 0         | no       | -         | Print a help message for using this tool. **By using this option no analysis is started.**                            | `-h`
-v        | version     | 0         | no       | -         | Print the version number of this tool. **By using this option no analysis is started.**                               | `-v`
-a        | address     | 1         | no       | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                            | `-a 127.0.0.1`
-p        | port        | 1         | no       | 9200      | The HTTP port of the Elasticsearch endpoint.                                                                          | `-p 9200`
-s        | security    | 1         | no       | true      | Enables or disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `-s false`
-u        | username    | 1         | no       | admin     | The user name of the Elasticsearch user.                                                                              | `-u admin`
-x        | password    | 1         | no       | admin     | The password of the Elasticsearch user.                                                                               | `-x admin`
+Option   | Alternative  | Arguments | Default   | Description                                                                                                           | Example
+---      | ---          | ---       | ---       | ---                                                                                                                   | ---
+`-h`     | `--help`     | 0         | -         | Print a help message on how to use this tool. **By using this option no analysis is started.**                        | `-h`
+`-v`     | `--version`  | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                               | `-v`
+`-a`     | `--address`  | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                            | `-a 127.0.0.1`
+`-p`     | `--port`     | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                                          | `-p 9200`
+`-s`     | `--security` | 1         | true      | Enables or disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `-s false`
+`-u`     | `--username` | 1         | admin     | The user name of the Elasticsearch user.                                                                              | `-u admin`
+`-x`     | `--password` | 1         | admin     | The password of the Elasticsearch user.                                                                               | `-x admin`
 
-Note that by using one of the help options (`h`, `v`) no analysis is started.
+Note that by using one of the help options (`-h`, `-v`) no analysis is started.
 These options only print information on how to use this tool.
 
 If any unknown option or invalid argument is passed, no analysis is started.
@@ -66,7 +72,7 @@ RELEASE NOTES
   * Elasticsearch monitoring
     * Cluster information
     * Node and endpoint information
-  * Automatic problem analysis
+  * Problem analysis
     * Connection issues
     * Cluster not being redundant
     * Possibility of split brain scenarios

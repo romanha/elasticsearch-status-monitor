@@ -73,6 +73,7 @@
          */
         .multi-child-detail-section {
             max-width: none !important;
+            width: max-content !important;
         }
 
         .multi-child-detail-section > div {

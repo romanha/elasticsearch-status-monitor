@@ -57,7 +57,7 @@ public class CliOptions {
         return Option.builder(HELP_OPTION)
                      .longOpt(HELP_OPTION_LONG)
                      .hasArg(false)
-                     .desc("Print a help message for using this tool. By using this option no analysis is started.")
+                     .desc("Print a help message on how to use this tool. By using this option no analysis is started.")
                      .build();
     }
 
