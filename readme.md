@@ -65,7 +65,8 @@ RELEASE NOTES
 
 1.0.0
 -----
-**Released on: 2020-not-yet-released**
+
+**Released on: 2021-not-yet-released**
 
 * Built for: Java 11 / Elasticsearch 6.8.13
 * Initial release
