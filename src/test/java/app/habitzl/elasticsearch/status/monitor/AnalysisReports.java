@@ -19,7 +19,7 @@ public final class AnalysisReports {
                 List.of(),
                 List.of(),
                 ClusterInfos.random(),
-                List.of(NodeInfos.randomNode(), NodeInfos.randomNode(), NodeInfos.randomNode())
+                List.of(NodeInfos.random(), NodeInfos.random(), NodeInfos.random())
         );
     }
 }

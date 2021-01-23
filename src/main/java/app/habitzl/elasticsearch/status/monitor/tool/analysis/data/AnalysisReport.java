@@ -3,13 +3,14 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis.data;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
+
+import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
-import javax.annotation.concurrent.Immutable;
 
 /**
  * The analysis report model.
@@ -20,12 +21,15 @@ public final class AnalysisReport implements Serializable {
 
     private final StatusMonitorConfiguration configuration;
     private final ReportProgress reportProgress;
+    private final MonitoringResult monitoringResult;
     private final List<Problem> problems;
     private final List<Warning> warnings;
     private final ClusterInfo clusterInfo;
     private final List<NodeInfo> nodeInfos;
 
-    public static AnalysisReport aborted(final StatusMonitorConfiguration configuration, final List<Problem> problems) {
+    public static AnalysisReport aborted(
+            final StatusMonitorConfiguration configuration,
+            final List<Problem> problems) {
         return new AnalysisReport(configuration, ReportProgress.ABORTED, problems);
     }
 
@@ -62,10 +66,20 @@ public final class AnalysisReport implements Serializable {
         this.warnings = List.copyOf(warnings);
         this.clusterInfo = clusterInfo;
         this.nodeInfos = List.copyOf(nodeInfos);
+
+        this.monitoringResult = calculateMonitoringResult(reportProgress, problems, warnings);
+    }
+
+    public StatusMonitorConfiguration getConfiguration() {
+        return configuration;
     }
 
     public ReportProgress getReportProgress() {
         return reportProgress;
+    }
+
+    public MonitoringResult getMonitoringResult() {
+        return monitoringResult;
     }
 
     public List<Problem> getProblems() {
@@ -74,10 +88,6 @@ public final class AnalysisReport implements Serializable {
 
     public List<Warning> getWarnings() {
         return warnings;
-    }
-
-    public StatusMonitorConfiguration getConfiguration() {
-        return configuration;
     }
 
     public ClusterInfo getClusterInfo() {
@@ -120,10 +130,25 @@ public final class AnalysisReport implements Serializable {
         return new StringJoiner(", ", AnalysisReport.class.getSimpleName() + "[", "]")
                 .add("configuration=" + configuration)
                 .add("reportProgress=" + reportProgress)
+                .add("monitoringResult=" + monitoringResult)
                 .add("problems=" + problems)
                 .add("warnings=" + warnings)
                 .add("clusterInfo=" + clusterInfo)
                 .add("nodeInfos=" + nodeInfos)
                 .toString();
+    }
+
+    private MonitoringResult calculateMonitoringResult(
+            final ReportProgress reportProgress,
+            final List<Problem> problems,
+            final List<Warning> warnings) {
+        MonitoringResult result = MonitoringResult.NO_ISSUES_FOUND;
+        if (reportProgress == ReportProgress.ABORTED || !problems.isEmpty()) {
+            result = MonitoringResult.PROBLEMS_FOUND;
+        } else if (!warnings.isEmpty()) {
+            result = MonitoringResult.ONLY_WARNINGS_FOUND;
+        }
+
+        return result;
     }
 }

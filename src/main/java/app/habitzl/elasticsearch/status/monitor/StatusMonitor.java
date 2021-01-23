@@ -5,6 +5,7 @@ package app.habitzl.elasticsearch.status.monitor;
  */
 public interface StatusMonitor {
 
+    // TODO return AnalysisReport to get exit code in Main
     /**
      * Creates a monitoring snapshot of the current state of the ES cluster.
      */

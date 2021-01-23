@@ -15,7 +15,7 @@ public final class NodeInfos {
         // instantiation protection
     }
 
-    public static NodeInfo randomNode() {
+    public static NodeInfo random() {
         return randomMasterEligibleDataNode(EndpointInfos.random());
     }
 
