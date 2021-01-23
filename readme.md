@@ -1,39 +1,55 @@
-ELASTICSEARCH-STATUS-MONITOR
-============================
+# Elasticsearch Status Monitor
 
-The _Elasticsearch Status Monitor_ provides a quick overview of an _Elasticsearch_ cluster and analyses the data for potential problems.
+## Table of Contents
 
-The generated report shows
+* [Introduction](#introduction)
+* [Usage](#usage)
+* [Configuration](#configuration)
+  * [Command Line Options](#command-line-options)
+* [Features](#features)
+* [About](#about)
+  * [Author](#author)
+  * [License](#license)
+* [Release Notes](#release-notes)
 
-* the cluster health status,
-* the node and endpoint information and
-* all problems and warnings found by the analysis.
+## Introduction
 
-The analysis can find
+The _Elasticsearch Status Monitor_ is an open-source tool for monitoring an _Elasticsearch_ cluster.
 
-* connection issues (from the tool to the _Elasticsearch_ cluster),
-* cluster setup issues (redundancy, possibility for split brain scenarios)
-* high RAM usage on endpoints.
+It generates a report containing a cluster overview and potential issues found by its data analysis.
 
-The tool does not manipulate or change the _Elasticsearch_ cluster or its data.
+The tool does not manipulate or change the cluster or its data.
 
-Development
------------
+## Usage
 
-The _Elasticsearch Status Monitor_ is developed by Roman Habitzl.
+### Requirements
 
-Usage
------
+The tool requires Java 11.
 
-You can start the tool by running the command `java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar`.
+### Running the tool
+
+You can start the tool by running the command:
+
+```bash
+java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar
+```
 
 The tool will create a folder called `reports` in the directory of the JAR. This folder includes all generated reports.
 
 To connect to a secured _Elasticsearch_ cluster, make sure that the certificates are added to the trust store of the JRE.
 The tool uses the default trust store located at `%JAVA_HOME%/lib/security/cacerts`.
 
-Command Line Options
---------------------
+If the JAR is used as part of a script, following exit codes can be used for automation:
+
+Exit Code | Description
+---       | ---
+0         | The analysis was completed and did not find and problems or warnings.
+1         | The analysis was aborted or completed and found problems.
+2         | The analysis was completed without finding problems, but some warnings were found.
+
+## Configuration
+
+### Command Line Options
 
 The tool supports following CLI options:
 
@@ -54,17 +70,45 @@ If any unknown option or invalid argument is passed, no analysis is started.
 
 Here is an example with some options:
 
-`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar -a 127.0.0.1 -p 9200 -u admin -x admin`
+```bash
+java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar -a 127.0.0.1 -p 9200 -u admin -x admin
+```
 
 This is the same example using the long alternative option names:
 
-`java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --address 127.0.0.1 --port 9200 --username admin --password admin`
+```bash
+java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --address 127.0.0.1 --port 9200 --username admin --password admin
+```
 
-RELEASE NOTES
-=============
+## Features
 
-1.0.0
------
+This section lists all issues that the data analysis supports.
+
+### Problems
+
+* General connection issues
+* Unauthorised connection
+* SSL handshake problems
+
+### Warnings
+
+* Cluster setup is missing redundancy
+* Cluster setup allows split brain scenarios
+* High RAM usage on endpoints
+
+## About
+
+### Author
+
+The _Elasticsearch Status Monitor_ is developed by Roman Habitzl since December 2020.
+
+### License
+
+To be done.
+
+## Release Notes
+
+### 1.0.0
 
 **Released on: 2021-not-yet-released**
 
@@ -82,3 +126,4 @@ RELEASE NOTES
   * Help output via CLI options (help, version)
   * Tool configuration via CLI options (address, port, security, username, password)
   * SSL/TLS support for connecting to Elasticsearch
+  * Exit codes for running as part of a script
