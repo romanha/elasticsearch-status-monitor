@@ -116,6 +116,19 @@ class DefaultStatusAnalyserTest {
     }
 
     @Test
+    void createReport_anyOtherRestStatus_returnAbortedAnalysisReportWithGeneralConnectionProblem() {
+        // Given
+        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success(RestStatus.UNSUPPORTED_MEDIA_TYPE));
+
+        // When
+        AnalysisReport analysisReport = sut.createReport();
+
+        // Then
+        AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(GeneralConnectionProblem.create()));
+        assertThat(analysisReport, equalTo(expectedAnalysisReport));
+    }
+
+    @Test
     void createReport_allStatusRequestsSucceed_performStatusRequestsInOrder() {
         // Given
         givenAllRequestsSucceed();
