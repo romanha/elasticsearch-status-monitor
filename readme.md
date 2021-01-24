@@ -46,6 +46,7 @@ Exit Code | Description
 0         | The analysis was completed and did not find and problems or warnings.
 1         | The analysis was aborted or completed and found problems.
 2         | The analysis was completed without finding problems, but some warnings were found.
+3         | The analysis was not started due to misconfiguration. (e.g. unknown CLI option)
 
 ## Configuration
 

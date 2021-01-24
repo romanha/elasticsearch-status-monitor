@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor;
 
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.logging.log4j.LogManager;
@@ -22,16 +23,31 @@ public class Main {
         ConfigurationLoader configurationLoader = injector.getInstance(ConfigurationLoader.class);
         AnalysisStartOption startOption = configurationLoader.load(args);
 
-        if (startOption == AnalysisStartOption.ANALYSIS_POSSIBLE) {
-            StatusMonitor statusMonitor = injector.getInstance(StatusMonitor.class);
-            statusMonitor.createSnapshot();
-        } else if (startOption == AnalysisStartOption.ANALYSIS_NOT_POSSIBLE) {
-            LOG.error("Analysis start not possible due to misconfiguration.");
-        } else if (startOption == AnalysisStartOption.ANALYSIS_NOT_REQUESTED) {
-            LOG.debug("Analysis start not requested due to the use of help options.");
+        int exitCode;
+
+        switch (startOption) {
+            case ANALYSIS_POSSIBLE:
+                exitCode = performAnalysis(injector);
+                break;
+            case ANALYSIS_NOT_REQUESTED:
+                LOG.debug("Analysis start not requested due to the use of help options.");
+                exitCode = 0;
+                break;
+            case ANALYSIS_NOT_POSSIBLE:
+            default:
+                LOG.error("Analysis start not possible due to misconfiguration.");
+                exitCode = 3;
+                break;
         }
 
         teardown(injector);
+        System.exit(exitCode);
+    }
+
+    private static int performAnalysis(final Injector injector) {
+        StatusMonitor statusMonitor = injector.getInstance(StatusMonitor.class);
+        AnalysisReport report = statusMonitor.createSnapshot();
+        return report.getMonitoringResult().getExitCode();
     }
 
     private static void teardown(final Injector injector) {

@@ -2,6 +2,7 @@ package app.habitzl.elasticsearch.status.monitor.tool;
 
 import app.habitzl.elasticsearch.status.monitor.StatusMonitor;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
+
 import javax.inject.Inject;
 
 /**
@@ -19,8 +20,9 @@ public class ReportBasedStatusMonitor implements StatusMonitor {
     }
 
     @Override
-    public void createSnapshot() {
+    public AnalysisReport createSnapshot() {
         AnalysisReport report = analyser.createReport();
         reportGenerator.generate(report);
+        return report;
     }
 }

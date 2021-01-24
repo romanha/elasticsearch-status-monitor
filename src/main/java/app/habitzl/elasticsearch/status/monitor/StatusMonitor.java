@@ -1,13 +1,16 @@
 package app.habitzl.elasticsearch.status.monitor;
 
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
+
 /**
  * The status monitor is the single entry point of this tool's functionality.
  */
 public interface StatusMonitor {
 
-    // TODO return AnalysisReport to get exit code in Main
     /**
      * Creates a monitoring snapshot of the current state of the ES cluster.
+     *
+     * @return The report data of the monitored snapshot.
      */
-    void createSnapshot();
+    AnalysisReport createSnapshot();
 }

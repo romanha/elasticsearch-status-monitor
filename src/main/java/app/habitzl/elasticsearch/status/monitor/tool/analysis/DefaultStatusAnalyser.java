@@ -72,6 +72,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
                 analysisReport = abortStatusMonitoring(GeneralConnectionProblem.create(connectionInfo.getConnectionErrorInformation().orElse("")));
                 break;
         }
+
         return analysisReport;
     }
 
