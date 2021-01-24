@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor;
 import app.habitzl.elasticsearch.status.monitor.tool.ReportBasedStatusMonitor;
 import app.habitzl.elasticsearch.status.monitor.tool.ReportGenerator;
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultExitCodeMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
@@ -49,6 +50,7 @@ class GuiceModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(StatusMonitor.class).to(ReportBasedStatusMonitor.class).in(Singleton.class);
+        bind(ExitCodeMapper.class).to(DefaultExitCodeMapper.class).in(Singleton.class);
 
         // Configuration
         bind(StatusMonitorConfiguration.class).in(Singleton.class);

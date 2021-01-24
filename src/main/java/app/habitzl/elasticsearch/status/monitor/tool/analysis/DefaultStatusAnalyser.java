@@ -106,7 +106,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
                 clusterAnalysisResult
         );
 
-        return AnalysisReport.create(
+        return AnalysisReport.finished(
                 configuration,
                 analysisResult.getProblems(),
                 analysisResult.getWarnings(),

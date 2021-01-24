@@ -199,7 +199,7 @@ class DefaultStatusAnalyserTest {
         ClusterInfo clusterInfo = ClusterInfos.random();
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
         givenAllRequestsSucceed(clusterInfo, nodeInfos);
-        return AnalysisReport.create(configuration, List.of(), List.of(), clusterInfo, nodeInfos);
+        return AnalysisReport.finished(configuration, List.of(), List.of(), clusterInfo, nodeInfos);
     }
 
     /**
@@ -209,7 +209,7 @@ class DefaultStatusAnalyserTest {
         ClusterInfo clusterInfo = ClusterInfos.random();
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
         givenAllRequestsSucceed(clusterInfo, nodeInfos);
-        return AnalysisReport.create(configuration, List.of(), warnings, clusterInfo, nodeInfos);
+        return AnalysisReport.finished(configuration, List.of(), warnings, clusterInfo, nodeInfos);
     }
 
     private void givenAllRequestsSucceed(final ClusterInfo clusterInfo, final List<NodeInfo> nodeInfos) {

@@ -23,31 +23,29 @@ public class Main {
         ConfigurationLoader configurationLoader = injector.getInstance(ConfigurationLoader.class);
         AnalysisStartOption startOption = configurationLoader.load(args);
 
-        int exitCode;
-
+        AnalysisReport report;
         switch (startOption) {
             case ANALYSIS_POSSIBLE:
-                exitCode = performAnalysis(injector);
+                report = performAnalysis(injector);
                 break;
             case ANALYSIS_NOT_REQUESTED:
-                LOG.debug("Analysis start not requested due to the use of help options.");
-                exitCode = 0;
+                report = null;
+                LOG.info("Analysis start not requested due to the use of help options.");
                 break;
             case ANALYSIS_NOT_POSSIBLE:
             default:
+                report = null;
                 LOG.error("Analysis start not possible due to misconfiguration.");
-                exitCode = 3;
                 break;
         }
 
         teardown(injector);
-        System.exit(exitCode);
+        exit(injector, startOption, report);
     }
 
-    private static int performAnalysis(final Injector injector) {
+    private static AnalysisReport performAnalysis(final Injector injector) {
         StatusMonitor statusMonitor = injector.getInstance(StatusMonitor.class);
-        AnalysisReport report = statusMonitor.createSnapshot();
-        return report.getMonitoringResult().getExitCode();
+        return statusMonitor.createSnapshot();
     }
 
     private static void teardown(final Injector injector) {
@@ -62,5 +60,12 @@ public class Main {
         } catch (final IOException e) {
             LOG.warn("Could not safely close the connection to the ES cluster.", e);
         }
+    }
+
+    private static void exit(final Injector injector, final AnalysisStartOption startOption, final AnalysisReport report) {
+        ExitCodeMapper exitCodeMapper = injector.getInstance(ExitCodeMapper.class);
+        ExitCode exitCode = exitCodeMapper.getExitCode(startOption, report);
+        LOG.info("Exiting program with code '{}' ({}).", exitCode, exitCode.value());
+        System.exit(exitCode.value());
     }
 }

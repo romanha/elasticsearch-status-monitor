@@ -21,7 +21,6 @@ public final class AnalysisReport implements Serializable {
 
     private final StatusMonitorConfiguration configuration;
     private final ReportProgress reportProgress;
-    private final MonitoringResult monitoringResult;
     private final List<Problem> problems;
     private final List<Warning> warnings;
     private final ClusterInfo clusterInfo;
@@ -33,7 +32,7 @@ public final class AnalysisReport implements Serializable {
         return new AnalysisReport(configuration, ReportProgress.ABORTED, problems);
     }
 
-    public static AnalysisReport create(
+    public static AnalysisReport finished(
             final StatusMonitorConfiguration configuration,
             final List<Problem> problems,
             final List<Warning> warnings,
@@ -66,8 +65,6 @@ public final class AnalysisReport implements Serializable {
         this.warnings = List.copyOf(warnings);
         this.clusterInfo = clusterInfo;
         this.nodeInfos = List.copyOf(nodeInfos);
-
-        this.monitoringResult = calculateMonitoringResult(reportProgress, problems, warnings);
     }
 
     public StatusMonitorConfiguration getConfiguration() {
@@ -76,10 +73,6 @@ public final class AnalysisReport implements Serializable {
 
     public ReportProgress getReportProgress() {
         return reportProgress;
-    }
-
-    public MonitoringResult getMonitoringResult() {
-        return monitoringResult;
     }
 
     public List<Problem> getProblems() {
@@ -130,25 +123,10 @@ public final class AnalysisReport implements Serializable {
         return new StringJoiner(", ", AnalysisReport.class.getSimpleName() + "[", "]")
                 .add("configuration=" + configuration)
                 .add("reportProgress=" + reportProgress)
-                .add("monitoringResult=" + monitoringResult)
                 .add("problems=" + problems)
                 .add("warnings=" + warnings)
                 .add("clusterInfo=" + clusterInfo)
                 .add("nodeInfos=" + nodeInfos)
                 .toString();
-    }
-
-    private MonitoringResult calculateMonitoringResult(
-            final ReportProgress reportProgress,
-            final List<Problem> problems,
-            final List<Warning> warnings) {
-        MonitoringResult result = MonitoringResult.NO_ISSUES_FOUND;
-        if (reportProgress == ReportProgress.ABORTED || !problems.isEmpty()) {
-            result = MonitoringResult.PROBLEMS_FOUND;
-        } else if (!warnings.isEmpty()) {
-            result = MonitoringResult.ONLY_WARNINGS_FOUND;
-        }
-
-        return result;
     }
 }
