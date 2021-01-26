@@ -21,6 +21,7 @@
 		<!-- Test -->
 		<junit.version>5.7.0</junit.version>
 		<hamcrest.version>2.2</hamcrest.version>
+		<hamcrest.optional.version>2.0.0</hamcrest.optional.version>
 		<mockito.version>3.6.28</mockito.version>
 
 		<!-- Build -->
@@ -102,6 +103,13 @@
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest</artifactId>
 			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.npathai</groupId>
+			<artifactId>hamcrest-optional</artifactId>
+			<version>${hamcrest.optional.version}</version>
 			<scope>test</scope>
 		</dependency>
 

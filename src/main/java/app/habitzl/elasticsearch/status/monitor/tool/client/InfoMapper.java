@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client;
 
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 
@@ -15,6 +16,11 @@ public interface InfoMapper {
      * Maps data returned via the ES {@code /_cluster/settings} API.
      */
     ClusterSettings mapClusterSettings(String jsonData);
+
+    /**
+     * Maps data returned via the ES {@code /_cluster/health} API.
+     */
+    ClusterInfo mapClusterInfo(String jsonData);
 
     /**
      * Maps data returned via the ES {@code /_cat/nodes} API.

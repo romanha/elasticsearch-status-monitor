@@ -15,25 +15,39 @@ class DefaultInfoMapperTest {
 
     private DefaultInfoMapper sut;
     private ClusterSettingsMapper clusterSettingsMapper;
+    private ClusterInfoMapper clusterInfoMapper;
     private NodeInfoMapper nodeInfoMapper;
 
     @BeforeEach
     void setUp() {
         clusterSettingsMapper = mock(ClusterSettingsMapper.class);
+        clusterInfoMapper = mock(ClusterInfoMapper.class);
         nodeInfoMapper = mock(NodeInfoMapper.class);
-        sut = new DefaultInfoMapper(clusterSettingsMapper, nodeInfoMapper);
+        sut = new DefaultInfoMapper(clusterSettingsMapper, clusterInfoMapper, nodeInfoMapper);
     }
 
     @Test
     void mapClusterSettings_sut_delegatesToClusterSettingsMapper() {
         // Given
-        // test string
+        String json = TEST_STRING;
 
         // When
-        sut.mapClusterSettings(TEST_STRING);
+        sut.mapClusterSettings(json);
 
         // Then
-        verify(clusterSettingsMapper).map(TEST_STRING);
+        verify(clusterSettingsMapper).map(json);
+    }
+
+    @Test
+    void mapClusterInfo_sut_delegatesToClusterInfoMapper() {
+        // Given
+        String json = TEST_STRING;
+
+        // When
+        sut.mapClusterInfo(json);
+
+        // Then
+        verify(clusterInfoMapper).map(json);
     }
 
     @Test

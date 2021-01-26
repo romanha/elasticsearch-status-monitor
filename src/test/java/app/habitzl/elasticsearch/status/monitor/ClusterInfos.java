@@ -24,6 +24,7 @@ public final class ClusterInfos {
                 random.nextInt(),
                 random.nextInt(),
                 random.nextInt(),
+                random.nextInt(),
                 random.nextInt()
         );
     }

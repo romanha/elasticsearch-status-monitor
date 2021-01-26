@@ -88,10 +88,13 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     public Optional<ClusterInfo> getClusterInfo() {
         ClusterInfo clusterInfo;
 
-        ClusterHealthRequest request = new ClusterHealthRequest();
+        Request request = new Request(METHOD_GET, "/_cluster/health");
+        setAcceptedContentToJSON(request);
+
         try {
-            ClusterHealthResponse response = client.cluster().health(request, RequestOptions.DEFAULT);
-            clusterInfo = ClusterInfo.fromClusterHealthResponse(response);
+            Response response = client.getLowLevelClient().performRequest(request);
+            String result = responseMapper.getContentAsString(response);
+            clusterInfo = infoMapper.mapClusterInfo(result);
         } catch (final IOException | ElasticsearchStatusException e) {
             logError(e);
             clusterInfo = null;

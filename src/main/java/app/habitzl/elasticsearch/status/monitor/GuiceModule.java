@@ -14,7 +14,9 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.ElasticsearchRestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterSettingsMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultClusterInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultClusterSettingsMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultNodeInfoMapper;
@@ -24,6 +26,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.NodeInfoMappe
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeParser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format.DayBasedTimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils.JsonParser;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.CliOptions;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.DefaultConfigurationLoader;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
@@ -63,11 +66,13 @@ class GuiceModule extends AbstractModule {
         bind(RestClientFactory.class).to(ElasticsearchRestClientFactory.class).in(Singleton.class);
 
         // Mapper and parser
-        bind(ObjectMapper.class).toInstance(new ObjectMapper());
+        bind(JsonParser.class).in(Singleton.class);
+        bind(ObjectMapper.class).in(Singleton.class);
         bind(ResponseMapper.class).to(JsonContentResponseMapper.class).in(Singleton.class);
         bind(TimeParser.class).to(DefaultTimeParser.class).in(Singleton.class);
         bind(InfoMapper.class).to(DefaultInfoMapper.class).in(Singleton.class);
         bind(ClusterSettingsMapper.class).to(DefaultClusterSettingsMapper.class).in(Singleton.class);
+        bind(ClusterInfoMapper.class).to(DefaultClusterInfoMapper.class).in(Singleton.class);
         bind(NodeInfoMapper.class).to(DefaultNodeInfoMapper.class).in(Singleton.class);
 
         // Analyser

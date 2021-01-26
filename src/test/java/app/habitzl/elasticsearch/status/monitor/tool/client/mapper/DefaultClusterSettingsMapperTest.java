@@ -27,7 +27,7 @@ class DefaultClusterSettingsMapperTest {
             + "  },\n"
             + "  \"persistent\": {},\n"
             + "  \"defaults\": {}\n"
-            + "}\n";
+            + "}";
 
     private static final String JSON_SETTINGS_PERSISTENT = "{\n"
             + "  \"transient\": {},\n"
@@ -40,7 +40,7 @@ class DefaultClusterSettingsMapperTest {
             + "    }\n"
             + "  },\n"
             + "  \"defaults\": {}\n"
-            + "}\n";
+            + "}";
 
     private static final String JSON_SETTINGS_DEFAULTS = "{\n"
             + "  \"transient\": {},\n"
@@ -53,7 +53,7 @@ class DefaultClusterSettingsMapperTest {
             + "      }\n"
             + "    }\n"
             + "  }\n"
-            + "}\n";
+            + "}";
 
     private DefaultClusterSettingsMapper sut;
     private ObjectMapper mapper;

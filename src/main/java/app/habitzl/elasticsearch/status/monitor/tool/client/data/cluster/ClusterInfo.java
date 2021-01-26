@@ -1,7 +1,5 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster;
 
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,20 +14,9 @@ public final class ClusterInfo implements Serializable {
     private final int numberOfNodes;
     private final int numberOfDataNodes;
     private final int numberOfActiveShards;
+    private final int numberOfPrimaryShards;
     private final int numberOfInitializingShards;
     private final int numberOfUnassignedShards;
-
-    public static ClusterInfo fromClusterHealthResponse(final ClusterHealthResponse response) {
-        return new ClusterInfo(
-                response.getClusterName(),
-                ClusterHealthStatus.valueOf(response.getStatus().name()),
-                response.getNumberOfNodes(),
-                response.getNumberOfDataNodes(),
-                response.getActiveShards(),
-                response.getInitializingShards(),
-                response.getUnassignedShards()
-        );
-    }
 
     public ClusterInfo(
             final String clusterName,
@@ -37,6 +24,7 @@ public final class ClusterInfo implements Serializable {
             final int numberOfNodes,
             final int numberOfDataNodes,
             final int numberOfActiveShards,
+            final int numberOfPrimaryShards,
             final int numberOfInitializingShards,
             final int numberOfUnassignedShards) {
         this.clusterName = clusterName;
@@ -44,6 +32,7 @@ public final class ClusterInfo implements Serializable {
         this.numberOfNodes = numberOfNodes;
         this.numberOfDataNodes = numberOfDataNodes;
         this.numberOfActiveShards = numberOfActiveShards;
+        this.numberOfPrimaryShards = numberOfPrimaryShards;
         this.numberOfInitializingShards = numberOfInitializingShards;
         this.numberOfUnassignedShards = numberOfUnassignedShards;
     }
@@ -68,6 +57,10 @@ public final class ClusterInfo implements Serializable {
         return numberOfActiveShards;
     }
 
+    public int getNumberOfPrimaryShards() {
+        return numberOfPrimaryShards;
+    }
+
     public int getNumberOfInitializingShards() {
         return numberOfInitializingShards;
     }
@@ -90,6 +83,7 @@ public final class ClusterInfo implements Serializable {
             isEqual = Objects.equals(numberOfNodes, that.numberOfNodes)
                     && Objects.equals(numberOfDataNodes, that.numberOfDataNodes)
                     && Objects.equals(numberOfActiveShards, that.numberOfActiveShards)
+                    && Objects.equals(numberOfPrimaryShards, that.numberOfPrimaryShards)
                     && Objects.equals(numberOfInitializingShards, that.numberOfInitializingShards)
                     && Objects.equals(numberOfUnassignedShards, that.numberOfUnassignedShards)
                     && Objects.equals(clusterName, that.clusterName)
@@ -101,8 +95,7 @@ public final class ClusterInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                clusterName, healthStatus, numberOfNodes, numberOfDataNodes, numberOfActiveShards, numberOfInitializingShards, numberOfUnassignedShards);
+        return Objects.hash(clusterName, healthStatus, numberOfNodes, numberOfDataNodes, numberOfActiveShards, numberOfPrimaryShards, numberOfInitializingShards, numberOfUnassignedShards);
     }
 
     @Override
@@ -113,6 +106,7 @@ public final class ClusterInfo implements Serializable {
                 .add("numberOfNodes=" + numberOfNodes)
                 .add("numberOfDataNodes=" + numberOfDataNodes)
                 .add("numberOfActiveShards=" + numberOfActiveShards)
+                .add("numberOfPrimaryShards=" + numberOfPrimaryShards)
                 .add("numberOfInitializingShards=" + numberOfInitializingShards)
                 .add("numberOfUnassignedShards=" + numberOfUnassignedShards)
                 .toString();
