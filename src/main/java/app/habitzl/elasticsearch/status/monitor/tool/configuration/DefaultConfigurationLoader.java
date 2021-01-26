@@ -38,7 +38,8 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
             parseAuthenticationOptions(commandLine);
             startOption = parseHelpOptions(commandLine);
         } catch (final ParseException e) {
-            LOG.error("Invalid options provided for starting the Elasticsearch Status Monitor. Using default configuration.", e);
+            LOG.error("Invalid options provided for starting the Elasticsearch Status Monitor. {}", e.getMessage());
+            LOG.info("Falling back to default configuration.");
             startOption = AnalysisStartOption.ANALYSIS_NOT_POSSIBLE;
         }
 

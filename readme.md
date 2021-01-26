@@ -4,6 +4,9 @@
 
 * [Introduction](#introduction)
 * [Usage](#usage)
+  * [Requirements](#requirements)
+  * [Running the tool](#running-the-tool)
+  * [Logging](#logging)
 * [Configuration](#configuration)
   * [Command Line Options](#command-line-options)
 * [Features](#features)
@@ -47,6 +50,10 @@ Exit Code | Description
 1         | The analysis was aborted or completed and found problems.
 2         | The analysis was completed without finding problems, but some warnings were found.
 3         | The analysis was not started due to misconfiguration. (e.g. unknown CLI option)
+
+### Logging
+
+The tool logs into a `logs` folder, which is created from where the tool is called.
 
 ## Configuration
 

@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration status="INFO">
+
+	<!--
+		Pattern explanation:
+
+		%d		The date of the logging in default format. (e.g. 2021-01-31 14:34:02,123)
+		%-5p	Logging priority adjusted to a width of 5 characters. (e.g. "INFO ")
+		%m		The logging message.
+		%n		A new line.
+
+		For more see: https://logging.apache.org/log4j/2.x/manual/layouts.html#Patterns
+	-->
 	<Properties>
-		<Property name="layout">%d [%t] %-5level %logger - %m%n</Property>
+		<Property name="ConsolePattern">%d{DEFAULT} %-5p - %m%n</Property>
+		<Property name="FilePattern">%d{DEFAULT} %-5p - %m%n</Property>
 	</Properties>
 
 	<Appenders>
-		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="${layout}" />
+		<Console name="ConsoleLogging" target="SYSTEM_OUT">
+			<PatternLayout pattern="${ConsolePattern}"/>
 		</Console>
+
+		<File name="FileLogging" fileName="logs/${date:yyyy-MM-dd HH-mm-ss}/report.log" append="false">
+			<PatternLayout pattern="${FilePattern}"/>
+		</File>
 	</Appenders>
 
 	<Loggers>
-		<Logger name="app.habitzl" level="INFO" additivity="false" >
-			<AppenderRef ref="Console" />
+		<Logger name="app.habitzl" level="INFO" additivity="false">
+			<!-- <AppenderRef ref="ConsoleLogging" /> -->
+			<AppenderRef ref="FileLogging"/>
 		</Logger>
 
 		<Root level="ERROR">
-			<AppenderRef ref="Console" />
+			<!-- <AppenderRef ref="ConsoleLogging" /> -->
+			<AppenderRef ref="FileLogging"/>
 		</Root>
 	</Loggers>
 </Configuration>
