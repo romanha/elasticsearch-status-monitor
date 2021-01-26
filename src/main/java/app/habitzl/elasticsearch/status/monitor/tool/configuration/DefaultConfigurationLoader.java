@@ -46,32 +46,31 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
     }
 
     private void parseConnectionOptions(final CommandLine commandLine) {
-        if (commandLine.hasOption(CliOptions.ADDRESS_OPTION)) {
-            LOG.info("Using host {} from CLI options.", commandLine.getOptionValue(CliOptions.ADDRESS_OPTION));
-            configuration.setHost(commandLine.getOptionValue(CliOptions.ADDRESS_OPTION));
+        if (commandLine.hasOption(CliOptions.HOST_OPTION_SHORT)) {
+            LOG.info("Using host {} from CLI options.", commandLine.getOptionValue(CliOptions.HOST_OPTION_SHORT));
+            configuration.setHost(commandLine.getOptionValue(CliOptions.HOST_OPTION_SHORT));
         }
 
-        if (commandLine.hasOption(CliOptions.PORT_OPTION)) {
-            LOG.info("Using configured port {} from CLI options.", commandLine.getOptionValue(CliOptions.PORT_OPTION));
-            configuration.setPort(commandLine.getOptionValue(CliOptions.PORT_OPTION));
+        if (commandLine.hasOption(CliOptions.PORT_OPTION_SHORT)) {
+            LOG.info("Using configured port {} from CLI options.", commandLine.getOptionValue(CliOptions.PORT_OPTION_SHORT));
+            configuration.setPort(commandLine.getOptionValue(CliOptions.PORT_OPTION_SHORT));
         }
 
-        if (commandLine.hasOption(CliOptions.SECURITY_OPTION)) {
-            boolean isSecurityDisabled = commandLine.getOptionValue(CliOptions.SECURITY_OPTION).equalsIgnoreCase("false");
-            LOG.info("Security is {} by CLI options.", isSecurityDisabled ? "disabled" : "enabled");
-            configuration.setUsingHttps(!isSecurityDisabled);
+        if (commandLine.hasOption(CliOptions.UNSECURE_OPTION_LONG)) {
+            LOG.info("Security is disabled by CLI options.");
+            configuration.setUsingHttps(false);
         }
     }
 
     private void parseAuthenticationOptions(final CommandLine commandLine) {
-        if (commandLine.hasOption(CliOptions.USER_OPTION)) {
-            LOG.info("Using configured user name {} from CLI options.", commandLine.getOptionValue(CliOptions.USER_OPTION));
-            configuration.setUsername(commandLine.getOptionValue(CliOptions.USER_OPTION));
+        if (commandLine.hasOption(CliOptions.USER_OPTION_LONG)) {
+            LOG.info("Using configured user name {} from CLI options.", commandLine.getOptionValue(CliOptions.USER_OPTION_LONG));
+            configuration.setUsername(commandLine.getOptionValue(CliOptions.USER_OPTION_LONG));
         }
 
-        if (commandLine.hasOption(CliOptions.PASSWORD_OPTION)) {
+        if (commandLine.hasOption(CliOptions.PASSWORD_OPTION_LONG)) {
             LOG.info("Using configured password from CLI options.");
-            configuration.setPassword(commandLine.getOptionValue(CliOptions.PASSWORD_OPTION));
+            configuration.setPassword(commandLine.getOptionValue(CliOptions.PASSWORD_OPTION_LONG));
         }
     }
 
@@ -82,12 +81,12 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
     private AnalysisStartOption parseHelpOptions(final CommandLine commandLine) {
         AnalysisStartOption startOption = AnalysisStartOption.ANALYSIS_POSSIBLE;
 
-        if (commandLine.hasOption(CliOptions.VERSION_OPTION)) {
+        if (commandLine.hasOption(CliOptions.VERSION_OPTION_LONG)) {
             printVersion();
             startOption = AnalysisStartOption.ANALYSIS_NOT_REQUESTED;
         }
 
-        if (commandLine.hasOption(CliOptions.HELP_OPTION)) {
+        if (commandLine.hasOption(CliOptions.HELP_OPTION_LONG)) {
             printHelp();
             startOption = AnalysisStartOption.ANALYSIS_NOT_REQUESTED;
         }

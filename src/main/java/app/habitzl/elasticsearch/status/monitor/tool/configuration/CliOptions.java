@@ -8,19 +8,14 @@ import org.apache.commons.cli.Options;
  */
 public class CliOptions {
 
-    protected static final String VERSION_OPTION = "v";
     protected static final String VERSION_OPTION_LONG = "version";
-    protected static final String HELP_OPTION = "h";
     protected static final String HELP_OPTION_LONG = "help";
-    protected static final String ADDRESS_OPTION = "a";
-    protected static final String ADDRESS_OPTION_LONG = "address";
-    protected static final String PORT_OPTION = "p";
+    protected static final String HOST_OPTION_LONG = "host";
+    protected static final String HOST_OPTION_SHORT = "h";
     protected static final String PORT_OPTION_LONG = "port";
-    protected static final String SECURITY_OPTION = "s";
-    protected static final String SECURITY_OPTION_LONG = "security";
-    protected static final String USER_OPTION = "u";
+    protected static final String PORT_OPTION_SHORT = "p";
+    protected static final String UNSECURE_OPTION_LONG = "unsecure";
     protected static final String USER_OPTION_LONG = "username";
-    protected static final String PASSWORD_OPTION = "x";
     protected static final String PASSWORD_OPTION_LONG = "password";
 
     private final Options availableOptions;
@@ -39,14 +34,14 @@ public class CliOptions {
         options.addOption(createHelpOption());
         options.addOption(createHostOption());
         options.addOption(createPortOption());
-        options.addOption(createSecurityOption());
+        options.addOption(createUnsecureOption());
         options.addOption(createUserOption());
         options.addOption(createPasswordOption());
         return options;
     }
 
     private Option createVersionOption() {
-        return Option.builder(VERSION_OPTION)
+        return Option.builder()
                      .longOpt(VERSION_OPTION_LONG)
                      .hasArg(false)
                      .desc("Print the version number of this tool. By using this option no analysis is started.")
@@ -54,7 +49,7 @@ public class CliOptions {
     }
 
     private Option createHelpOption() {
-        return Option.builder(HELP_OPTION)
+        return Option.builder()
                      .longOpt(HELP_OPTION_LONG)
                      .hasArg(false)
                      .desc("Print a help message on how to use this tool. By using this option no analysis is started.")
@@ -62,8 +57,8 @@ public class CliOptions {
     }
 
     private Option createHostOption() {
-        return Option.builder(ADDRESS_OPTION)
-                     .longOpt(ADDRESS_OPTION_LONG)
+        return Option.builder(HOST_OPTION_SHORT)
+                     .longOpt(HOST_OPTION_LONG)
                      .hasArg(true)
                      .argName("IP address or host name")
                      .desc("The IP address or host name of the Elasticsearch endpoint.")
@@ -71,7 +66,7 @@ public class CliOptions {
     }
 
     private Option createPortOption() {
-        return Option.builder(PORT_OPTION)
+        return Option.builder(PORT_OPTION_SHORT)
                      .longOpt(PORT_OPTION_LONG)
                      .hasArg(true)
                      .argName("port")
@@ -79,17 +74,16 @@ public class CliOptions {
                      .build();
     }
 
-    private Option createSecurityOption() {
-        return Option.builder(SECURITY_OPTION)
-                     .longOpt(SECURITY_OPTION_LONG)
-                     .hasArg(true)
-                     .argName("true or false")
-                     .desc("Enables or disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch.")
+    private Option createUnsecureOption() {
+        return Option.builder()
+                     .longOpt(UNSECURE_OPTION_LONG)
+                     .hasArg(false)
+                     .desc("Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch.")
                      .build();
     }
 
     private Option createUserOption() {
-        return Option.builder(USER_OPTION)
+        return Option.builder()
                      .longOpt(USER_OPTION_LONG)
                      .hasArg(true)
                      .argName("user name")
@@ -98,7 +92,7 @@ public class CliOptions {
     }
 
     private Option createPasswordOption() {
-        return Option.builder(PASSWORD_OPTION)
+        return Option.builder()
                      .longOpt(PASSWORD_OPTION_LONG)
                      .hasArg(true)
                      .argName("password")

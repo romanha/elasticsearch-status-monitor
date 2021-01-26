@@ -54,17 +54,17 @@ Exit Code | Description
 
 The tool supports following CLI options:
 
-Option   | Alternative  | Arguments | Default   | Description                                                                                                           | Example
----      | ---          | ---       | ---       | ---                                                                                                                   | ---
-`-h`     | `--help`     | 0         | -         | Print a help message on how to use this tool. **By using this option no analysis is started.**                        | `-h`
-`-v`     | `--version`  | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                               | `-v`
-`-a`     | `--address`  | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                            | `-a 127.0.0.1`
-`-p`     | `--port`     | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                                          | `-p 9200`
-`-s`     | `--security` | 1         | true      | Enables or disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `-s false`
-`-u`     | `--username` | 1         | admin     | The user name of the Elasticsearch user.                                                                              | `-u admin`
-`-x`     | `--password` | 1         | admin     | The password of the Elasticsearch user.                                                                               | `-x admin`
+Option       | Alternative  | Arguments | Default   | Description                                                                                                | Example
+---          | ---          | ---       | ---       | ---                                                                                                        | ---
+`--help`     | -            | 0         | -         | Print a help message on how to use this tool. **By using this option no analysis is started.**             | `--help`
+`--version`  | -            | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                    | `--version`
+`--host`     | `-h`         | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`
+`--port`     | `-p`         | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`
+`--unsecure` | -            | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`
+`--username` | -            | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`
+`--password` | -            | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`
 
-Note that by using one of the help options (`-h`, `-v`) no analysis is started.
+Note that by using one of the help options (`--help`, `--version`) no analysis is started.
 These options only print information on how to use this tool.
 
 If any unknown option or invalid argument is passed, no analysis is started.
@@ -72,13 +72,7 @@ If any unknown option or invalid argument is passed, no analysis is started.
 Here is an example with some options:
 
 ```bash
-java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar -a 127.0.0.1 -p 9200 -u admin -x admin
-```
-
-This is the same example using the long alternative option names:
-
-```bash
-java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --address 127.0.0.1 --port 9200 --username admin --password admin
+java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --host 127.0.0.1 --port 9200 --username admin --password admin
 ```
 
 ## Features
@@ -125,6 +119,6 @@ To be done.
     * High RAM usage on endpoints
   * HTML report generation
   * Help output via CLI options (help, version)
-  * Tool configuration via CLI options (address, port, security, username, password)
+  * Tool configuration via CLI options (host, port, security, username, password)
   * SSL/TLS support for connecting to Elasticsearch
   * Exit codes for running as part of a script

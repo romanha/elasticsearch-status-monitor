@@ -28,9 +28,9 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.HOST_OPTION_SHORT, "1.2.3.4")
                 .withLongOption("unknown")
-                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.PORT_OPTION_SHORT, "9999")
                 .build();
 
         // When
@@ -45,8 +45,8 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.HOST_OPTION_SHORT, "1.2.3.4")
+                .withShortOption(CliOptions.PORT_OPTION_SHORT, "9999")
                 .build();
 
         // When
@@ -61,25 +61,8 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(CliOptions.PORT_OPTION, "9999")
-                .withShortOption(CliOptions.HELP_OPTION)
-                .build();
-
-        // When
-        AnalysisStartOption result = sut.load(args);
-
-        // Then
-        assertThat(result, is(AnalysisStartOption.ANALYSIS_NOT_REQUESTED));
-    }
-
-    @Test
-    void load_containsLongHelpOption_returnAnalysisNotRequested() {
-        // Given
-        String[] args = ArgumentBuilder
-                .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.HOST_OPTION_SHORT, "1.2.3.4")
+                .withShortOption(CliOptions.PORT_OPTION_SHORT, "9999")
                 .withLongOption(CliOptions.HELP_OPTION_LONG)
                 .build();
 
@@ -95,25 +78,8 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(CliOptions.PORT_OPTION, "9999")
-                .withShortOption(CliOptions.VERSION_OPTION)
-                .build();
-
-        // When
-        AnalysisStartOption result = sut.load(args);
-
-        // Then
-        assertThat(result, is(AnalysisStartOption.ANALYSIS_NOT_REQUESTED));
-    }
-
-    @Test
-    void load_containsLongVersionOption_returnAnalysisNotRequested() {
-        // Given
-        String[] args = ArgumentBuilder
-                .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
-                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.HOST_OPTION_SHORT, "1.2.3.4")
+                .withShortOption(CliOptions.PORT_OPTION_SHORT, "9999")
                 .withLongOption(CliOptions.VERSION_OPTION_LONG)
                 .build();
 
@@ -125,19 +91,14 @@ class DefaultConfigurationLoaderTest {
     }
 
     @Test
-    void load_validOption_setConfiguration() {
+    void load_validShortOptions_setConfiguration() {
         // Given
         String address = "1.2.3.4";
         String port = "9999";
-        String username = "username";
-        String password = "password";
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, address)
-                .withShortOption(CliOptions.PORT_OPTION, port)
-                .withShortOption(CliOptions.SECURITY_OPTION, "true")
-                .withShortOption(CliOptions.USER_OPTION, username)
-                .withShortOption(CliOptions.PASSWORD_OPTION, password)
+                .withShortOption(CliOptions.HOST_OPTION_SHORT, address)
+                .withShortOption(CliOptions.PORT_OPTION_SHORT, port)
                 .build();
 
         // When
@@ -146,13 +107,10 @@ class DefaultConfigurationLoaderTest {
         // Then
         assertThat(configuration.getHost(), equalTo(address));
         assertThat(configuration.getPort(), equalTo(port));
-        assertThat(configuration.isUsingHttps(), equalTo(true));
-        assertThat(configuration.getUsername(), equalTo(username));
-        assertThat(configuration.getPassword(), equalTo(password));
     }
 
     @Test
-    void load_validLongOption_setConfiguration() {
+    void load_validLongOptions_setConfiguration() {
         // Given
         String address = "1.2.3.4";
         String port = "9999";
@@ -160,9 +118,8 @@ class DefaultConfigurationLoaderTest {
         String password = "password";
         String[] args = ArgumentBuilder
                 .create()
-                .withLongOption(CliOptions.ADDRESS_OPTION_LONG, address)
+                .withLongOption(CliOptions.HOST_OPTION_LONG, address)
                 .withLongOption(CliOptions.PORT_OPTION_LONG, port)
-                .withLongOption(CliOptions.SECURITY_OPTION_LONG, "true")
                 .withLongOption(CliOptions.USER_OPTION_LONG, username)
                 .withLongOption(CliOptions.PASSWORD_OPTION_LONG, password)
                 .build();
@@ -173,7 +130,6 @@ class DefaultConfigurationLoaderTest {
         // Then
         assertThat(configuration.getHost(), equalTo(address));
         assertThat(configuration.getPort(), equalTo(port));
-        assertThat(configuration.isUsingHttps(), equalTo(true));
         assertThat(configuration.getUsername(), equalTo(username));
         assertThat(configuration.getPassword(), equalTo(password));
     }
@@ -184,7 +140,7 @@ class DefaultConfigurationLoaderTest {
         String address = "1.2.3.4";
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, address)
+                .withShortOption(CliOptions.HOST_OPTION_SHORT, address)
                 .build();
 
         // When
@@ -203,9 +159,9 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.ADDRESS_OPTION, "1.2.3.4")
+                .withShortOption(CliOptions.HOST_OPTION_SHORT, "1.2.3.4")
                 .withLongOption("unknown")
-                .withShortOption(CliOptions.PORT_OPTION, "9999")
+                .withShortOption(CliOptions.PORT_OPTION_SHORT, "9999")
                 .build();
 
         // When
@@ -228,11 +184,10 @@ class DefaultConfigurationLoaderTest {
     }
 
     @Test
-    void load_securityOptionWithUnknownValue_enableSecurity() {
+    void load_noUnsecureOption_enableSecurity() {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.SECURITY_OPTION, "unknown")
                 .build();
 
         // When
@@ -240,6 +195,21 @@ class DefaultConfigurationLoaderTest {
 
         // Then
         assertThat(configuration.isUsingHttps(), equalTo(true));
+    }
+
+    @Test
+    void load_unsecureOption_disableSecurity() {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withShortOption(CliOptions.UNSECURE_OPTION_LONG)
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.isUsingHttps(), equalTo(false));
     }
 
     private void assertThatConfigurationIsDefault() {
