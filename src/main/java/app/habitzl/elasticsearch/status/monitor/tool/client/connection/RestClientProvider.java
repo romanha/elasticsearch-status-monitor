@@ -7,7 +7,7 @@ import javax.inject.Provider;
 import java.util.Objects;
 
 /**
- * A provider responsible for returning a single instance of an Elasticsearch high-level REST client.
+ * A provider responsible for returning a single instance of an Elasticsearch REST client.
  */
 public class RestClientProvider implements Provider<RestClient> {
 
