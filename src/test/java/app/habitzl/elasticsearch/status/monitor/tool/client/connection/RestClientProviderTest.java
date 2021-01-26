@@ -1,6 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ class RestClientProviderTest {
     }
 
     private void givenClientAlreadyExists() {
-        when(factory.create()).thenReturn(mock(RestHighLevelClient.class));
+        when(factory.create()).thenReturn(mock(RestClient.class));
         sut.get();
         verify(factory).create();
     }

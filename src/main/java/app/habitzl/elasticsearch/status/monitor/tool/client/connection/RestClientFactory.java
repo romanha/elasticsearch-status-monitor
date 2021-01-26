@@ -1,6 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClient;
 
 /**
  * A factory for creating Elasticsearch REST clients.
@@ -8,7 +8,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 public interface RestClientFactory {
 
     /**
-     * Creates a new high-level REST client.
+     * Creates a new Elasticsearch REST client.
      */
-    RestHighLevelClient create();
+    RestClient create();
 }

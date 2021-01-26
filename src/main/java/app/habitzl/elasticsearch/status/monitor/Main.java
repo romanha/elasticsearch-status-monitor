@@ -5,7 +5,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 
@@ -54,7 +54,7 @@ public class Main {
     }
 
     private static void closeElasticsearchRestClient(final Injector injector) {
-        RestHighLevelClient client = injector.getInstance(RestHighLevelClient.class);
+        RestClient client = injector.getInstance(RestClient.class);
         try {
             client.close();
         } catch (final IOException e) {

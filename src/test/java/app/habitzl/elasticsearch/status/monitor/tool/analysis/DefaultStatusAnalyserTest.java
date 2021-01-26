@@ -19,7 +19,6 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.Conn
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
-import org.elasticsearch.rest.RestStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -63,9 +62,9 @@ class DefaultStatusAnalyserTest {
     }
 
     @Test
-    void createReport_restStatusUnauthorized_doNotAttemptMoreStatusRequests() {
+    void createReport_connectionStatusUnauthorized_doNotAttemptMoreStatusRequests() {
         // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success(RestStatus.UNAUTHORIZED));
+        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.UNAUTHORIZED, ""));
 
         // When
         sut.createReport();
@@ -103,28 +102,15 @@ class DefaultStatusAnalyserTest {
     }
 
     @Test
-    void createReport_restStatusUnauthorized_returnAbortedAnalysisReportWithUnauthorizedConnectionProblem() {
+    void createReport_connectionStatusUnauthorized_returnAbortedAnalysisReportWithUnauthorizedConnectionProblem() {
         // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success(RestStatus.UNAUTHORIZED));
+        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.UNAUTHORIZED, ""));
 
         // When
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
         AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(UnauthorizedConnectionProblem.create()));
-        assertThat(analysisReport, equalTo(expectedAnalysisReport));
-    }
-
-    @Test
-    void createReport_anyOtherRestStatus_returnAbortedAnalysisReportWithGeneralConnectionProblem() {
-        // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success(RestStatus.UNSUPPORTED_MEDIA_TYPE));
-
-        // When
-        AnalysisReport analysisReport = sut.createReport();
-
-        // Then
-        AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(GeneralConnectionProblem.create()));
         assertThat(analysisReport, equalTo(expectedAnalysisReport));
     }
 
@@ -226,7 +212,7 @@ class DefaultStatusAnalyserTest {
     }
 
     private void givenAllRequestsSucceed(final ClusterInfo clusterInfo, final List<NodeInfo> nodeInfos) {
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success(RestStatus.OK));
+        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success());
         when(elasticsearchClient.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
         when(elasticsearchClient.getNodeInfo()).thenReturn(nodeInfos);
     }

@@ -4,7 +4,7 @@ import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.Node;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ class ElasticsearchRestClientFactoryTest {
     @Test
     void create_sut_returnsClient() {
         // When
-        RestHighLevelClient client = sut.create();
+        RestClient client = sut.create();
 
         // Then
         assertThat(client, notNullValue());
@@ -43,10 +43,10 @@ class ElasticsearchRestClientFactoryTest {
                 : ElasticsearchRestClientFactory.HTTP_SCHEME;
 
         // When
-        RestHighLevelClient client = sut.create();
+        RestClient client = sut.create();
 
         // Then
-        List<Node> nodes = client.getLowLevelClient().getNodes();
+        List<Node> nodes = client.getNodes();
         assertThat(nodes, hasSize(1));
 
         HttpHost host = nodes.iterator().next().getHost();
@@ -67,10 +67,10 @@ class ElasticsearchRestClientFactoryTest {
                 : ElasticsearchRestClientFactory.HTTP_SCHEME;
 
         // When
-        RestHighLevelClient client = sut.create();
+        RestClient client = sut.create();
 
         // Then
-        List<Node> nodes = client.getLowLevelClient().getNodes();
+        List<Node> nodes = client.getNodes();
         assertThat(nodes, hasSize(1));
 
         HttpHost host = nodes.iterator().next().getHost();

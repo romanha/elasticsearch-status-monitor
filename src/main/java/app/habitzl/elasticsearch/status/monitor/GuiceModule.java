@@ -41,7 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import freemarker.template.Configuration;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClient;
 
 import java.io.File;
 import java.time.Clock;
@@ -62,7 +62,7 @@ class GuiceModule extends AbstractModule {
 
         // Elasticsearch client
         bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);
-        bind(RestHighLevelClient.class).toProvider(RestClientProvider.class).in(Singleton.class);
+        bind(RestClient.class).toProvider(RestClientProvider.class).in(Singleton.class);
         bind(RestClientFactory.class).to(ElasticsearchRestClientFactory.class).in(Singleton.class);
 
         // Mapper and parser

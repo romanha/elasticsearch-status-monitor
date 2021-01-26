@@ -1,6 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClient;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -9,9 +9,9 @@ import java.util.Objects;
 /**
  * A provider responsible for returning a single instance of an Elasticsearch high-level REST client.
  */
-public class RestClientProvider implements Provider<RestHighLevelClient> {
+public class RestClientProvider implements Provider<RestClient> {
 
-    private RestHighLevelClient client;
+    private RestClient client;
     private final RestClientFactory factory;
 
     @Inject
@@ -20,11 +20,11 @@ public class RestClientProvider implements Provider<RestHighLevelClient> {
     }
 
     @Override
-    public RestHighLevelClient get() {
+    public RestClient get() {
         return Objects.nonNull(client) ? client : createClient();
     }
 
-    private RestHighLevelClient createClient() {
+    private RestClient createClient() {
         client = factory.create();
         return client;
     }

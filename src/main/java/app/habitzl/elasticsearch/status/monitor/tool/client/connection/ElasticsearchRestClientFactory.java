@@ -1,19 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.util.Optional;
-import javax.inject.Inject;
-import javax.net.ssl.SSLContext;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -25,7 +12,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+
+import javax.inject.Inject;
+import javax.net.ssl.SSLContext;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.util.Optional;
 
 public class ElasticsearchRestClientFactory implements RestClientFactory {
     private static final Logger LOG = LogManager.getLogger(ElasticsearchRestClientFactory.class);
@@ -45,12 +45,10 @@ public class ElasticsearchRestClientFactory implements RestClientFactory {
     }
 
     @Override
-    public RestHighLevelClient create() {
+    public RestClient create() {
         RestClientBuilder builder = RestClient.builder(createHttpHost());
-
         builder.setHttpClientConfigCallback(createHttpClientConfigCallback());
-
-        return new RestHighLevelClient(builder);
+        return builder.build();
     }
 
     private HttpHost createHttpHost() {

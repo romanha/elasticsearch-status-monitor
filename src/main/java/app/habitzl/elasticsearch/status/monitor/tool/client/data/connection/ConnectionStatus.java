@@ -19,4 +19,14 @@ public enum ConnectionStatus {
      * The tool and the Elasticsearch cluster could not negotiate the desired level of security.
      */
     SSL_HANDSHAKE_FAILURE,
+
+    /**
+     * The tool was not authorized to connect to the Elasticsearch cluster.
+     */
+    UNAUTHORIZED,
+
+    /**
+     * There is no further information about the connection status.
+     */
+    UNKNOWN,
 }
