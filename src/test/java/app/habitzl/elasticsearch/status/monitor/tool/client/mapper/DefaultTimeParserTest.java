@@ -33,13 +33,20 @@ class DefaultTimeParserTest {
         assertThat(result, equalTo(expectedDuration));
     }
 
+    /**
+     * Note that the smallest supported time unit is seconds, so 1.5s still results in only 1s.
+     */
     private static Stream<Arguments> stringToDuration() {
         return Stream.of(
                 Arguments.of(null, Duration.ZERO),
                 Arguments.of("", Duration.ZERO),
                 Arguments.of("invalid", Duration.ZERO),
                 Arguments.of("42x", Duration.ZERO),
+                Arguments.of("s", Duration.ZERO),
                 Arguments.of("m", Duration.ZERO),
+                Arguments.of("1s", Duration.ofSeconds(1)),
+                Arguments.of("1.5s", Duration.ofSeconds(1)),
+                Arguments.of("60s", Duration.ofMinutes(1)),
                 Arguments.of("1m", Duration.ofMinutes(1)),
                 Arguments.of("1.75m", Duration.ofSeconds(105)),
                 Arguments.of("5m", Duration.ofMinutes(5)),

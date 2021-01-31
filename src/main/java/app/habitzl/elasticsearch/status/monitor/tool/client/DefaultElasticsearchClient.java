@@ -5,9 +5,12 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
-import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.RestStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
-import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterHealthParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterSettingsParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersionParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.GeneralParams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
@@ -27,9 +30,9 @@ import java.util.Optional;
 public class DefaultElasticsearchClient implements ElasticsearchClient {
     private static final Logger LOG = LogManager.getLogger(DefaultElasticsearchClient.class);
 
-    private static final String METHOD_GET = "GET";
-    private static final String HEADER_ACCEPT = "accept";
-    private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+    static final String METHOD_GET = "GET";
+    static final String HEADER_ACCEPT = "accept";
+    static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
     private final RestClient client;
     private final ResponseMapper responseMapper;
@@ -46,20 +49,17 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     public ConnectionInfo checkConnection() {
         ConnectionInfo connectionInfo;
 
-        Request request = new Request(METHOD_GET, "/_cluster/health");
+        Request request = new Request(METHOD_GET, EndpointVersionParams.API_ENDPOINT);
         setAcceptedContentToJSON(request);
 
         try {
-            client.performRequest(request);
-            connectionInfo = ConnectionInfo.success();
+            Response response = client.performRequest(request);
+            ConnectionStatus status = ConnectionStatus.fromHttpCode(response.getStatusLine().getStatusCode());
+            connectionInfo = status == ConnectionStatus.SUCCESS ? ConnectionInfo.success() : ConnectionInfo.error(status, null);
         } catch (final ResponseException e) {
             logError(e);
-            RestStatus restStatus = RestStatus.fromHttpCode(e.getResponse().getStatusLine().getStatusCode());
-            if (restStatus == RestStatus.UNAUTHORIZED) {
-                connectionInfo = ConnectionInfo.error(ConnectionStatus.UNAUTHORIZED, null);
-            } else {
-                connectionInfo = ConnectionInfo.error(ConnectionStatus.UNKNOWN, e.getMessage());
-            }
+            ConnectionStatus status = ConnectionStatus.fromHttpCode(e.getResponse().getStatusLine().getStatusCode());
+            connectionInfo = ConnectionInfo.error(status, e.getMessage());
         } catch (final SSLHandshakeException e) {
             logError(e);
             connectionInfo = ConnectionInfo.error(ConnectionStatus.SSL_HANDSHAKE_FAILURE, e.getMessage());
@@ -75,8 +75,9 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     public Optional<ClusterSettings> getClusterSettings() {
         ClusterSettings clusterSettings;
 
-        Request request = new Request(METHOD_GET, "/_cluster/settings");
-        request.addParameter("include_defaults", "true");
+        Request request = new Request(METHOD_GET, ClusterSettingsParams.API_ENDPOINT);
+        setAcceptedContentToJSON(request);
+        request.addParameter(ClusterSettingsParams.PARAM_INCLUDE_DEFAULTS, "true");
 
         try {
             Response response = client.performRequest(request);
@@ -95,13 +96,14 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     public Optional<ClusterInfo> getClusterInfo() {
         ClusterInfo clusterInfo;
 
-        Request request = new Request(METHOD_GET, "/_cluster/health");
+        Request request = new Request(METHOD_GET, ClusterHealthParams.API_ENDPOINT);
         setAcceptedContentToJSON(request);
 
         try {
             Response response = client.performRequest(request);
             String result = responseMapper.getContentAsString(response);
             clusterInfo = infoMapper.mapClusterInfo(result);
+            LOG.debug("Mapped cluster info: {}", clusterInfo);
         } catch (final IOException e) {
             logError(e);
             clusterInfo = null;
@@ -114,10 +116,10 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     public List<NodeInfo> getNodeInfo() {
         List<NodeInfo> nodeInfos = new ArrayList<>();
 
-        Request request = new Request(METHOD_GET, "/_cat/nodes");
+        Request request = new Request(METHOD_GET, CatNodesParams.API_ENDPOINT);
         setAcceptedContentToJSON(request);
-        request.addParameter("h", NodeParams.all());
-//		request.addParameter("full_id", "true");
+        request.addParameter(CatNodesParams.PARAM_COLUMNS, CatNodesParams.allColumns());
+        request.addParameter(CatNodesParams.PARAM_FULL_ID, "true");
 
         try {
             Response response = client.performRequest(request);
@@ -143,7 +145,7 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         builder.addHeader(HEADER_ACCEPT, CONTENT_TYPE_APPLICATION_JSON);
         request.setOptions(builder);
 
-        request.addParameter("format", "json");
+        request.addParameter(GeneralParams.PARAM_FORMAT, "json");
     }
 
     private void logError(final Exception e) {

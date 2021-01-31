@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.util.Map;
 
 import static app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils.MapUtils.*;
-import static app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams.*;
+import static app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParams.*;
 
 public class DefaultNodeInfoMapper implements NodeInfoMapper {
     static final String MASTER_NODE_MARKER = "*";
@@ -28,14 +28,14 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
     public NodeInfo map(final Map<String, Object> data) {
         EndpointInfo endpointInfo = mapEndpointInfo(data);
 
-        String processId = getString(data, NODE_PROCESS_ID);
-        String nodeId = getString(data, NODE_ID_KEY);
-        String name = getString(data, NODE_NAME_KEY);
-        boolean isMasterNode = (getString(data, NODE_MASTER_KEY)).equalsIgnoreCase(MASTER_NODE_MARKER);
-        boolean isDataNode = (getString(data, NODE_ROLE_KEY)).contains(DATA_NODE_ROLE_ID);
-        boolean isMasterEligibleNode = (getString(data, NODE_ROLE_KEY)).contains(MASTER_ELIGIBLE_NODE_ROLE_ID);
-        Duration uptime = timeParser.parse(getString(data, NODE_UPTIME));
-        float load15m = getFloat(data, AVERAGE_LOAD_KEY);
+        String processId = getString(data, NODE_PROCESS_ID_COLUMN);
+        String nodeId = getString(data, NODE_ID_COLUMN);
+        String name = getString(data, NODE_NAME_COLUMN);
+        boolean isMasterNode = (getString(data, NODE_MASTER_COLUMN)).equalsIgnoreCase(MASTER_NODE_MARKER);
+        boolean isDataNode = (getString(data, NODE_ROLE_COLUMN)).contains(DATA_NODE_ROLE_ID);
+        boolean isMasterEligibleNode = (getString(data, NODE_ROLE_COLUMN)).contains(MASTER_ELIGIBLE_NODE_ROLE_ID);
+        Duration uptime = timeParser.parse(getString(data, NODE_UPTIME_COLUMN));
+        float load15m = getFloat(data, AVERAGE_LOAD_COLUMN);
         return new NodeInfo(
                 processId,
                 nodeId,
@@ -50,9 +50,9 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
     }
 
     private EndpointInfo mapEndpointInfo(final Map<String, Object> data) {
-        String address = getString(data, IP_KEY);
-        int ram = getInteger(data, RAM_PERCENT_KEY);
-        int heap = getInteger(data, HEAP_PERCENT_KEY);
+        String address = getString(data, IP_COLUMN);
+        int ram = getInteger(data, RAM_PERCENT_COLUMN);
+        int heap = getInteger(data, HEAP_PERCENT_COLUMN);
 
         return new EndpointInfo(address, ram, heap);
     }

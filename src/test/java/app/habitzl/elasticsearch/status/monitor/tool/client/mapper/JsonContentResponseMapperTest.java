@@ -32,7 +32,19 @@ class JsonContentResponseMapperTest {
     }
 
     @Test
-    void toMap_response_returnsMap() throws IOException {
+    void getContentAsString_response_returnString() throws IOException {
+        // Given
+        Response response = prepareResponse();
+
+        // When
+        String result = sut.getContentAsString(response);
+
+        // Then
+        assertThat(result, equalTo(TEST_DATA));
+    }
+
+    @Test
+    void toMap_response_returnMap() throws IOException {
         // Given
         Response response = prepareResponse();
         Map<String, String> map = prepareMapperForSingleMap();
@@ -45,7 +57,7 @@ class JsonContentResponseMapperTest {
     }
 
     @Test
-    void toMaps_response_returnsMaps() throws IOException {
+    void toMaps_response_returnMaps() throws IOException {
         // Given
         Response response = prepareResponse();
         List<Map<String, String>> maps = prepareMapperForMultipleMaps();

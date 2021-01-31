@@ -2,7 +2,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
-import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,16 +51,16 @@ class DefaultNodeInfoMapperTest {
         when(timeParser.parse(TEST_UPTIME_IN_SECONDS)).thenReturn(TEST_UPTIME_DURATION);
         when(timeFormatter.format(TEST_UPTIME_DURATION)).thenReturn(TEST_UPTIME_DURATION_FORMATTED);
         Map<String, Object> map = Map.ofEntries(
-                Map.entry(NodeParams.IP_KEY, TEST_IP),
-                Map.entry(NodeParams.RAM_PERCENT_KEY, TEST_RAM.toString()),
-                Map.entry(NodeParams.HEAP_PERCENT_KEY, TEST_HEAP.toString()),
-                Map.entry(NodeParams.NODE_PROCESS_ID, TEST_PROCESS_ID),
-                Map.entry(NodeParams.NODE_ID_KEY, TEST_NODE_ID),
-                Map.entry(NodeParams.NODE_NAME_KEY, TEST_NODE_NAME),
-                Map.entry(NodeParams.NODE_MASTER_KEY, DefaultNodeInfoMapper.MASTER_NODE_MARKER),
-                Map.entry(NodeParams.NODE_ROLE_KEY, NODE_ROLE_MASTER_DATA_PLUS_UNKNOWN_CHARS),
-                Map.entry(NodeParams.NODE_UPTIME, TEST_UPTIME_IN_SECONDS),
-                Map.entry(NodeParams.AVERAGE_LOAD_KEY, TEST_LOAD_AVERAGE.toString())
+                Map.entry(CatNodesParams.IP_COLUMN, TEST_IP),
+                Map.entry(CatNodesParams.RAM_PERCENT_COLUMN, TEST_RAM.toString()),
+                Map.entry(CatNodesParams.HEAP_PERCENT_COLUMN, TEST_HEAP.toString()),
+                Map.entry(CatNodesParams.NODE_PROCESS_ID_COLUMN, TEST_PROCESS_ID),
+                Map.entry(CatNodesParams.NODE_ID_COLUMN, TEST_NODE_ID),
+                Map.entry(CatNodesParams.NODE_NAME_COLUMN, TEST_NODE_NAME),
+                Map.entry(CatNodesParams.NODE_MASTER_COLUMN, DefaultNodeInfoMapper.MASTER_NODE_MARKER),
+                Map.entry(CatNodesParams.NODE_ROLE_COLUMN, NODE_ROLE_MASTER_DATA_PLUS_UNKNOWN_CHARS),
+                Map.entry(CatNodesParams.NODE_UPTIME_COLUMN, TEST_UPTIME_IN_SECONDS),
+                Map.entry(CatNodesParams.AVERAGE_LOAD_COLUMN, TEST_LOAD_AVERAGE.toString())
         );
 
         // When
@@ -86,7 +86,7 @@ class DefaultNodeInfoMapperTest {
     void map_notMasterEligibleOrDataNode_returnsNodeInfo() {
         // Given
         Map<String, Object> map = Map.ofEntries(
-                Map.entry(NodeParams.NODE_ROLE_KEY, NODE_ROLE_UNKNOWN_CHARS)
+                Map.entry(CatNodesParams.NODE_ROLE_COLUMN, NODE_ROLE_UNKNOWN_CHARS)
         );
 
         // When
@@ -101,7 +101,7 @@ class DefaultNodeInfoMapperTest {
     void map_notCurrentMasterNode_returnsNodeInfo() {
         // Given
         Map<String, Object> map = Map.ofEntries(
-                Map.entry(NodeParams.NODE_MASTER_KEY, "-")
+                Map.entry(CatNodesParams.NODE_MASTER_COLUMN, "-")
         );
 
         // When

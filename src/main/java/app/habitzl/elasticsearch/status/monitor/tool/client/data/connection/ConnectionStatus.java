@@ -28,5 +28,29 @@ public enum ConnectionStatus {
     /**
      * There is no further information about the connection status.
      */
-    UNKNOWN,
+    UNKNOWN;
+
+    /**
+     * Determines the connection status from the HTTP status code.
+     */
+    public static ConnectionStatus fromHttpCode(final int httpStatusCode) {
+        ConnectionStatus result;
+
+        switch (httpStatusCode) {
+            case 200:
+                result = SUCCESS;
+                break;
+            case 401:
+                result = UNAUTHORIZED;
+                break;
+            case 404:
+                result = NOT_FOUND;
+                break;
+            default:
+                result = UNKNOWN;
+                break;
+        }
+
+        return result;
+    }
 }
