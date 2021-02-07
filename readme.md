@@ -96,6 +96,7 @@ This section lists all issues that the data analysis supports.
 
 * Cluster setup is missing redundancy
 * Cluster setup allows split brain scenarios
+* Unassigned shards
 * High RAM usage on endpoints
 
 ## About
@@ -123,6 +124,7 @@ To be done.
     * Connection issues
     * Cluster not being redundant
     * Possibility of split brain scenarios
+    * Unassigned shards
     * High RAM usage on endpoints
   * HTML report generation
   * Help output via CLI options (help, version)

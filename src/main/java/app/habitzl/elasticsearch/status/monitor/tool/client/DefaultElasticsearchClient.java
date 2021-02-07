@@ -6,7 +6,9 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAllocationParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterHealthParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterSettingsParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersionParams;
@@ -33,6 +35,7 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     static final String METHOD_GET = "GET";
     static final String HEADER_ACCEPT = "accept";
     static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+    private static final int HTTP_STATUS_BAD_REQUEST = 400;
 
     private final RestClient client;
     private final ResponseMapper responseMapper;
@@ -137,6 +140,38 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         return nodeInfos;
     }
 
+    @Override
+    public Optional<UnassignedShardInfo> getUnassignedShardInfo() {
+        UnassignedShardInfo unassignedShardInfo;
+
+        Request request = new Request(METHOD_GET, ClusterAllocationParams.API_ENDPOINT);
+        setAcceptedContentToJSON(request);
+
+        try {
+            Response response = client.performRequest(request);
+            if (response.getStatusLine().getStatusCode() != HTTP_STATUS_BAD_REQUEST) {
+                String result = responseMapper.getContentAsString(response);
+                unassignedShardInfo = infoMapper.mapUnassignedShardInfo(result);
+                LOG.debug("Mapped unassigned shard info: {}", unassignedShardInfo);
+            } else {
+                unassignedShardInfo = null;
+                LOG.debug("No unassigned shards found.");
+            }
+        } catch (final ResponseException e) {
+            unassignedShardInfo = null;
+            if (e.getResponse().getStatusLine().getStatusCode() == HTTP_STATUS_BAD_REQUEST) {
+                LOG.debug("No unassigned shards found.");
+            } else {
+                logError(e);
+            }
+        } catch (final IOException e) {
+            logError(e);
+            unassignedShardInfo = null;
+        }
+
+        return Optional.ofNullable(unassignedShardInfo);
+    }
+
     /**
      * Either setting the "accept" header or the "format" parameter would also work alone.
      */
@@ -149,6 +184,6 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     }
 
     private void logError(final Exception e) {
-        LOG.error("Failed to get cluster information!", e);
+        LOG.error("Failed to request Elasticsearch data!", e);
     }
 }

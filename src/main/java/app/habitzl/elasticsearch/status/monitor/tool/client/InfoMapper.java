@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.client;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 
 import java.util.Map;
 
@@ -26,4 +27,9 @@ public interface InfoMapper {
      * Maps data returned via the ES {@code /_cat/nodes} API.
      */
     NodeInfo mapNodeInfo(Map<String, Object> data);
+
+    /**
+     * Maps data returned via the ES {@code /_cluster/allocation/explain} API.
+     */
+    UnassignedShardInfo mapUnassignedShardInfo(String jsonData);
 }

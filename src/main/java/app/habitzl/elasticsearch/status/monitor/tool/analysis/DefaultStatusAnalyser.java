@@ -82,6 +82,9 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
         Optional<ClusterInfo> clusterInfo = elasticsearchClient.getClusterInfo();
         List<NodeInfo> nodeInfos = elasticsearchClient.getNodeInfo();
 
+        // TODO get unassigned shard infos if
+        //Optional<UnassignedShardInfo> unassignedShardInfo = elasticsearchClient.getUnassignedShardInfo();
+
         AnalysisResult endpointAnalysisResult = endpointAnalyser.analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
         AnalysisResult clusterAnalysisResult = clusterAnalyser.analyse(clusterSettings, nodeInfos);
 

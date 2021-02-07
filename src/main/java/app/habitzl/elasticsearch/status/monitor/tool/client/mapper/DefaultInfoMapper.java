@@ -4,6 +4,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -13,15 +14,18 @@ public class DefaultInfoMapper implements InfoMapper {
     private final ClusterSettingsMapper clusterSettingsMapper;
     private final ClusterInfoMapper clusterInfoMapper;
     private final NodeInfoMapper nodeInfoMapper;
+    private final ClusterAllocationMapper clusterAllocationMapper;
 
     @Inject
     public DefaultInfoMapper(
             final ClusterSettingsMapper clusterSettingsMapper,
             final ClusterInfoMapper clusterInfoMapper,
-            final NodeInfoMapper nodeInfoMapper) {
+            final NodeInfoMapper nodeInfoMapper,
+            final ClusterAllocationMapper clusterAllocationMapper) {
         this.clusterSettingsMapper = clusterSettingsMapper;
         this.clusterInfoMapper = clusterInfoMapper;
         this.nodeInfoMapper = nodeInfoMapper;
+        this.clusterAllocationMapper = clusterAllocationMapper;
     }
 
     @Override
@@ -37,5 +41,10 @@ public class DefaultInfoMapper implements InfoMapper {
     @Override
     public NodeInfo mapNodeInfo(final Map<String, Object> data) {
         return nodeInfoMapper.map(data);
+    }
+
+    @Override
+    public UnassignedShardInfo mapUnassignedShardInfo(final String jsonData) {
+        return clusterAllocationMapper.map(jsonData);
     }
 }

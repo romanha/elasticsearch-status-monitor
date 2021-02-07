@@ -3,12 +3,15 @@ package app.habitzl.elasticsearch.status.monitor.tool.client;
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.ClusterSettingsUtils;
 import app.habitzl.elasticsearch.status.monitor.NodeInfos;
+import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAllocationParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterHealthParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterSettingsParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersionParams;
@@ -45,6 +48,7 @@ class DefaultElasticsearchClientTest {
     private static final ProtocolVersion HTTP_PROTOCOL_VERSION = new ProtocolVersion("HTTP", 2, 0);
     private static final RequestLine FAKE_REQUEST_LINE = new BasicRequestLine("GET", "/", HTTP_PROTOCOL_VERSION);
     private static final int HTTP_STATUS_OK = 200;
+    private static final int HTTP_STATUS_BAD_REQUEST = 400;
     private static final int HTTP_STATUS_NOT_FOUND = 404;
 
     private DefaultElasticsearchClient sut;
@@ -261,6 +265,71 @@ class DefaultElasticsearchClientTest {
         assertThat(result, empty());
     }
 
+    @Test
+    void getUnassignedShardInfo_always_sendClusterAllocationRequest() throws IOException {
+        // Given
+        givenClientRespondsWith(HTTP_STATUS_OK);
+
+        // When
+        sut.getUnassignedShardInfo();
+
+        // Then
+        Request expectedRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, ClusterAllocationParams.API_ENDPOINT);
+        verify(client).performRequest(expectedRequest);
+    }
+
+    @Test
+    void getUnassignedShardInfo_successResponse_returnUnassignedShardInfo() throws IOException {
+        // Given
+        Response response = givenClientRespondsWith(HTTP_STATUS_OK);
+        String content = givenResponseHasContent(response);
+        UnassignedShardInfo expected = givenContentCanBeMappedToUnassignedShardInfo(content);
+
+        // When
+        Optional<UnassignedShardInfo> result = sut.getUnassignedShardInfo();
+
+        // Then
+        assertThat(result, isPresentAnd(equalTo(expected)));
+    }
+
+    @Test
+    void getUnassignedShardInfo_responseMapperThrowsException_returnEmpty() throws IOException {
+        // Given
+        givenClientRespondsWith(HTTP_STATUS_OK);
+        givenResponseMapperThrowsException();
+
+        // When
+        Optional<UnassignedShardInfo> result = sut.getUnassignedShardInfo();
+
+        // Then
+        assertThat(result, isEmpty());
+    }
+
+    @Test
+    void getUnassignedShardInfo_errorResponseWithBadRequest_returnEmpty() throws IOException {
+        // Given
+        givenClientRespondsWith(HTTP_STATUS_BAD_REQUEST);
+        givenResponseMapperThrowsException();
+
+        // When
+        Optional<UnassignedShardInfo> result = sut.getUnassignedShardInfo();
+
+        // Then
+        assertThat(result, isEmpty());
+    }
+
+    @Test
+    void getUnassignedShardInfo_clientThrowsResponseException_returnErrorConnectionInfo() throws IOException {
+        // Given
+        givenClientThrowsResponseException(HTTP_STATUS_BAD_REQUEST);
+
+        // When
+        Optional<UnassignedShardInfo> result = sut.getUnassignedShardInfo();
+
+        // Then
+        assertThat(result, isEmpty());
+    }
+
     private Response givenClientRespondsWith(final int statusCode) throws IOException {
         Response response = mockResponse(statusCode);
         when(client.performRequest(any(Request.class))).thenReturn(response);
@@ -327,6 +396,12 @@ class DefaultElasticsearchClientTest {
         }
 
         return infos;
+    }
+
+    private UnassignedShardInfo givenContentCanBeMappedToUnassignedShardInfo(final String responseContent) {
+        UnassignedShardInfo info = UnassignedShardInfos.random();
+        when(infoMapper.mapUnassignedShardInfo(responseContent)).thenReturn(info);
+        return info;
     }
 
     private void givenResponseMapperThrowsException() throws IOException {

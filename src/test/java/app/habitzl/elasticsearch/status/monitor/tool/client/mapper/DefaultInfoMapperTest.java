@@ -17,13 +17,20 @@ class DefaultInfoMapperTest {
     private ClusterSettingsMapper clusterSettingsMapper;
     private ClusterInfoMapper clusterInfoMapper;
     private NodeInfoMapper nodeInfoMapper;
+    private ClusterAllocationMapper clusterAllocationMapper;
 
     @BeforeEach
     void setUp() {
         clusterSettingsMapper = mock(ClusterSettingsMapper.class);
         clusterInfoMapper = mock(ClusterInfoMapper.class);
         nodeInfoMapper = mock(NodeInfoMapper.class);
-        sut = new DefaultInfoMapper(clusterSettingsMapper, clusterInfoMapper, nodeInfoMapper);
+        clusterAllocationMapper = mock(ClusterAllocationMapper.class);
+        sut = new DefaultInfoMapper(
+                clusterSettingsMapper,
+                clusterInfoMapper,
+                nodeInfoMapper,
+                clusterAllocationMapper
+        );
     }
 
     @Test
@@ -60,5 +67,17 @@ class DefaultInfoMapperTest {
 
         // Then
         verify(nodeInfoMapper).map(map);
+    }
+
+    @Test
+    void mapUnassignedShardInfo_sut_delegatesToClusterAllocationMapper() {
+        // Given
+        String json = TEST_STRING;
+
+        // When
+        sut.mapUnassignedShardInfo(json);
+
+        // Then
+        verify(clusterAllocationMapper).map(json);
     }
 }
