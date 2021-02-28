@@ -8,12 +8,12 @@
   * [Running the tool](#running-the-tool)
   * [Logging](#logging)
 * [Configuration](#configuration)
-  * [Command Line Options](#command-line-options)
+  * [Command line options](#command-line-options)
 * [Features](#features)
 * [About](#about)
   * [Author](#author)
   * [License](#license)
-* [Release Notes](#release-notes)
+* [Release notes](#release-notes)
 
 ## Introduction
 
@@ -27,7 +27,7 @@ The tool does not manipulate or change the cluster or its data.
 
 ### Requirements
 
-The tool requires Java 11.
+Running the tool requires a Java runtime environment of version 11 or higher.
 
 ### Running the tool
 
@@ -53,11 +53,11 @@ Exit Code | Description
 
 ### Logging
 
-The tool logs into a `logs` folder, which is created from where the tool is called.
+The tool logs into a `logs` folder, which is created in the directory from where the tool is called.
 
 ## Configuration
 
-### Command Line Options
+### Command line options
 
 The tool supports following CLI options:
 
@@ -109,7 +109,7 @@ The _Elasticsearch Status Monitor_ is developed by Roman Habitzl since December 
 
 To be done.
 
-## Release Notes
+## Release notes
 
 ### 1.0.0
 
@@ -130,4 +130,4 @@ To be done.
   * Help output via CLI options (help, version)
   * Tool configuration via CLI options (host, port, security, username, password)
   * SSL/TLS support for connecting to Elasticsearch
-  * Exit codes for running as part of a script
+  * Exit codes for running the tool as part of a script

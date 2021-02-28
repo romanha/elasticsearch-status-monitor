@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.NodeInfos;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
+import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
@@ -18,6 +19,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -197,7 +199,8 @@ class DefaultStatusAnalyserTest {
     private AnalysisReport givenAllRequestsSucceed() {
         ClusterInfo clusterInfo = ClusterInfos.random();
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
-        givenAllRequestsSucceed(clusterInfo, nodeInfos);
+        UnassignedShardInfo unassignedShardInfo = UnassignedShardInfos.random();
+        givenAllRequestsSucceed(clusterInfo, nodeInfos, unassignedShardInfo);
         return AnalysisReport.finished(configuration, List.of(), List.of(), clusterInfo, nodeInfos);
     }
 
@@ -207,14 +210,19 @@ class DefaultStatusAnalyserTest {
     private AnalysisReport givenAllRequestsSucceedWithWarnings(final List<Warning> warnings) {
         ClusterInfo clusterInfo = ClusterInfos.random();
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
-        givenAllRequestsSucceed(clusterInfo, nodeInfos);
+        UnassignedShardInfo unassignedShardInfo = UnassignedShardInfos.random();
+        givenAllRequestsSucceed(clusterInfo, nodeInfos, unassignedShardInfo);
         return AnalysisReport.finished(configuration, List.of(), warnings, clusterInfo, nodeInfos);
     }
 
-    private void givenAllRequestsSucceed(final ClusterInfo clusterInfo, final List<NodeInfo> nodeInfos) {
+    private void givenAllRequestsSucceed(
+            final ClusterInfo clusterInfo,
+            final List<NodeInfo> nodeInfos,
+            final UnassignedShardInfo unassignedShardInfo) {
         when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success());
         when(elasticsearchClient.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
         when(elasticsearchClient.getNodeInfo()).thenReturn(nodeInfos);
+        when(elasticsearchClient.getUnassignedShardInfo()).thenReturn(Optional.of(unassignedShardInfo));
     }
 
     private Warning givenEndpointAnalyserFindsWarning() {

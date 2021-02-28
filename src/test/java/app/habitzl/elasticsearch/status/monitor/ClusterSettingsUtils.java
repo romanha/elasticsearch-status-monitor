@@ -1,7 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
-import java.security.SecureRandom;
 
 /**
  * Utility class for creating random cluster settings.
@@ -15,8 +14,7 @@ public final class ClusterSettingsUtils {
     }
 
     public static ClusterSettings random() {
-        SecureRandom random = new SecureRandom();
-        return random(random.nextInt(ONE_HUNDRED));
+        return random(Randoms.generateInteger(ONE_HUNDRED));
     }
 
     public static ClusterSettings random(final int minimumMasterNodes) {

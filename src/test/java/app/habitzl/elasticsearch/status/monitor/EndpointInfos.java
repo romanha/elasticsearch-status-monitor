@@ -2,24 +2,22 @@ package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 
-import java.security.SecureRandom;
-
 /**
  * Utility class for creating random endpoint infos.
  */
 public final class EndpointInfos {
+
+    private static final int ONE_HUNDRED = 100;
 
     private EndpointInfos() {
         // instantiation protection
     }
 
     public static EndpointInfo random() {
-        SecureRandom random = new SecureRandom();
-
         return new EndpointInfo(
-                "Address " + random.nextInt(),
-                (int) (Math.random() * 100),
-                (int) (Math.random() * 100)
+                "Address " + Randoms.generateInteger(),
+                Randoms.generateInteger(ONE_HUNDRED),
+                Randoms.generateInteger(ONE_HUNDRED)
         );
     }
 }

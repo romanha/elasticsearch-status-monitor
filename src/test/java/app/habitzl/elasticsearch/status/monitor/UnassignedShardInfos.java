@@ -3,7 +3,6 @@ package app.habitzl.elasticsearch.status.monitor;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedReason;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.List;
 
@@ -17,15 +16,13 @@ public final class UnassignedShardInfos {
     }
 
     public static UnassignedShardInfo random() {
-        SecureRandom random = new SecureRandom();
-
         return new UnassignedShardInfo(
-                "test-index-" + random.nextInt(),
-                Math.abs(random.nextInt()),
-                random.nextBoolean(),
-                UnassignedReason.UNKNOWN_REASON,
+                "test-index-" + Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
+                Randoms.generateBoolean(),
+                Randoms.generateEnumValue(UnassignedReason.class),
                 Instant.now(),
-                "cannot allocated because of reason " + random.nextInt(),
+                "cannot allocated because of reason " + Randoms.generatePositiveInteger(),
                 List.of(NodeAllocationDecisions.random(), NodeAllocationDecisions.random())
         );
     }

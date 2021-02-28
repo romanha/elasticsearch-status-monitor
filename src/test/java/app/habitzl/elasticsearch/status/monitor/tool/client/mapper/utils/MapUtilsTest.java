@@ -1,9 +1,8 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils;
 
-import org.junit.jupiter.api.BeforeEach;
+import app.habitzl.elasticsearch.status.monitor.Randoms;
 import org.junit.jupiter.api.Test;
 
-import java.security.SecureRandom;
 import java.util.Map;
 
 import static app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils.MapUtils.ZERO_FLOAT;
@@ -17,13 +16,6 @@ class MapUtilsTest {
     private static final String KNOWN_KEY = "key";
     private static final String UNKNOWN_KEY = "unknown key";
     private static final String STRING_VALUE = "string value";
-
-    private SecureRandom random;
-
-    @BeforeEach
-    void setUp() {
-        random = new SecureRandom();
-    }
 
     @Test
     void getString_unknownKey_returnsEmpty() {
@@ -52,7 +44,7 @@ class MapUtilsTest {
     @Test
     void getInteger_unknownKey_returnsZero() {
         // Given
-        Map<String, Object> map = Map.of(KNOWN_KEY, random.nextInt());
+        Map<String, Object> map = Map.of(KNOWN_KEY, Randoms.generateInteger());
 
         // When
         int result = MapUtils.getInteger(map, UNKNOWN_KEY);
@@ -64,7 +56,7 @@ class MapUtilsTest {
     @Test
     void getInteger_knownKey_returnsValue() {
         // Given
-        Integer value = random.nextInt();
+        Integer value = Randoms.generateInteger();
         Map<String, Object> map = Map.of(KNOWN_KEY, value.toString());
 
         // When
@@ -77,7 +69,7 @@ class MapUtilsTest {
     @Test
     void getFloat_unknownKey_returnsZero() {
         // Given
-        Map<String, Object> map = Map.of(KNOWN_KEY, random.nextFloat());
+        Map<String, Object> map = Map.of(KNOWN_KEY, Randoms.generateFloat());
 
         // When
         float result = MapUtils.getFloat(map, UNKNOWN_KEY);
@@ -89,7 +81,7 @@ class MapUtilsTest {
     @Test
     void getFloat_knownKey_returnsValue() {
         // Given
-        Float value = random.nextFloat();
+        Float value = Randoms.generateFloat();
         Map<String, Object> map = Map.of(KNOWN_KEY, value.toString());
 
         // When

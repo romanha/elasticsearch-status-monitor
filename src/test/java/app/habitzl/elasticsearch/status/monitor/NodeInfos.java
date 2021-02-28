@@ -3,7 +3,6 @@ package app.habitzl.elasticsearch.status.monitor;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 
-import java.security.SecureRandom;
 import java.time.Duration;
 
 /**
@@ -36,16 +35,15 @@ public final class NodeInfos {
     }
 
     private static NodeInfo random(final EndpointInfo endpoint, final boolean isMasterEligible, final boolean isDataNode) {
-        SecureRandom random = new SecureRandom();
         return new NodeInfo(
-                "P" + random.nextInt(),
-                "node-id-" + random.nextInt(),
-                "node-name-" + random.nextInt(),
-                random.nextBoolean(),
+                "P" + Randoms.generatePositiveInteger(),
+                "node-id-" + Randoms.generatePositiveInteger(),
+                "node-name-" + Randoms.generatePositiveInteger(),
+                Randoms.generateBoolean(),
                 isDataNode,
                 isMasterEligible,
-                Duration.ofMillis(random.nextInt()).toString(),
-                random.nextFloat(),
+                Duration.ofMillis(Randoms.generatePositiveInteger()).toString(),
+                Randoms.generateFloat(),
                 endpoint
         );
     }
