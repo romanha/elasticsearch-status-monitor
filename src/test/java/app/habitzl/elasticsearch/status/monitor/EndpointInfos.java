@@ -15,7 +15,7 @@ public final class EndpointInfos {
 
     public static EndpointInfo random() {
         return new EndpointInfo(
-                "Address " + Randoms.generateInteger(),
+                Randoms.generateString("Address "),
                 Randoms.generateInteger(ONE_HUNDRED),
                 Randoms.generateInteger(ONE_HUNDRED)
         );

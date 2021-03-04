@@ -17,12 +17,12 @@ public final class UnassignedShardInfos {
 
     public static UnassignedShardInfo random() {
         return new UnassignedShardInfo(
-                "test-index-" + Randoms.generatePositiveInteger(),
+                Randoms.generateString("test-index-"),
                 Randoms.generatePositiveInteger(),
                 Randoms.generateBoolean(),
                 Randoms.generateEnumValue(UnassignedReason.class),
                 Instant.now(),
-                "cannot allocated because of reason " + Randoms.generatePositiveInteger(),
+                Randoms.generateString("cannot allocated because of reason "),
                 List.of(NodeAllocationDecisions.random(), NodeAllocationDecisions.random())
         );
     }

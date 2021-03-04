@@ -22,8 +22,8 @@ public final class StatusMonitorConfigurations {
         configuration.setHost(LOCAL_IP_ADDRESS);
         configuration.setPort(Integer.toString(port));
         configuration.setUsingHttps(isUsingHttps);
-        configuration.setUsername("user-" + Randoms.generatePositiveInteger());
-        configuration.setPassword("password-" + Randoms.generatePositiveInteger());
+        configuration.setUsername(Randoms.generateString("user-"));
+        configuration.setPassword(Randoms.generateString("password-"));
         return configuration;
     }
 }

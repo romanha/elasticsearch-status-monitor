@@ -14,7 +14,7 @@ public final class ClusterInfos {
 
     public static ClusterInfo random() {
         return new ClusterInfo(
-                "test-cluster-" + Randoms.generateInteger(),
+                Randoms.generateString("test-cluster-"),
                 ClusterHealthStatus.GREEN,
                 Randoms.generateInteger(),
                 Randoms.generateInteger(),

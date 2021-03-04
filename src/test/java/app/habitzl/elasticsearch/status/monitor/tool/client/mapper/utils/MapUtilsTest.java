@@ -13,9 +13,9 @@ import static org.hamcrest.Matchers.equalTo;
 
 class MapUtilsTest {
 
-    private static final String KNOWN_KEY = "key";
-    private static final String UNKNOWN_KEY = "unknown key";
-    private static final String STRING_VALUE = "string value";
+    private static final String KNOWN_KEY = Randoms.generateString("key-");
+    private static final String UNKNOWN_KEY = Randoms.generateString("unknown-key-");
+    private static final String STRING_VALUE = Randoms.generateString();
 
     @Test
     void getString_unknownKey_returnsEmpty() {

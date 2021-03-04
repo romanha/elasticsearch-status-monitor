@@ -36,9 +36,9 @@ public final class NodeInfos {
 
     private static NodeInfo random(final EndpointInfo endpoint, final boolean isMasterEligible, final boolean isDataNode) {
         return new NodeInfo(
-                "P" + Randoms.generatePositiveInteger(),
-                "node-id-" + Randoms.generatePositiveInteger(),
-                "node-name-" + Randoms.generatePositiveInteger(),
+                Randoms.generateString("P"),
+                Randoms.generateString("node-id-"),
+                Randoms.generateString("node-name-"),
                 Randoms.generateBoolean(),
                 isDataNode,
                 isMasterEligible,

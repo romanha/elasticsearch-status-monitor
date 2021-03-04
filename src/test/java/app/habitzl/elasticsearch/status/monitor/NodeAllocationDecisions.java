@@ -15,13 +15,13 @@ public final class NodeAllocationDecisions {
 
     public static NodeAllocationDecision random() {
         return new NodeAllocationDecision(
-                "node-id-" + Randoms.generateInteger(),
-                "node-name-" + Randoms.generateInteger(),
+                Randoms.generateString("node-id-"),
+                Randoms.generateString("node-name-"),
                 List.of(randomDecision(), randomDecision())
         );
     }
 
     private static String randomDecision() {
-        return "node does not match setting " + Randoms.generateInteger();
+        return Randoms.generateString("node does not match setting ");
     }
 }

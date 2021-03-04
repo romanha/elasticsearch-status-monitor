@@ -8,6 +8,13 @@ import java.security.SecureRandom;
 public final class Randoms {
 
     private static final SecureRandom RANDOM = new SecureRandom();
+    private static final int DEFAULT_STRING_LENGTH = 5;
+    private static final int UNICODE_INDEX_ZERO = 48;
+    private static final int UNICODE_INDEX_NINE = 57;
+    private static final int UNICODE_INDEX_CAPITAL_A = 65;
+    private static final int UNICODE_INDEX_CAPITAL_Z = 90;
+    private static final int UNICODE_INDEX_SMALL_A = 97;
+    private static final int UNICODE_INDEX_SMALL_Z = 122;
 
     private Randoms() {
         // instantiation protection
@@ -62,5 +69,34 @@ public final class Randoms {
         T[] enumConstants = clazz.getEnumConstants();
         int randomIndex = RANDOM.nextInt(enumConstants.length);
         return enumConstants[randomIndex];
+    }
+
+    /**
+     * Generates a random alphanumeric String value with 5 characters.
+     */
+    public static String generateString() {
+        return generateString(DEFAULT_STRING_LENGTH);
+    }
+
+    /**
+     * Appends a random alphanumeric String value with 5 characters to the given prefix.
+     */
+    public static String generateString(final String prefix) {
+        return prefix + generateString(DEFAULT_STRING_LENGTH);
+    }
+
+    /**
+     * Generates a random alphanumeric String value of the given length.
+     * <p>
+     * The generated String can contain any character from 0-9, A-Z and a-z.
+     */
+    private static String generateString(final int length) {
+        return RANDOM.ints(UNICODE_INDEX_ZERO, UNICODE_INDEX_SMALL_Z + 1)
+                     .filter(unicodeIndex ->
+                             (unicodeIndex <= UNICODE_INDEX_NINE || unicodeIndex >= UNICODE_INDEX_CAPITAL_A)
+                                     && (unicodeIndex <= UNICODE_INDEX_CAPITAL_Z || unicodeIndex >= UNICODE_INDEX_SMALL_A))
+                     .limit(length)
+                     .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                     .toString();
     }
 }

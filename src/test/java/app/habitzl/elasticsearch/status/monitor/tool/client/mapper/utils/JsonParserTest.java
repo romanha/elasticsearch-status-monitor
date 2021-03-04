@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils;
 
+import app.habitzl.elasticsearch.status.monitor.Randoms;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -18,9 +19,9 @@ import static org.hamcrest.Matchers.*;
 
 class JsonParserTest {
 
-    private static final String TEST_CHILD_STRING_VALUE = "test child string";
-    private static final String TEST_STRING_VALUE = "test string";
-    private static final int TEST_NUMBER_VALUE = 42;
+    private static final String TEST_CHILD_STRING_VALUE = Randoms.generateString();
+    private static final String TEST_STRING_VALUE = Randoms.generateString();
+    private static final int TEST_NUMBER_VALUE = Randoms.generateInteger();
 
     private static final String JSON_TEST_STRING = "{\n"
             + "  \"parent\": {\n"
