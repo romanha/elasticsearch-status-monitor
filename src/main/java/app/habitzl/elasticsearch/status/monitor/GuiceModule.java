@@ -8,6 +8,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnaly
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
@@ -79,6 +80,7 @@ class GuiceModule extends AbstractModule {
         bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
         bind(EndpointAnalyser.class).in(Singleton.class);
         bind(ClusterAnalyser.class).in(Singleton.class);
+        bind(ShardAnalyser.class).in(Singleton.class);
 
         // Presentation
         bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);

@@ -13,6 +13,10 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class DefaultClusterAllocationMapperTest {
 
@@ -20,7 +24,8 @@ class DefaultClusterAllocationMapperTest {
     private static final int SHARD_NUMBER = 2;
     private static final boolean IS_PRIMARY_SHARD = false;
     private static final UnassignedReason UNASSIGNED_REASON = UnassignedReason.INDEX_CREATED;
-    private static final Instant UNASSIGNED_SINCE = Instant.parse("2021-01-31T16:08:16.600Z");
+    private static final String UNASSIGNED_SINCE_STRING = "2021-01-31T16:08:16.600Z";
+    private static final Instant UNASSIGNED_SINCE = Instant.parse(UNASSIGNED_SINCE_STRING);
     private static final String ALLOCATE_EXPLANATION = "cannot allocate because allocation is not permitted to any of the nodes";
     private static final String NODE_ID_1 = "node-id-1";
     private static final String NODE_NAME_1 = "node-name-1";
@@ -74,7 +79,8 @@ class DefaultClusterAllocationMapperTest {
     @BeforeEach
     void setUp() {
         JsonParser parser = new JsonParser(new ObjectMapper());
-        sut = new DefaultClusterAllocationMapper(parser);
+        TimeFormatter timeFormatter = prepareTimeFormatter();
+        sut = new DefaultClusterAllocationMapper(parser, timeFormatter);
     }
 
     @Test
@@ -90,6 +96,7 @@ class DefaultClusterAllocationMapperTest {
                 IS_PRIMARY_SHARD,
                 UNASSIGNED_REASON,
                 UNASSIGNED_SINCE,
+                UNASSIGNED_SINCE_STRING,
                 ALLOCATE_EXPLANATION,
                 expectedNodeAllocationDecisions
         );
@@ -111,6 +118,7 @@ class DefaultClusterAllocationMapperTest {
                 UnassignedReason.UNKNOWN_REASON,
                 null,
                 "",
+                "",
                 List.of()
         );
         String invalidJson = "invalidJson";
@@ -120,5 +128,12 @@ class DefaultClusterAllocationMapperTest {
 
         // Then
         assertThat(result, equalTo(expectedInfo));
+    }
+
+    private TimeFormatter prepareTimeFormatter() {
+        TimeFormatter timeFormatter = mock(TimeFormatter.class);
+        when(timeFormatter.format((Instant) notNull())).thenReturn(UNASSIGNED_SINCE_STRING);
+        when(timeFormatter.format((Instant) isNull())).thenReturn("");
+        return timeFormatter;
     }
 }

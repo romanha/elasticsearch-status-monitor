@@ -14,6 +14,7 @@ public class UnassignedShardInfo {
     private final boolean isPrimaryShard;
     private final UnassignedReason unassignedReason;
     private final Instant unassignedSince;
+    private final String unassignedSinceString;
     private final String explanation;
     private final List<NodeAllocationDecision> nodeDecisions;
 
@@ -23,6 +24,7 @@ public class UnassignedShardInfo {
             final boolean isPrimaryShard,
             final UnassignedReason unassignedReason,
             final Instant unassignedSince,
+            final String unassignedSinceString,
             final String explanation,
             final List<NodeAllocationDecision> nodeDecisions) {
         this.indexName = indexName;
@@ -30,6 +32,7 @@ public class UnassignedShardInfo {
         this.isPrimaryShard = isPrimaryShard;
         this.unassignedReason = Objects.isNull(unassignedReason) ? UnassignedReason.UNKNOWN_REASON : unassignedReason;
         this.unassignedSince = unassignedSince;
+        this.unassignedSinceString = unassignedSinceString;
         this.explanation = explanation;
         this.nodeDecisions = Objects.isNull(nodeDecisions) ? List.of() : List.copyOf(nodeDecisions);
     }
@@ -52,6 +55,10 @@ public class UnassignedShardInfo {
 
     public Instant getUnassignedSince() {
         return unassignedSince;
+    }
+
+    public String getUnassignedSinceString() {
+        return unassignedSinceString;
     }
 
     public String getExplanation() {
@@ -78,6 +85,7 @@ public class UnassignedShardInfo {
                     && Objects.equals(indexName, that.indexName)
                     && Objects.equals(unassignedReason, that.unassignedReason)
                     && Objects.equals(unassignedSince, that.unassignedSince)
+                    && Objects.equals(unassignedSinceString, that.unassignedSinceString)
                     && Objects.equals(explanation, that.explanation)
                     && Objects.equals(nodeDecisions, that.nodeDecisions);
         }
@@ -87,7 +95,7 @@ public class UnassignedShardInfo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(indexName, shardNumber, isPrimaryShard, unassignedReason, unassignedSince, explanation, nodeDecisions);
+        return Objects.hash(indexName, shardNumber, isPrimaryShard, unassignedReason, unassignedSince, unassignedSinceString, explanation, nodeDecisions);
     }
 
     @Override
@@ -98,6 +106,7 @@ public class UnassignedShardInfo {
                 .add("isPrimaryShard=" + isPrimaryShard)
                 .add("unassignedReason=" + unassignedReason)
                 .add("unassignedSince=" + unassignedSince)
+                .add("unassignedSinceString='" + unassignedSinceString + "'")
                 .add("explanation='" + explanation + "'")
                 .add("nodeDecisions=" + nodeDecisions)
                 .toString();

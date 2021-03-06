@@ -32,10 +32,12 @@ public class DefaultClusterAllocationMapper implements ClusterAllocationMapper {
     private static final String ALLOCATION_DECISION_DECIDER_EXPLANATION_PATH = "/explanation";
 
     private final JsonParser parser;
+    private final TimeFormatter timeFormatter;
 
     @Inject
-    public DefaultClusterAllocationMapper(final JsonParser parser) {
+    public DefaultClusterAllocationMapper(final JsonParser parser, final TimeFormatter timeFormatter) {
         this.parser = parser;
+        this.timeFormatter = timeFormatter;
     }
 
     @Override
@@ -47,7 +49,9 @@ public class DefaultClusterAllocationMapper implements ClusterAllocationMapper {
                                                   .map(String::toUpperCase)
                                                   .map(UnassignedReason::valueOf)
                                                   .orElse(UnassignedReason.UNKNOWN_REASON);
-        Optional<String> unassignedSince = parser.getValueFromPath(jsonData, UNASSIGNED_INFO_TIMESTAMP_PATH, String.class);
+        Instant unassignedSince = parser.getValueFromPath(jsonData, UNASSIGNED_INFO_TIMESTAMP_PATH, String.class)
+                                        .flatMap(this::parseTimestamp)
+                                        .orElse(null);
         Optional<String> explanation = parser.getValueFromPath(jsonData, ALLOCATION_EXPLANATION_PATH, String.class);
 
         List<NodeAllocationDecision> decisions = mapNodeAllocationDecisions(jsonData);
@@ -57,7 +61,8 @@ public class DefaultClusterAllocationMapper implements ClusterAllocationMapper {
                 shardNumber.orElse(-1),
                 isPrimaryShard.orElse(false),
                 unassignedReason,
-                unassignedSince.flatMap(this::parseTimestamp).orElse(null),
+                unassignedSince,
+                timeFormatter.format(unassignedSince),
                 explanation.orElse(""),
                 decisions
         );

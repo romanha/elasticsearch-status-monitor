@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
@@ -15,6 +16,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,17 +34,20 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
     private final ElasticsearchClient elasticsearchClient;
     private final EndpointAnalyser endpointAnalyser;
     private final ClusterAnalyser clusterAnalyser;
+    private final ShardAnalyser shardAnalyser;
 
     @Inject
     public DefaultStatusAnalyser(
             final StatusMonitorConfiguration configuration,
             final ElasticsearchClient elasticsearchClient,
             final EndpointAnalyser endpointAnalyser,
-            final ClusterAnalyser clusterAnalyser) {
+            final ClusterAnalyser clusterAnalyser,
+            final ShardAnalyser shardAnalyser) {
         this.configuration = configuration;
         this.elasticsearchClient = elasticsearchClient;
         this.endpointAnalyser = endpointAnalyser;
         this.clusterAnalyser = clusterAnalyser;
+        this.shardAnalyser = shardAnalyser;
     }
 
     @Override
@@ -81,16 +86,18 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
         ClusterSettings clusterSettings = elasticsearchClient.getClusterSettings().orElse(ClusterSettings.createDefault());
         Optional<ClusterInfo> clusterInfo = elasticsearchClient.getClusterInfo();
         List<NodeInfo> nodeInfos = elasticsearchClient.getNodeInfo();
-
-        // TODO get unassigned shard infos if
-        //Optional<UnassignedShardInfo> unassignedShardInfo = elasticsearchClient.getUnassignedShardInfo();
+        Optional<UnassignedShardInfo> unassignedShardInfo =
+                clusterInfo.filter(info -> info.getNumberOfUnassignedShards() > 0)
+                           .flatMap(info -> elasticsearchClient.getUnassignedShardInfo());
 
         AnalysisResult endpointAnalysisResult = endpointAnalyser.analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
         AnalysisResult clusterAnalysisResult = clusterAnalyser.analyse(clusterSettings, nodeInfos);
+        AnalysisResult shardAnalysisResult = shardAnalyser.analyse(unassignedShardInfo.orElse(null));
 
         AnalysisResult analysisResult = combineAnalysisResults(
                 endpointAnalysisResult,
-                clusterAnalysisResult
+                clusterAnalysisResult,
+                shardAnalysisResult
         );
 
         return AnalysisReport.finished(

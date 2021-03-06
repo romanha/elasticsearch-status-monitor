@@ -22,6 +22,7 @@ public final class UnassignedShardInfos {
                 Randoms.generateBoolean(),
                 Randoms.generateEnumValue(UnassignedReason.class),
                 Instant.now(),
+                Randoms.generateString("unassigned since "),
                 Randoms.generateString("cannot allocated because of reason "),
                 List.of(NodeAllocationDecisions.random(), NodeAllocationDecisions.random())
         );

@@ -35,10 +35,10 @@ public final class Randoms {
     }
 
     /**
-     * Generates a random positive integer value.
+     * Generates a random positive integer value (excluding 0).
      */
     public static int generatePositiveInteger() {
-        return generateInteger(0, Integer.MAX_VALUE - 1);
+        return generateInteger(1, Integer.MAX_VALUE - 1);
     }
 
     /**

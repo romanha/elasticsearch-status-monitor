@@ -15,13 +15,26 @@ public final class ClusterInfos {
     public static ClusterInfo random() {
         return new ClusterInfo(
                 Randoms.generateString("test-cluster-"),
+                Randoms.generateEnumValue(ClusterHealthStatus.class),
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger()
+        );
+    }
+
+    public static ClusterInfo randomHealthy() {
+        return new ClusterInfo(
+                Randoms.generateString("test-cluster-"),
                 ClusterHealthStatus.GREEN,
-                Randoms.generateInteger(),
-                Randoms.generateInteger(),
-                Randoms.generateInteger(),
-                Randoms.generateInteger(),
-                Randoms.generateInteger(),
-                Randoms.generateInteger()
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
+                0,
+                0
         );
     }
 }

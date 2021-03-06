@@ -6,6 +6,7 @@ import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
@@ -14,6 +15,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLH
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.ClusterNotRedundantWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.HighRamUsageWarning;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.UnassignedShardsWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,6 +43,7 @@ class DefaultStatusAnalyserTest {
     private ElasticsearchClient elasticsearchClient;
     private EndpointAnalyser endpointAnalyser;
     private ClusterAnalyser clusterAnalyser;
+    private ShardAnalyser shardAnalyser;
 
     @BeforeEach
     void setUp() {
@@ -47,7 +51,8 @@ class DefaultStatusAnalyserTest {
         elasticsearchClient = mock(ElasticsearchClient.class);
         mockEndpointAnalyser();
         mockClusterAnalyser();
-        sut = new DefaultStatusAnalyser(configuration, elasticsearchClient, endpointAnalyser, clusterAnalyser);
+        mockShardAnalyser();
+        sut = new DefaultStatusAnalyser(configuration, elasticsearchClient, endpointAnalyser, clusterAnalyser, shardAnalyser);
     }
 
     @Test
@@ -129,6 +134,23 @@ class DefaultStatusAnalyserTest {
         inOrder.verify(elasticsearchClient).checkConnection();
         inOrder.verify(elasticsearchClient).getClusterInfo();
         inOrder.verify(elasticsearchClient).getNodeInfo();
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    void createReport_allStatusRequestsSucceedWithWarnings_performStatusRequestsInOrder() {
+        // Given
+        givenAllRequestsSucceedWithWarnings(List.of());
+
+        // When
+        sut.createReport();
+
+        // Then
+        InOrder inOrder = inOrder(elasticsearchClient);
+        inOrder.verify(elasticsearchClient).checkConnection();
+        inOrder.verify(elasticsearchClient).getClusterInfo();
+        inOrder.verify(elasticsearchClient).getNodeInfo();
+        inOrder.verify(elasticsearchClient).getUnassignedShardInfo();
     }
 
     @Test
@@ -170,11 +192,25 @@ class DefaultStatusAnalyserTest {
     }
 
     @Test
+    void createReport_shardAnalyserFindsWarning_returnExpectedAnalysisReport() {
+        // Given
+        Warning warning = givenShardAnalyserFindsWarning();
+        AnalysisReport expectedAnalysisReport = givenAllRequestsSucceedWithWarnings(List.of(warning));
+
+        // When
+        AnalysisReport analysisReport = sut.createReport();
+
+        // Then
+        assertThat(analysisReport, equalTo(expectedAnalysisReport));
+    }
+
+    @Test
     void createReport_everyAnalyserFindsWarning_returnExpectedAnalysisReport() {
         // Given
         Warning warning1 = givenEndpointAnalyserFindsWarning();
         Warning warning2 = givenClusterAnalyserFindsWarning();
-        AnalysisReport expectedAnalysisReport = givenAllRequestsSucceedWithWarnings(List.of(warning1, warning2));
+        Warning warning3 = givenShardAnalyserFindsWarning();
+        AnalysisReport expectedAnalysisReport = givenAllRequestsSucceedWithWarnings(List.of(warning1, warning2, warning3));
 
         // When
         AnalysisReport analysisReport = sut.createReport();
@@ -193,14 +229,18 @@ class DefaultStatusAnalyserTest {
         when(clusterAnalyser.analyse(any(ClusterSettings.class), anyList())).thenReturn(AnalysisResult.empty());
     }
 
+    private void mockShardAnalyser() {
+        shardAnalyser = mock(ShardAnalyser.class);
+        when(shardAnalyser.analyse(nullable(UnassignedShardInfo.class))).thenReturn(AnalysisResult.empty());
+    }
+
     /**
      * Returns the expected status report from all status monitor requests.
      */
     private AnalysisReport givenAllRequestsSucceed() {
-        ClusterInfo clusterInfo = ClusterInfos.random();
+        ClusterInfo clusterInfo = ClusterInfos.randomHealthy();
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
-        UnassignedShardInfo unassignedShardInfo = UnassignedShardInfos.random();
-        givenAllRequestsSucceed(clusterInfo, nodeInfos, unassignedShardInfo);
+        givenAllRequestsSucceed(clusterInfo, nodeInfos, null);
         return AnalysisReport.finished(configuration, List.of(), List.of(), clusterInfo, nodeInfos);
     }
 
@@ -218,11 +258,11 @@ class DefaultStatusAnalyserTest {
     private void givenAllRequestsSucceed(
             final ClusterInfo clusterInfo,
             final List<NodeInfo> nodeInfos,
-            final UnassignedShardInfo unassignedShardInfo) {
+            final @Nullable UnassignedShardInfo unassignedShardInfo) {
         when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success());
         when(elasticsearchClient.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
         when(elasticsearchClient.getNodeInfo()).thenReturn(nodeInfos);
-        when(elasticsearchClient.getUnassignedShardInfo()).thenReturn(Optional.of(unassignedShardInfo));
+        when(elasticsearchClient.getUnassignedShardInfo()).thenReturn(Optional.ofNullable(unassignedShardInfo));
     }
 
     private Warning givenEndpointAnalyserFindsWarning() {
@@ -235,6 +275,13 @@ class DefaultStatusAnalyserTest {
     private Warning givenClusterAnalyserFindsWarning() {
         ClusterNotRedundantWarning warning = ClusterNotRedundantWarning.create(true, true, true);
         when(clusterAnalyser.analyse(any(ClusterSettings.class), anyList()))
+                .thenReturn(AnalysisResult.create(List.of(), List.of(warning)));
+        return warning;
+    }
+
+    private Warning givenShardAnalyserFindsWarning() {
+        UnassignedShardsWarning warning = UnassignedShardsWarning.create(UnassignedShardInfos.random());
+        when(shardAnalyser.analyse(any(UnassignedShardInfo.class)))
                 .thenReturn(AnalysisResult.create(List.of(), List.of(warning)));
         return warning;
     }
