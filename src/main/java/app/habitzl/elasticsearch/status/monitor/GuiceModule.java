@@ -15,8 +15,10 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.ElasticsearchRestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterAllocationMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterSettingsMapper;
+import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultClusterAllocationMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultClusterInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultClusterSettingsMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultInfoMapper;
@@ -75,6 +77,7 @@ class GuiceModule extends AbstractModule {
         bind(ClusterSettingsMapper.class).to(DefaultClusterSettingsMapper.class).in(Singleton.class);
         bind(ClusterInfoMapper.class).to(DefaultClusterInfoMapper.class).in(Singleton.class);
         bind(NodeInfoMapper.class).to(DefaultNodeInfoMapper.class).in(Singleton.class);
+        bind(ClusterAllocationMapper.class).to(DefaultClusterAllocationMapper.class).in(Singleton.class);
 
         // Analyser
         bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);

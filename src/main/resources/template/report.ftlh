@@ -95,6 +95,10 @@
             width: 100%;
             height: 0;
         }
+
+        .keep-new-lines {
+            white-space: pre-line;
+        }
     </style>
 </head>
 <body>
@@ -223,13 +227,15 @@
                 <p class="error">${problem.description}</p>
                 <#if problem.additionalInformation?has_content>
                     <p>
-                        <span class="bold">Additional information:</span><br/>
-                        ${problem.additionalInformation}
+                        <span class="bold">Additional information:</span>
+                        <br/>
+                        <span class="keep-new-lines">${problem.additionalInformation}</span>
                     </p>
                 </#if>
                 <p>
-                    <span class="bold">Solution:</span><br/>
-                    ${problem.solution}
+                    <span class="bold">Solution:</span>
+                    <br/>
+                    <span class="keep-new-lines">${problem.solution}</span>
                 </p>
             </div>
         </#list>
@@ -245,13 +251,15 @@
                 <p class="warn">${warning.description}</p>
                 <#if warning.additionalInformation?has_content>
                     <p>
-                        <span class="bold">Additional information:</span><br/>
-                        ${warning.additionalInformation}
+                        <span class="bold">Additional information:</span>
+                        <br/>
+                        <span class="keep-new-lines">${warning.additionalInformation}</span>
                     </p>
                 </#if>
                 <p>
-                    <span class="bold">Solution:</span><br/>
-                    ${warning.solution}
+                    <span class="bold">Solution:</span>
+                    <br/>
+                    <span class="keep-new-lines">${warning.solution}</span>
                 </p>
             </div>
         </#list>

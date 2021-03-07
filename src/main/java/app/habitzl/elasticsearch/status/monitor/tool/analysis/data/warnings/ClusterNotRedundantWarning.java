@@ -49,17 +49,20 @@ public class ClusterNotRedundantWarning implements Warning {
 
     @Override
     public String getAdditionalInformation() {
-        StringBuilder builder = new StringBuilder("");
+        StringBuilder builder = new StringBuilder();
         if (notEnoughMasterEligibleNodes) {
-            builder.append("The cluster does not have enough master-eligible nodes running on different endpoints. ");
+            builder.append("The cluster does not have enough master-eligible nodes running on different endpoints.")
+                   .append(System.lineSeparator());
         }
 
         if (notEnoughDataNodes) {
-            builder.append("The cluster does not have enough data nodes running on different endpoints. ");
+            builder.append("The cluster does not have enough data nodes running on different endpoints.")
+                   .append(System.lineSeparator());
         }
 
         if (quorumIsSetToMaximumMasterEligibleNodes) {
-            builder.append("The setting 'discovery.zen.minimum_master_nodes' should not be set to the maximum number of master-eligible nodes. ");
+            builder.append("The setting 'discovery.zen.minimum_master_nodes' should not be set to the maximum number of master-eligible nodes.")
+                   .append(System.lineSeparator());
         }
 
         return builder.toString();

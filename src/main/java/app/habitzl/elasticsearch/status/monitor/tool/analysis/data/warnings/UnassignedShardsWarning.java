@@ -9,6 +9,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class UnassignedShardsWarning implements Warning {
     private static final long serialVersionUID = 1L;
@@ -30,26 +31,47 @@ public class UnassignedShardsWarning implements Warning {
 
     @Override
     public String getDescription() {
-        return "The cluster contains shards that are not assigned to any node.";
+        return "The cluster contains shards that are not assigned to any node. "
+                + "This indicates that data is unavailable or that the cluster is not configured for the expected reliability.";
     }
 
     @Override
     public String getSolution() {
-        return String.format(
-                "The shard cannot be assigned because: %s",
-                info.getExplanation()
-        );
+        return String.format("Explanation: '%s'.", info.getExplanation())
+                + System.lineSeparator()
+                + "Check the additional information why each node failed to allocate the shard.";
     }
 
     @Override
     public String getAdditionalInformation() {
-        return String.format(
-                "Shard %d of index %s is unassigned since %s. Reason code: '%s'",
+        String mainInfo = String.format(
+                "Shard %d of index '%s' is unassigned since %s.",
                 info.getShardNumber(),
                 info.getIndexName(),
-                info.getUnassignedSinceString(),
+                info.getUnassignedSinceString()
+        );
+
+        String reasonCode = String.format(
+                "The last assignment was attempted because of the action '%s'.",
                 info.getUnassignedReason().name()
         );
+
+        String nodeDecisions =
+                info.getNodeDecisions()
+                    .stream()
+                    .map(nodeDecision -> String.format(
+                            "Allocation on node '%s' failed: '%s'",
+                            nodeDecision.getNodeName(),
+                            String.join(", ", nodeDecision.getDecisions())
+                    ))
+                    .collect(Collectors.joining(System.lineSeparator()));
+
+        return mainInfo
+                + System.lineSeparator()
+                + reasonCode
+                + System.lineSeparator()
+                + System.lineSeparator()
+                + nodeDecisions;
     }
 
     @Override

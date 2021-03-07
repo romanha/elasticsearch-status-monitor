@@ -2,6 +2,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
 
+import javax.inject.Inject;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -21,6 +22,7 @@ public class DayBasedTimeFormatter implements TimeFormatter {
 
     private final Clock clock;
 
+    @Inject
     public DayBasedTimeFormatter(final Clock clock) {
         this.clock = clock;
     }
