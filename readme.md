@@ -107,7 +107,7 @@ The _Elasticsearch Status Monitor_ is developed by Roman Habitzl since December 
 
 ### License
 
-To be done.
+The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Version 2.0].
 
 ## Release notes
 
@@ -131,3 +131,5 @@ To be done.
   * Tool configuration via CLI options (host, port, security, username, password)
   * SSL/TLS support for connecting to Elasticsearch
   * Exit codes for running the tool as part of a script
+
+[Apache License, Version 2.0]: LICENSE
