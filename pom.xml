@@ -6,7 +6,7 @@
 
 	<groupId>app.habitzl.elasticsearch.status.monitor</groupId>
 	<artifactId>elasticsearch-status-monitor</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<developers>
