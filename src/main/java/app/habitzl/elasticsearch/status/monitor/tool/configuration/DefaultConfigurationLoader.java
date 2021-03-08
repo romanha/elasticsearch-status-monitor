@@ -109,7 +109,7 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
     private void printHelp() {
         String cmdLineSyntax = "java -jar elasticsearch-status-monitor.jar";
         String header = "This tool provides a quick overview of an Elasticsearch cluster and analyses the data for potential problems.";
-        String footer = "Please report issues at: https://bitbucket.org/romanha/elasticsearch-status-monitor";
+        String footer = "Please report issues at: https://github.com/romanha/elasticsearch-status-monitor/issues";
 
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp(cmdLineSyntax, header, cliOptions.getAvailableOptions(), footer, true);
