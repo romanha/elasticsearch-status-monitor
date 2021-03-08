@@ -208,10 +208,6 @@
         </#list>
     </div>
 
-    <div class="detail-section">
-        <h2>More information is yet to come!</h2>
-    </div>
-
 <#elseif report.reportProgress=="ABORTED">
     <div class="error">
         <p>The status monitor was not able to create a full status report!</p>
