@@ -9,6 +9,27 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
+	<developers>
+		<developer>
+			<id>Roman Habitzl</id>
+			<name>Roman Habitzl</name>
+			<email>roman.habitzl@gmail.com</email>
+			<timezone>Europe/Vienna</timezone>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/romanha/elasticsearch-status-monitor/issues</url>
+	</issueManagement>
+
 	<properties>
 		<!-- Production -->
 		<elasticsearch.version>6.8.13</elasticsearch.version>

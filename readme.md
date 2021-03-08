@@ -116,7 +116,7 @@ The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Versio
 
 ### 1.0.0
 
-**Released on: 2021-not-yet-released**
+**Released on: 2021-03-08**
 
 * Built for: Java 11 / Elasticsearch 6.8.13
 * Initial release
