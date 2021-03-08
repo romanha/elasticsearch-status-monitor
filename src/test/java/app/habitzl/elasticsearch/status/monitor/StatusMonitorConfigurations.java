@@ -7,7 +7,6 @@ import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitor
  */
 public final class StatusMonitorConfigurations {
 
-    private static final String LOCAL_IP_ADDRESS = "127.0.0.1";
     private static final int MAX_PORT = 9999;
 
     private StatusMonitorConfigurations() {
@@ -19,7 +18,7 @@ public final class StatusMonitorConfigurations {
         boolean isUsingHttps = Randoms.generateBoolean();
 
         StatusMonitorConfiguration configuration = new StatusMonitorConfiguration();
-        configuration.setHost(LOCAL_IP_ADDRESS);
+        configuration.setHost(Randoms.generateString("host-"));
         configuration.setPort(Integer.toString(port));
         configuration.setUsingHttps(isUsingHttps);
         configuration.setUsername(Randoms.generateString("user-"));

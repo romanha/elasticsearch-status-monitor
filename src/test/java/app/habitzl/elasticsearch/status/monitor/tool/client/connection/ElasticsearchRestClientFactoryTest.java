@@ -36,7 +36,8 @@ class ElasticsearchRestClientFactoryTest {
     @Test
     void create_sut_returnsClientWithConfiguredHttpHost() {
         // Given
-        String configuredAddress = configuration.getHost();
+        String localhost = "localhost";
+        configuration.setHost(localhost);
         int configuredPort = Integer.parseInt(configuration.getPort());
         String configuredScheme = configuration.isUsingHttps()
                 ? ElasticsearchRestClientFactory.HTTPS_SCHEME
@@ -50,7 +51,7 @@ class ElasticsearchRestClientFactoryTest {
         assertThat(nodes, hasSize(1));
 
         HttpHost host = nodes.iterator().next().getHost();
-        assertThat(host.getHostName(), equalTo(configuredAddress));
+        assertThat(host.getHostName(), equalTo(localhost));
         assertThat(host.getPort(), equalTo(configuredPort));
         assertThat(host.getSchemeName(), equalTo(configuredScheme));
     }
