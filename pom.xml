@@ -172,6 +172,10 @@
 									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 								</manifest>
+								<manifestEntries>
+									<!-- Log4j has improved implementations for Java9+, therefore we need to enable Multi-Release support. -->
+									<Multi-Release>true</Multi-Release>
+								</manifestEntries>
 							</archive>
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
