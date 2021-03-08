@@ -1,0 +1,5 @@
+# Travis-CI is a continuous integration tool.
+# It automatically builds and checks the software after commits.
+# The current build status is displayed via badges in the readme file.
+
+language: java
