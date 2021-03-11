@@ -17,6 +17,7 @@ public final class NodeInfo implements Serializable {
     private final boolean isMasterEligibleNode;
     private final String uptime;
     private final float loadAverageLast15Minutes;
+    private final int heapUsageInPercent;
     private final EndpointInfo endpointInfo;
 
     public NodeInfo(
@@ -28,6 +29,7 @@ public final class NodeInfo implements Serializable {
             final boolean isMasterEligibleNode,
             final String uptime,
             final float loadAverageLast15Minutes,
+            final int heapUsageInPercent,
             final EndpointInfo endpointInfo) {
         this.processId = processId;
         this.nodeId = nodeId;
@@ -37,6 +39,7 @@ public final class NodeInfo implements Serializable {
         this.isMasterEligibleNode = isMasterEligibleNode;
         this.uptime = uptime;
         this.loadAverageLast15Minutes = loadAverageLast15Minutes;
+        this.heapUsageInPercent = heapUsageInPercent;
         this.endpointInfo = endpointInfo;
     }
 
@@ -89,6 +92,10 @@ public final class NodeInfo implements Serializable {
         return loadAverageLast15Minutes;
     }
 
+    public int getHeapUsageInPercent() {
+        return heapUsageInPercent;
+    }
+
     public EndpointInfo getEndpointInfo() {
         return endpointInfo;
     }
@@ -108,6 +115,7 @@ public final class NodeInfo implements Serializable {
                     && Objects.equals(isDataNode, nodeInfo.isDataNode)
                     && Objects.equals(isMasterEligibleNode, nodeInfo.isMasterEligibleNode)
                     && Objects.equals(loadAverageLast15Minutes, nodeInfo.loadAverageLast15Minutes)
+                    && Objects.equals(heapUsageInPercent, nodeInfo.heapUsageInPercent)
                     && Objects.equals(processId, nodeInfo.processId)
                     && Objects.equals(nodeId, nodeInfo.nodeId)
                     && Objects.equals(nodeName, nodeInfo.nodeName)
@@ -120,7 +128,7 @@ public final class NodeInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(processId, nodeId, nodeName, isMasterNode, isDataNode, isMasterEligibleNode, uptime, loadAverageLast15Minutes, endpointInfo);
+        return Objects.hash(processId, nodeId, nodeName, isMasterNode, isDataNode, isMasterEligibleNode, uptime, loadAverageLast15Minutes, heapUsageInPercent, endpointInfo);
     }
 
     @Override
@@ -132,8 +140,9 @@ public final class NodeInfo implements Serializable {
                 .add("isMasterNode=" + isMasterNode)
                 .add("isDataNode=" + isDataNode)
                 .add("isMasterEligibleNode=" + isMasterEligibleNode)
-                .add("uptime=" + uptime)
+                .add("uptime='" + uptime + "'")
                 .add("loadAverageLast15Minutes=" + loadAverageLast15Minutes)
+                .add("heapUsageInPercent=" + heapUsageInPercent)
                 .add("endpointInfo=" + endpointInfo)
                 .toString();
     }

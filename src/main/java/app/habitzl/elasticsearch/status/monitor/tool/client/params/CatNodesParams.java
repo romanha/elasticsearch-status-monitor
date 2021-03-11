@@ -6,7 +6,7 @@ import java.util.StringJoiner;
  * Parameter list of all values offered by the Elasticsearch {@code /_cat/nodes} API.
  */
 // TODO CAT APIs are not intended for machine usage, as they return human readable data.
-//      Instead, switch to the /_nodes/stats API.
+//      Instead, switch to the /_cluster/state and /_nodes and /_nodes/stats APIs.
 public final class CatNodesParams {
     private CatNodesParams() {
         // instantiation protection

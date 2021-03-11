@@ -10,6 +10,8 @@ import java.time.Duration;
  */
 public final class NodeInfos {
 
+    private static final int ONE_HUNDRED = 100;
+
     private NodeInfos() {
         // instantiation protection
     }
@@ -44,6 +46,7 @@ public final class NodeInfos {
                 isMasterEligible,
                 Duration.ofMillis(Randoms.generatePositiveInteger()).toString(),
                 Randoms.generateFloat(),
+                Randoms.generateInteger(ONE_HUNDRED),
                 endpoint
         );
     }

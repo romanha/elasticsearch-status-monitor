@@ -36,6 +36,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
         boolean isMasterEligibleNode = (getString(data, NODE_ROLE_COLUMN)).contains(MASTER_ELIGIBLE_NODE_ROLE_ID);
         Duration uptime = timeParser.parse(getString(data, NODE_UPTIME_COLUMN));
         float load15m = getFloat(data, AVERAGE_LOAD_COLUMN);
+        int heap = getInteger(data, HEAP_PERCENT_COLUMN);
         return new NodeInfo(
                 processId,
                 nodeId,
@@ -45,6 +46,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
                 isMasterEligibleNode,
                 timeFormatter.format(uptime),
                 load15m,
+                heap,
                 endpointInfo
         );
     }
@@ -52,8 +54,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
     private EndpointInfo mapEndpointInfo(final Map<String, Object> data) {
         String address = getString(data, IP_COLUMN);
         int ram = getInteger(data, RAM_PERCENT_COLUMN);
-        int heap = getInteger(data, HEAP_PERCENT_COLUMN);
 
-        return new EndpointInfo(address, ram, heap);
+        return new EndpointInfo(address, ram);
     }
 }

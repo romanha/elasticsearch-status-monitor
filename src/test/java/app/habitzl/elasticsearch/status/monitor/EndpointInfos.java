@@ -14,10 +14,13 @@ public final class EndpointInfos {
     }
 
     public static EndpointInfo random() {
+        return random(Randoms.generateInteger(ONE_HUNDRED));
+    }
+
+    public static EndpointInfo random(final int ramUsage) {
         return new EndpointInfo(
                 Randoms.generateString("Address "),
-                Randoms.generateInteger(ONE_HUNDRED),
-                Randoms.generateInteger(ONE_HUNDRED)
+                ramUsage
         );
     }
 }

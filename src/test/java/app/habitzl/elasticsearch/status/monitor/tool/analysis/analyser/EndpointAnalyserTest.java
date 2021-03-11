@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
 
+import app.habitzl.elasticsearch.status.monitor.EndpointInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.HighRamUsageWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
@@ -38,10 +39,10 @@ class EndpointAnalyserTest {
     @Test
     void analyse_endpointsWithHighRamUsage_returnsHighRamUsageWarningWithAffectedEndpoints() {
         // Given
-        EndpointInfo badEndpoint1 = new EndpointInfo("1.1.1.1", 80, 0);
-        EndpointInfo badEndpoint2 = new EndpointInfo("2.2.2.2", 100, 0);
-        EndpointInfo goodEndpoint1 = new EndpointInfo("3.3.3.3", 0, 0);
-        EndpointInfo goodEndpoint2 = new EndpointInfo("4.4.4.4", 79, 0);
+        EndpointInfo badEndpoint1 = EndpointInfos.random(80);
+        EndpointInfo badEndpoint2 = EndpointInfos.random(100);
+        EndpointInfo goodEndpoint1 = EndpointInfos.random(0);
+        EndpointInfo goodEndpoint2 = EndpointInfos.random(79);
         List<EndpointInfo> allEndpoints = List.of(badEndpoint1, badEndpoint2, goodEndpoint1, goodEndpoint2);
 
         // When

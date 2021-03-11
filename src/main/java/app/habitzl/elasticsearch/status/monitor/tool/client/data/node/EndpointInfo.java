@@ -11,12 +11,10 @@ public final class EndpointInfo implements Serializable {
 
     private final String ipAddress;
     private final int ramUsageInPercent;
-    private final int heapUsageInPercent;
 
-    public EndpointInfo(final String ipAddress, final int ramUsageInPercent, final int heapUsageInPercent) {
+    public EndpointInfo(final String ipAddress, final int ramUsageInPercent) {
         this.ipAddress = ipAddress;
         this.ramUsageInPercent = ramUsageInPercent;
-        this.heapUsageInPercent = heapUsageInPercent;
     }
 
     public String getIpAddress() {
@@ -25,10 +23,6 @@ public final class EndpointInfo implements Serializable {
 
     public int getRamUsageInPercent() {
         return ramUsageInPercent;
-    }
-
-    public int getHeapUsageInPercent() {
-        return heapUsageInPercent;
     }
 
     @Override
@@ -43,7 +37,6 @@ public final class EndpointInfo implements Serializable {
         } else {
             EndpointInfo that = (EndpointInfo) o;
             isEqual = Objects.equals(ramUsageInPercent, that.ramUsageInPercent)
-                    && Objects.equals(heapUsageInPercent, that.heapUsageInPercent)
                     && Objects.equals(ipAddress, that.ipAddress);
         }
 
@@ -52,7 +45,7 @@ public final class EndpointInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ipAddress, ramUsageInPercent, heapUsageInPercent);
+        return Objects.hash(ipAddress, ramUsageInPercent);
     }
 
     @Override
@@ -60,7 +53,6 @@ public final class EndpointInfo implements Serializable {
         return new StringJoiner(", ", EndpointInfo.class.getSimpleName() + "[", "]")
                 .add("ipAddress='" + ipAddress + "'")
                 .add("ramUsageInPercent=" + ramUsageInPercent)
-                .add("heapUsageInPercent=" + heapUsageInPercent)
                 .toString();
     }
 }

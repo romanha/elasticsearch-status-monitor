@@ -67,7 +67,7 @@ class DefaultNodeInfoMapperTest {
         NodeInfo result = sut.map(map);
 
         // Then
-        EndpointInfo expectedEndpointInfo = new EndpointInfo(TEST_IP, TEST_RAM, TEST_HEAP);
+        EndpointInfo expectedEndpointInfo = new EndpointInfo(TEST_IP, TEST_RAM);
         NodeInfo expectedNodeInfo = new NodeInfo(
                 TEST_PROCESS_ID,
                 TEST_NODE_ID,
@@ -77,6 +77,7 @@ class DefaultNodeInfoMapperTest {
                 true,
                 TEST_UPTIME_DURATION_FORMATTED,
                 TEST_LOAD_AVERAGE,
+                TEST_HEAP,
                 expectedEndpointInfo
         );
         assertThat(result, equalTo(expectedNodeInfo));

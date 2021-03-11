@@ -114,11 +114,21 @@ The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Versio
 
 ## Release notes
 
+### 1.0.1
+
+**Not yet released.**
+
+Built for: Java 11 / Elasticsearch 6.8.13
+
+* **Fixed:** Heap usage was shown at endpoint information in the report.
+  * Moved heap usage to node information.
+
 ### 1.0.0
 
 **Released on: 2021-03-08**
 
-* Built for: Java 11 / Elasticsearch 6.8.13
+Built for: Java 11 / Elasticsearch 6.8.13
+
 * Initial release
   * Elasticsearch monitoring
     * Cluster information

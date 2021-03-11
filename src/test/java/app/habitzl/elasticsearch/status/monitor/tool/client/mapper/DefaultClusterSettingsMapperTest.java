@@ -16,6 +16,12 @@ import static org.mockito.Mockito.when;
 class DefaultClusterSettingsMapperTest {
     private static final int MINIMUM_MASTER_NODES = 2;
 
+    private static final String EMPTY_JSON_SETTINGS = "{\n"
+            + "  \"transient\": {},\n"
+            + "  \"persistent\": {},\n"
+            + "  \"defaults\": {}\n"
+            + "}";
+
     private static final String JSON_SETTINGS_TRANSIENT = "{\n"
             + "  \"transient\": {\n"
             + "    \"discovery\": {\n"
@@ -56,11 +62,10 @@ class DefaultClusterSettingsMapperTest {
             + "}";
 
     private DefaultClusterSettingsMapper sut;
-    private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mapper = mock(ObjectMapper.class);
+        ObjectMapper mapper = new ObjectMapper();
         sut = new DefaultClusterSettingsMapper(mapper);
     }
 
@@ -68,7 +73,7 @@ class DefaultClusterSettingsMapperTest {
     @ValueSource(strings = {JSON_SETTINGS_TRANSIENT, JSON_SETTINGS_PERSISTENT, JSON_SETTINGS_DEFAULTS})
     void map_jsonData_returnsExpectedSettings(final String jsonData) {
         // Given
-        sut = new DefaultClusterSettingsMapper(new ObjectMapper());
+        // JSON data
 
         // When
         ClusterSettings result = sut.map(jsonData);
@@ -81,13 +86,28 @@ class DefaultClusterSettingsMapperTest {
     }
 
     @Test
-    void map_mapperThrowsException_returnDefaultSettings() throws Exception {
+    void map_emptyJsonData_returnDefaultSettings() {
         // Given
-        String jsonData = "json";
-        when(mapper.readTree(jsonData)).thenThrow(JsonProcessingException.class);
+        String jsonData = EMPTY_JSON_SETTINGS;
 
         // When
         ClusterSettings result = sut.map(jsonData);
+
+        // Then
+        ClusterSettings expected = ClusterSettings.createDefault();
+        assertThat(result, equalTo(expected));
+    }
+
+    @Test
+    void map_mapperThrowsException_returnDefaultSettings() throws Exception {
+        // Given
+        String invalidJsonData = "json";
+        ObjectMapper mapper = mock(ObjectMapper.class);
+        when(mapper.readTree(invalidJsonData)).thenThrow(JsonProcessingException.class);
+        sut = new DefaultClusterSettingsMapper(mapper);
+
+        // When
+        ClusterSettings result = sut.map(invalidJsonData);
 
         // Then
         ClusterSettings expected = ClusterSettings.createDefault();

@@ -174,10 +174,6 @@
                         <td>RAM usage:</td>
                         <td>${node.endpointInfo.ramUsageInPercent}&percnt;</td>
                     </tr>
-                    <tr>
-                        <td>Heap usage:</td>
-                        <td>${node.endpointInfo.heapUsageInPercent}&percnt;</td>
-                    </tr>
                     </tbody>
                 </table>
 
@@ -195,6 +191,10 @@
                     <tr>
                         <td>Uptime:</td>
                         <td>${node.uptime}</td>
+                    </tr>
+                    <tr>
+                        <td>Heap usage:</td>
+                        <td>${node.heapUsageInPercent}&percnt;</td>
                     </tr>
                     </tbody>
                 </table>
