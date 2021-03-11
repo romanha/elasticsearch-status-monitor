@@ -127,6 +127,8 @@ Built for: Java 11 / Elasticsearch 6.8.13
   * This improves usability when running the tool on a webserver.
 * **Fix:** The heap usage was part of the endpoint information in the report.
   * Moved heap usage to node information.
+* **Dependencies:**
+  * Updated Google Guice from 5.0.0-BETA-1 to 5.0.1
 
 ### 1.0.0
 
