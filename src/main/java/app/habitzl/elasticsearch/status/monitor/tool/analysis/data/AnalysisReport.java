@@ -19,6 +19,7 @@ import java.util.StringJoiner;
 public final class AnalysisReport implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private final String timestamp;
     private final StatusMonitorConfiguration configuration;
     private final ReportProgress reportProgress;
     private final List<Problem> problems;
@@ -27,19 +28,21 @@ public final class AnalysisReport implements Serializable {
     private final List<NodeInfo> nodeInfos;
 
     public static AnalysisReport aborted(
+            final String timestamp,
             final StatusMonitorConfiguration configuration,
             final List<Problem> problems) {
-        return new AnalysisReport(configuration, ReportProgress.ABORTED, problems);
+        return new AnalysisReport(timestamp, configuration, ReportProgress.ABORTED, problems);
     }
 
     public static AnalysisReport finished(
+            final String timestamp,
             final StatusMonitorConfiguration configuration,
             final List<Problem> problems,
             final List<Warning> warnings,
             final ClusterInfo cluster,
             final List<NodeInfo> nodes) {
         List<NodeInfo> sortedNodes = sortNodesByName(nodes);
-        return new AnalysisReport(configuration, ReportProgress.FINISHED, problems, warnings, cluster, sortedNodes);
+        return new AnalysisReport(timestamp, configuration, ReportProgress.FINISHED, problems, warnings, cluster, sortedNodes);
     }
 
     private static List<NodeInfo> sortNodesByName(final List<NodeInfo> nodes) {
@@ -48,23 +51,33 @@ public final class AnalysisReport implements Serializable {
         return sortedNodes;
     }
 
-    private AnalysisReport(final StatusMonitorConfiguration configuration, final ReportProgress reportProgress, final List<Problem> problems) {
-        this(configuration, reportProgress, problems, List.of(), null, List.of());
+    private AnalysisReport(
+            final String timestamp,
+            final StatusMonitorConfiguration configuration,
+            final ReportProgress reportProgress,
+            final List<Problem> problems) {
+        this(timestamp, configuration, reportProgress, problems, List.of(), null, List.of());
     }
 
     private AnalysisReport(
+            final String timestamp,
             final StatusMonitorConfiguration configuration,
             final ReportProgress reportProgress,
             final List<Problem> problems,
             final List<Warning> warnings,
             final ClusterInfo clusterInfo,
             final List<NodeInfo> nodeInfos) {
+        this.timestamp = timestamp;
         this.configuration = configuration;
         this.reportProgress = reportProgress;
         this.problems = List.copyOf(problems);
         this.warnings = List.copyOf(warnings);
         this.clusterInfo = clusterInfo;
         this.nodeInfos = List.copyOf(nodeInfos);
+    }
+
+    public String getTimestamp() {
+        return timestamp;
     }
 
     public StatusMonitorConfiguration getConfiguration() {
@@ -102,7 +115,8 @@ public final class AnalysisReport implements Serializable {
             isEqual = false;
         } else {
             AnalysisReport that = (AnalysisReport) o;
-            isEqual = Objects.equals(configuration, that.configuration)
+            isEqual = Objects.equals(timestamp, that.timestamp)
+                    && Objects.equals(configuration, that.configuration)
                     && Objects.equals(reportProgress, that.reportProgress)
                     && Objects.equals(problems, that.problems)
                     && Objects.equals(warnings, that.warnings)
@@ -115,12 +129,13 @@ public final class AnalysisReport implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(configuration, reportProgress, problems, warnings, clusterInfo, nodeInfos);
+        return Objects.hash(timestamp, configuration, reportProgress, problems, warnings, clusterInfo, nodeInfos);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", AnalysisReport.class.getSimpleName() + "[", "]")
+                .add("timestamp='" + timestamp + "'")
                 .add("configuration=" + configuration)
                 .add("reportProgress=" + reportProgress)
                 .add("problems=" + problems)

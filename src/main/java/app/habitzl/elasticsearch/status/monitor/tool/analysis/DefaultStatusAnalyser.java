@@ -1,9 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 
 import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.AnalyserProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
@@ -18,10 +16,12 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.Conn
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
+import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
+import java.time.Clock;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,24 +30,24 @@ import java.util.stream.Collectors;
 public class DefaultStatusAnalyser implements StatusAnalyser {
     private static final Logger LOG = LogManager.getLogger(DefaultStatusAnalyser.class);
 
+    private final Clock clock;
+    private final TimeFormatter timeFormatter;
     private final StatusMonitorConfiguration configuration;
     private final ElasticsearchClient elasticsearchClient;
-    private final EndpointAnalyser endpointAnalyser;
-    private final ClusterAnalyser clusterAnalyser;
-    private final ShardAnalyser shardAnalyser;
+    private final AnalyserProvider analyserProvider;
 
     @Inject
     public DefaultStatusAnalyser(
+            final Clock clock,
+            final TimeFormatter timeFormatter,
             final StatusMonitorConfiguration configuration,
             final ElasticsearchClient elasticsearchClient,
-            final EndpointAnalyser endpointAnalyser,
-            final ClusterAnalyser clusterAnalyser,
-            final ShardAnalyser shardAnalyser) {
+            final AnalyserProvider analyserProvider) {
+        this.clock = clock;
+        this.timeFormatter = timeFormatter;
         this.configuration = configuration;
         this.elasticsearchClient = elasticsearchClient;
-        this.endpointAnalyser = endpointAnalyser;
-        this.clusterAnalyser = clusterAnalyser;
-        this.shardAnalyser = shardAnalyser;
+        this.analyserProvider = analyserProvider;
     }
 
     @Override
@@ -90,9 +90,12 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
                 clusterInfo.filter(info -> info.getNumberOfUnassignedShards() > 0)
                            .flatMap(info -> elasticsearchClient.getUnassignedShardInfo());
 
-        AnalysisResult endpointAnalysisResult = endpointAnalyser.analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
-        AnalysisResult clusterAnalysisResult = clusterAnalyser.analyse(clusterSettings, nodeInfos);
-        AnalysisResult shardAnalysisResult = shardAnalyser.analyse(unassignedShardInfo.orElse(null));
+        AnalysisResult endpointAnalysisResult = analyserProvider.getEndpointAnalyser()
+                                                                .analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
+        AnalysisResult clusterAnalysisResult = analyserProvider.getClusterAnalyser()
+                                                               .analyse(clusterSettings, nodeInfos);
+        AnalysisResult shardAnalysisResult = analyserProvider.getShardAnalyser()
+                                                             .analyse(unassignedShardInfo.orElse(null));
 
         AnalysisResult analysisResult = combineAnalysisResults(
                 endpointAnalysisResult,
@@ -101,6 +104,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
         );
 
         return AnalysisReport.finished(
+                getTimestamp(),
                 configuration,
                 analysisResult.getProblems(),
                 analysisResult.getWarnings(),
@@ -123,6 +127,10 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 
     private AnalysisReport abortStatusMonitoring(final Problem problem) {
         LOG.warn("Encountered problem while gathering data: '{}'. Aborting status report generation.", problem);
-        return AnalysisReport.aborted(configuration, List.of(problem));
+        return AnalysisReport.aborted(getTimestamp(), configuration, List.of(problem));
+    }
+
+    private String getTimestamp() {
+        return timeFormatter.format(clock.instant());
     }
 }

@@ -116,15 +116,16 @@ The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Versio
 
 ## Release notes
 
-### 1.0.1
+### 1.1.0
 
 **Not yet released.**
 
 Built for: Java 11 / Elasticsearch 6.8.13
 
-* **Changed:** Renamed the generated HTML report file from `report.html` to `index.html`.
+* **New:** Added timestamp to report.
+* **Change:** Renamed the generated HTML report file from `report.html` to `index.html`.
   * This improves usability when running the tool on a webserver.
-* **Fixed:** The heap usage was part of the endpoint information in the report.
+* **Fix:** The heap usage was part of the endpoint information in the report.
   * Moved heap usage to node information.
 
 ### 1.0.0

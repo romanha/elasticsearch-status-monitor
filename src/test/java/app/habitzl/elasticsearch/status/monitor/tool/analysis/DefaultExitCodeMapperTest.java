@@ -1,10 +1,8 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 
+import app.habitzl.elasticsearch.status.monitor.AnalysisReports;
 import app.habitzl.elasticsearch.status.monitor.AnalysisStartOption;
-import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.ExitCode;
-import app.habitzl.elasticsearch.status.monitor.NodeInfos;
-import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
@@ -60,7 +58,7 @@ class DefaultExitCodeMapperTest {
     void getExitCode_abortedAnalysisReport_returnExitCodeProblemsFound() {
         // Given
         List<Problem> problems = List.of();
-        AnalysisReport report = AnalysisReport.aborted(StatusMonitorConfigurations.random(), problems);
+        AnalysisReport report = AnalysisReports.randomAborted(problems);
 
         // When
         ExitCode result = sut.getExitCode(AnalysisStartOption.ANALYSIS_POSSIBLE, report);
@@ -74,7 +72,7 @@ class DefaultExitCodeMapperTest {
         // Given
         List<Problem> problems = List.of(mock(Problem.class));
         List<Warning> warnings = List.of();
-        AnalysisReport report = createNewReport(problems, warnings);
+        AnalysisReport report = AnalysisReports.randomFinished(problems, warnings);
 
         // When
         ExitCode result = sut.getExitCode(AnalysisStartOption.ANALYSIS_POSSIBLE, report);
@@ -88,7 +86,7 @@ class DefaultExitCodeMapperTest {
         // Given
         List<Problem> problems = List.of(mock(Problem.class));
         List<Warning> warnings = List.of(mock(Warning.class));
-        AnalysisReport report = createNewReport(problems, warnings);
+        AnalysisReport report = AnalysisReports.randomFinished(problems, warnings);
 
         // When
         ExitCode result = sut.getExitCode(AnalysisStartOption.ANALYSIS_POSSIBLE, report);
@@ -102,7 +100,7 @@ class DefaultExitCodeMapperTest {
         // Given
         List<Problem> problems = List.of();
         List<Warning> warnings = List.of(mock(Warning.class));
-        AnalysisReport report = createNewReport(problems, warnings);
+        AnalysisReport report = AnalysisReports.randomFinished(problems, warnings);
 
         // When
         ExitCode result = sut.getExitCode(AnalysisStartOption.ANALYSIS_POSSIBLE, report);
@@ -116,22 +114,12 @@ class DefaultExitCodeMapperTest {
         // Given
         List<Problem> problems = List.of();
         List<Warning> warnings = List.of();
-        AnalysisReport report = createNewReport(problems, warnings);
+        AnalysisReport report = AnalysisReports.randomFinished(problems, warnings);
 
         // When
         ExitCode result = sut.getExitCode(AnalysisStartOption.ANALYSIS_POSSIBLE, report);
 
         // Then
         assertThat(result, equalTo(ExitCode.NO_ISSUES_FOUND));
-    }
-
-    private AnalysisReport createNewReport(final List<Problem> problems, final List<Warning> warnings) {
-        return AnalysisReport.finished(
-                StatusMonitorConfigurations.random(),
-                problems,
-                warnings,
-                ClusterInfos.random(),
-                List.of(NodeInfos.random())
-        );
     }
 }

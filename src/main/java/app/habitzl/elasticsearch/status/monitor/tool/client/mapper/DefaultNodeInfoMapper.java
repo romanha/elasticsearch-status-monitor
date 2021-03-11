@@ -2,6 +2,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
 
 import javax.inject.Inject;
 import java.time.Duration;

@@ -106,6 +106,9 @@
 
 <div id="configuration" class="bordered-detail-section">
     <h2>Tool Configuration</h2>
+    <p>
+        This report was generated at ${report.timestamp}.
+    </p>
     <table>
         <tbody>
         <tr>

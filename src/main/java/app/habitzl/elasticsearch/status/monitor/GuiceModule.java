@@ -6,6 +6,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.StatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultExitCodeMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.AnalyserProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
@@ -26,9 +27,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultNodeIn
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.DefaultTimeParser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.JsonContentResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.NodeInfoMapper;
-import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeParser;
-import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format.DayBasedTimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.utils.JsonParser;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.CliOptions;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.DefaultConfigurationLoader;
@@ -40,6 +39,8 @@ import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFil
 import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.TemplateProcessor;
 import app.habitzl.elasticsearch.status.monitor.util.ClockProvider;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
+import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.util.format.DayBasedTimeFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
@@ -81,6 +82,7 @@ class GuiceModule extends AbstractModule {
 
         // Analyser
         bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
+        bind(AnalyserProvider.class).in(Singleton.class);
         bind(EndpointAnalyser.class).in(Singleton.class);
         bind(ClusterAnalyser.class).in(Singleton.class);
         bind(ShardAnalyser.class).in(Singleton.class);

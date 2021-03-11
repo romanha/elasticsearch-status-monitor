@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
+package app.habitzl.elasticsearch.status.monitor.util;
 
 import java.time.Duration;
 import java.time.Instant;

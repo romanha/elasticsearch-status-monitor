@@ -68,7 +68,7 @@ class FreemarkerHtmlReportGeneratorTest {
     }
 
     private AnalysisReport createAnalysisReport() {
-        return AnalysisReports.random();
+        return AnalysisReports.randomFinished();
     }
 
     private Template prepareConfigurationTemplate() throws IOException {

@@ -1,5 +1,6 @@
-package app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format;
+package app.habitzl.elasticsearch.status.monitor.util.format;
 
+import app.habitzl.elasticsearch.status.monitor.Clocks;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -8,7 +9,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,7 +20,7 @@ class DayBasedTimeFormatterTest {
 
     @BeforeEach
     void setUp() {
-        Clock clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"));
+        Clock clock = Clocks.fixedUTC();
         sut = new DayBasedTimeFormatter(clock);
     }
 

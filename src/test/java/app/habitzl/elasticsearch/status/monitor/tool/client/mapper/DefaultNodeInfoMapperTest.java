@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParams;
+import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

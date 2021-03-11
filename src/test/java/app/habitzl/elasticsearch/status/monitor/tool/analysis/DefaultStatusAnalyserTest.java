@@ -1,9 +1,12 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 
+import app.habitzl.elasticsearch.status.monitor.Clocks;
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.NodeInfos;
+import app.habitzl.elasticsearch.status.monitor.Randoms;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.AnalyserProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
@@ -23,11 +26,13 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.Conn
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
+import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import javax.annotation.Nullable;
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,6 +43,8 @@ import static org.mockito.Mockito.*;
 
 class DefaultStatusAnalyserTest {
 
+    private static final String CURRENT_TIME = Randoms.generateString("Timestamp: ");
+
     private DefaultStatusAnalyser sut;
     private StatusMonitorConfiguration configuration;
     private ElasticsearchClient elasticsearchClient;
@@ -47,12 +54,16 @@ class DefaultStatusAnalyserTest {
 
     @BeforeEach
     void setUp() {
+        Clock clock = Clocks.fixedSystemDefault();
+        TimeFormatter timeFormatter = prepareTimeFormatter(clock);
         configuration = StatusMonitorConfigurations.random();
         elasticsearchClient = mock(ElasticsearchClient.class);
-        mockEndpointAnalyser();
-        mockClusterAnalyser();
-        mockShardAnalyser();
-        sut = new DefaultStatusAnalyser(configuration, elasticsearchClient, endpointAnalyser, clusterAnalyser, shardAnalyser);
+        AnalyserProvider analyserProvider = new AnalyserProvider(
+                mockEndpointAnalyser(),
+                mockClusterAnalyser(),
+                mockShardAnalyser()
+        );
+        sut = new DefaultStatusAnalyser(clock, timeFormatter, configuration, elasticsearchClient, analyserProvider);
     }
 
     @Test
@@ -91,8 +102,8 @@ class DefaultStatusAnalyserTest {
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
-        AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(GeneralConnectionProblem.create(connectionErrorInformation)));
-        assertThat(analysisReport, equalTo(expectedAnalysisReport));
+        AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(GeneralConnectionProblem.create(connectionErrorInformation)));
+        assertThat(analysisReport, equalTo(expected));
     }
 
     @Test
@@ -104,8 +115,8 @@ class DefaultStatusAnalyserTest {
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
-        AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(SSLHandshakeProblem.create()));
-        assertThat(analysisReport, equalTo(expectedAnalysisReport));
+        AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(SSLHandshakeProblem.create()));
+        assertThat(analysisReport, equalTo(expected));
     }
 
     @Test
@@ -117,8 +128,8 @@ class DefaultStatusAnalyserTest {
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
-        AnalysisReport expectedAnalysisReport = AnalysisReport.aborted(configuration, List.of(UnauthorizedConnectionProblem.create()));
-        assertThat(analysisReport, equalTo(expectedAnalysisReport));
+        AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(UnauthorizedConnectionProblem.create()));
+        assertThat(analysisReport, equalTo(expected));
     }
 
     @Test
@@ -219,19 +230,28 @@ class DefaultStatusAnalyserTest {
         assertThat(analysisReport, equalTo(expectedAnalysisReport));
     }
 
-    private void mockEndpointAnalyser() {
+    private TimeFormatter prepareTimeFormatter(final Clock clock) {
+        TimeFormatter timeFormatter = mock(TimeFormatter.class);
+        when(timeFormatter.format(clock.instant())).thenReturn(CURRENT_TIME);
+        return timeFormatter;
+    }
+
+    private EndpointAnalyser mockEndpointAnalyser() {
         endpointAnalyser = mock(EndpointAnalyser.class);
         when(endpointAnalyser.analyse(anyList())).thenReturn(AnalysisResult.empty());
+        return endpointAnalyser;
     }
 
-    private void mockClusterAnalyser() {
+    private ClusterAnalyser mockClusterAnalyser() {
         clusterAnalyser = mock(ClusterAnalyser.class);
         when(clusterAnalyser.analyse(any(ClusterSettings.class), anyList())).thenReturn(AnalysisResult.empty());
+        return clusterAnalyser;
     }
 
-    private void mockShardAnalyser() {
+    private ShardAnalyser mockShardAnalyser() {
         shardAnalyser = mock(ShardAnalyser.class);
         when(shardAnalyser.analyse(nullable(UnassignedShardInfo.class))).thenReturn(AnalysisResult.empty());
+        return shardAnalyser;
     }
 
     /**
@@ -241,7 +261,7 @@ class DefaultStatusAnalyserTest {
         ClusterInfo clusterInfo = ClusterInfos.randomHealthy();
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
         givenAllRequestsSucceed(clusterInfo, nodeInfos, null);
-        return AnalysisReport.finished(configuration, List.of(), List.of(), clusterInfo, nodeInfos);
+        return AnalysisReport.finished(CURRENT_TIME, configuration, List.of(), List.of(), clusterInfo, nodeInfos);
     }
 
     /**
@@ -252,7 +272,7 @@ class DefaultStatusAnalyserTest {
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
         UnassignedShardInfo unassignedShardInfo = UnassignedShardInfos.random();
         givenAllRequestsSucceed(clusterInfo, nodeInfos, unassignedShardInfo);
-        return AnalysisReport.finished(configuration, List.of(), warnings, clusterInfo, nodeInfos);
+        return AnalysisReport.finished(CURRENT_TIME, configuration, List.of(), warnings, clusterInfo, nodeInfos);
     }
 
     private void givenAllRequestsSucceed(

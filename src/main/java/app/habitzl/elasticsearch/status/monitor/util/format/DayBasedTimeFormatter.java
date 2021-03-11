@@ -1,6 +1,6 @@
-package app.habitzl.elasticsearch.status.monitor.tool.client.mapper.format;
+package app.habitzl.elasticsearch.status.monitor.util.format;
 
-import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.TimeFormatter;
+import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
 
 import javax.inject.Inject;
 import java.time.Clock;

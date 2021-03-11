@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.presentation.file;
 
+import app.habitzl.elasticsearch.status.monitor.Clocks;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,7 +25,7 @@ class ReportFileProviderTest {
 
     @BeforeEach
     void setUp() {
-        clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+        clock = Clocks.fixedSystemDefault();
         fileCreator = mock(FileCreator.class);
         sut = new ReportFileProvider(clock, fileCreator);
     }

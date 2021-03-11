@@ -56,7 +56,7 @@ class ReportBasedStatusMonitorTest {
     }
 
     private AnalysisReport prepareAnalyser() {
-        AnalysisReport report = AnalysisReports.random();
+        AnalysisReport report = AnalysisReports.randomFinished();
         when(analyser.createReport()).thenReturn(report);
         return report;
     }
