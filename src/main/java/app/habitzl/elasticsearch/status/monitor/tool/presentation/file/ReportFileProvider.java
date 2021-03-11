@@ -24,7 +24,7 @@ public class ReportFileProvider implements Provider<File> {
     private static final Logger LOG = LogManager.getLogger(ReportFileProvider.class);
 
     static final String REPORT_DIRECTORY_NAME = "reports";
-    static final String REPORT_FILE_NAME = "report.html";
+    static final String REPORT_FILE_NAME = "index.html";
     static final String TIMESTAMP_FILE_PATTERN = "yyyy-MM-dd HH-mm-ss";
 
     private final Clock clock;

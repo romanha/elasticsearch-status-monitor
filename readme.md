@@ -42,6 +42,8 @@ java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar
 
 The tool will create a folder called `reports` in the directory of the JAR. This folder includes all generated reports.
 
+Each report is stored in a folder representing the time of the report generation, for example `reports/2021-03-11 22-43-50/index.html`.
+
 To connect to a secured _Elasticsearch_ cluster, make sure that the certificates are added to the trust store of the JRE.
 The tool uses the default trust store located at `%JAVA_HOME%/lib/security/cacerts`.
 
@@ -120,7 +122,9 @@ The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Versio
 
 Built for: Java 11 / Elasticsearch 6.8.13
 
-* **Fixed:** Heap usage was shown at endpoint information in the report.
+* **Changed:** Renamed the generated HTML report file from `report.html` to `index.html`.
+  * This improves usability when running the tool on a webserver.
+* **Fixed:** The heap usage was part of the endpoint information in the report.
   * Moved heap usage to node information.
 
 ### 1.0.0
