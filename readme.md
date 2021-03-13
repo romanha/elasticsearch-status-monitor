@@ -96,6 +96,7 @@ This section lists all issues that the data analysis supports.
 * General connection issues
 * Unauthorised connection
 * SSL handshake problems
+* Cluster not fully operational
 
 ### Warnings
 
@@ -123,6 +124,7 @@ The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Versio
 Built for: Java 11 / Elasticsearch 6.8.13
 
 * **New:** Added timestamp to report.
+* **New:** Problem analysis for "Cluster not fully operational".
 * **Change:** Renamed the generated HTML report file from `report.html` to `index.html`.
   * This improves usability when running the tool on a webserver.
 * **Fix:** The heap usage was part of the endpoint information in the report.

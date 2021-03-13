@@ -26,6 +26,11 @@ public enum ConnectionStatus {
     UNAUTHORIZED,
 
     /**
+     * The tool can connect to the Elasticsearch cluster, but the cluster responds that its service is unavailable.
+     */
+    SERVICE_UNAVAILABLE,
+
+    /**
      * There is no further information about the connection status.
      */
     UNKNOWN;
@@ -45,6 +50,9 @@ public enum ConnectionStatus {
                 break;
             case 404:
                 result = NOT_FOUND;
+                break;
+            case 503:
+                result = SERVICE_UNAVAILABLE;
                 break;
             default:
                 result = UNKNOWN;

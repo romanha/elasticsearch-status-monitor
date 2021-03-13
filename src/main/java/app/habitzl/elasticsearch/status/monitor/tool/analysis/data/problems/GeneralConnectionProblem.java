@@ -38,7 +38,9 @@ public class GeneralConnectionProblem implements Problem {
 
     @Override
     public String getSolution() {
-        return "Check the host and port of the tool configuration. Check if the Elasticsearch cluster requires a secured connection (HTTPS).";
+        return "Check if an Elasticsearch node is running on the host and port used for monitoring."
+                + System.lineSeparator()
+                + "Check if the Elasticsearch cluster requires a secured connection (HTTPS).";
     }
 
     @Override

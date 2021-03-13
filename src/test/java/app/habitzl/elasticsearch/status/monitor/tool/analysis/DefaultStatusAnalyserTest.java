@@ -13,6 +13,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnal
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.ClusterNotFullyOperationalProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
@@ -29,6 +30,8 @@ import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitor
 import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InOrder;
 
 import javax.annotation.Nullable;
@@ -66,23 +69,11 @@ class DefaultStatusAnalyserTest {
         sut = new DefaultStatusAnalyser(clock, timeFormatter, configuration, elasticsearchClient, analyserProvider);
     }
 
-    @Test
-    void createReport_connectionStatusNotSuccess_doNotAttemptMoreStatusRequests() {
+    @ParameterizedTest
+    @EnumSource(value = ConnectionStatus.class, mode = EnumSource.Mode.EXCLUDE, names = "SUCCESS")
+    void createReport_connectionStatusNotSuccess_doNotAttemptMoreStatusRequests(final ConnectionStatus connectionStatusNotSuccess) {
         // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.NOT_FOUND, ""));
-
-        // When
-        sut.createReport();
-
-        // Then
-        verify(elasticsearchClient).checkConnection();
-        verifyNoMoreInteractions(elasticsearchClient);
-    }
-
-    @Test
-    void createReport_connectionStatusUnauthorized_doNotAttemptMoreStatusRequests() {
-        // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.UNAUTHORIZED, ""));
+        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(connectionStatusNotSuccess, ""));
 
         // When
         sut.createReport();
@@ -129,6 +120,19 @@ class DefaultStatusAnalyserTest {
 
         // Then
         AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(UnauthorizedConnectionProblem.create()));
+        assertThat(analysisReport, equalTo(expected));
+    }
+
+    @Test
+    void createReport_connectionStatusServiceUnavailable_returnAbortedAnalysisReportWithClusterNotFullyOperationalProblem() {
+        // Given
+        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.SERVICE_UNAVAILABLE, ""));
+
+        // When
+        AnalysisReport analysisReport = sut.createReport();
+
+        // Then
+        AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(ClusterNotFullyOperationalProblem.create()));
         assertThat(analysisReport, equalTo(expected));
     }
 

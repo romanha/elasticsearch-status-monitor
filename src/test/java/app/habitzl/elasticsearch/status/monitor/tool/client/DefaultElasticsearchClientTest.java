@@ -3,6 +3,7 @@ package app.habitzl.elasticsearch.status.monitor.tool.client;
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
 import app.habitzl.elasticsearch.status.monitor.ClusterSettingsUtils;
 import app.habitzl.elasticsearch.status.monitor.NodeInfos;
+import app.habitzl.elasticsearch.status.monitor.Randoms;
 import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
@@ -93,13 +94,13 @@ class DefaultElasticsearchClientTest {
     @Test
     void checkConnection_errorResponse_returnErrorConnectionInfo() throws IOException {
         // Given
-        givenClientRespondsWith(HTTP_STATUS_NOT_FOUND);
+        Response response = givenClientRespondsWith(HTTP_STATUS_NOT_FOUND);
 
         // When
         ConnectionInfo result = sut.checkConnection();
 
         // Then
-        ConnectionInfo expected = ConnectionInfo.error(ConnectionStatus.fromHttpCode(HTTP_STATUS_NOT_FOUND), null);
+        ConnectionInfo expected = ConnectionInfo.error(ConnectionStatus.fromHttpCode(HTTP_STATUS_NOT_FOUND), response.getStatusLine().toString());
         assertThat(result, equalTo(expected));
     }
 
@@ -112,7 +113,7 @@ class DefaultElasticsearchClientTest {
         ConnectionInfo result = sut.checkConnection();
 
         // Then
-        ConnectionInfo expected = ConnectionInfo.error(ConnectionStatus.fromHttpCode(HTTP_STATUS_NOT_FOUND), exception.getMessage());
+        ConnectionInfo expected = ConnectionInfo.error(ConnectionStatus.fromHttpCode(HTTP_STATUS_NOT_FOUND), exception.getResponse().getStatusLine().toString());
         assertThat(result, equalTo(expected));
     }
 
@@ -318,6 +319,7 @@ class DefaultElasticsearchClientTest {
         assertThat(result, isEmpty());
     }
 
+    @SuppressWarnings("ThrowableNotThrown")
     @Test
     void getUnassignedShardInfo_clientThrowsResponseException_returnErrorConnectionInfo() throws IOException {
         // Given
@@ -358,19 +360,19 @@ class DefaultElasticsearchClientTest {
     private Response mockResponse(final int statusCode) {
         Response response = mock(Response.class);
         when(response.getRequestLine()).thenReturn(FAKE_REQUEST_LINE);
-        StatusLine statusLine = new BasicStatusLine(HTTP_PROTOCOL_VERSION, statusCode, "");
+        StatusLine statusLine = new BasicStatusLine(HTTP_PROTOCOL_VERSION, statusCode, Randoms.generateString("Reason: "));
         when(response.getStatusLine()).thenReturn(statusLine);
         return response;
     }
 
     private String givenResponseHasContent(final Response response) throws IOException {
-        String responseContent = "response content";
+        String responseContent = Randoms.generateString("content-");
         when(responseMapper.getContentAsString(response)).thenReturn(responseContent);
         return responseContent;
     }
 
     private List<Map<String, Object>> givenResponseHasMapsContent(final Response response) throws IOException {
-        List<Map<String, Object>> responseContents = List.of(Map.of("test", "example"));
+        List<Map<String, Object>> responseContents = List.of(Map.of(Randoms.generateString("key-"), Randoms.generateString("value-")));
         when(responseMapper.toMaps(response)).thenReturn(responseContents);
         return responseContents;
     }

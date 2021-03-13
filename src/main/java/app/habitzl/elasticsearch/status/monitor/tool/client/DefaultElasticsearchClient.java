@@ -58,11 +58,14 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         try {
             Response response = client.performRequest(request);
             ConnectionStatus status = ConnectionStatus.fromHttpCode(response.getStatusLine().getStatusCode());
-            connectionInfo = status == ConnectionStatus.SUCCESS ? ConnectionInfo.success() : ConnectionInfo.error(status, null);
+            connectionInfo = status == ConnectionStatus.SUCCESS
+                    ? ConnectionInfo.success()
+                    : ConnectionInfo.error(status, response.getStatusLine().toString());
         } catch (final ResponseException e) {
             logError(e);
-            ConnectionStatus status = ConnectionStatus.fromHttpCode(e.getResponse().getStatusLine().getStatusCode());
-            connectionInfo = ConnectionInfo.error(status, e.getMessage());
+            Response response = e.getResponse();
+            ConnectionStatus status = ConnectionStatus.fromHttpCode(response.getStatusLine().getStatusCode());
+            connectionInfo = ConnectionInfo.error(status, response.getStatusLine().toString());
         } catch (final SSLHandshakeException e) {
             logError(e);
             connectionInfo = ConnectionInfo.error(ConnectionStatus.SSL_HANDSHAKE_FAILURE, e.getMessage());

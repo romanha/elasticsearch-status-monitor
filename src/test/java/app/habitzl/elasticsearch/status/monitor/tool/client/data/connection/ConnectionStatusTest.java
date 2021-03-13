@@ -23,11 +23,13 @@ class ConnectionStatusTest {
 
     private static Stream<Arguments> httpStatusToConnectionStatus() {
         return Stream.of(
+                Arguments.of(-1, ConnectionStatus.UNKNOWN),
                 Arguments.of(0, ConnectionStatus.UNKNOWN),
-                Arguments.of(999, ConnectionStatus.UNKNOWN),
                 Arguments.of(200, ConnectionStatus.SUCCESS),
                 Arguments.of(401, ConnectionStatus.UNAUTHORIZED),
-                Arguments.of(404, ConnectionStatus.NOT_FOUND)
-        );
+                Arguments.of(404, ConnectionStatus.NOT_FOUND),
+                Arguments.of(503, ConnectionStatus.SERVICE_UNAVAILABLE),
+                Arguments.of(999, ConnectionStatus.UNKNOWN)
+                );
     }
 }

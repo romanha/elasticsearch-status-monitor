@@ -6,6 +6,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisRepor
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.ClusterNotFullyOperationalProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.SSLHandshakeProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
@@ -71,6 +72,9 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
                 break;
             case UNAUTHORIZED:
                 analysisReport = abortStatusMonitoring(UnauthorizedConnectionProblem.create());
+                break;
+            case SERVICE_UNAVAILABLE:
+                analysisReport = abortStatusMonitoring(ClusterNotFullyOperationalProblem.create());
                 break;
             case NOT_FOUND:
             case UNKNOWN:
