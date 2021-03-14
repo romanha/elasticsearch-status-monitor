@@ -20,6 +20,10 @@
             max-width: 80% !important;
         }
 
+        table tr td:first-child {
+            padding-right: 1em;
+        }
+
         .error {
             font-weight: bold;
             color: red;

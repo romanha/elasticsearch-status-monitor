@@ -123,14 +123,25 @@ The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Versio
 
 Built for: Java 11 / Elasticsearch 6.8.13
 
-* **New:** Added timestamp to report.
-* **New:** Problem analysis for "Cluster not fully operational".
-* **Change:** Renamed the generated HTML report file from `report.html` to `index.html`.
+#### Changes
+
+* Renamed the generated HTML report file from `report.html` to `index.html`.
   * This improves usability when running the tool on a webserver.
-* **Fix:** The heap usage was part of the endpoint information in the report.
+  
+#### New features
+
+* Added the timestamp to the report.
+* Problem analysis for "Cluster not fully operational".
+  
+#### Fixes
+
+* The heap usage was part of the endpoint information in the report.
   * Moved heap usage to node information.
-* **Dependencies:**
-  * Updated Google Guice from 5.0.0-BETA-1 to 5.0.1
+  
+#### Miscellaneous
+
+* Updated Google Guice dependency from 5.0.0-BETA-1 to 5.0.1
+* Improved styling of the generated HTML report file.
 
 ### 1.0.0
 
@@ -138,20 +149,21 @@ Built for: Java 11 / Elasticsearch 6.8.13
 
 Built for: Java 11 / Elasticsearch 6.8.13
 
-* Initial release
-  * Elasticsearch monitoring
-    * Cluster information
-    * Node and endpoint information
-  * Problem analysis
-    * Connection issues
-    * Cluster not being redundant
-    * Possibility of split brain scenarios
-    * Unassigned shards
-    * High RAM usage on endpoints
-  * HTML report generation
-  * Help output via CLI options (help, version)
-  * Tool configuration via CLI options (host, port, security, username, password)
-  * SSL/TLS support for connecting to Elasticsearch
-  * Exit codes for running the tool as part of a script
+#### New features
+
+* Elasticsearch monitoring
+  * Cluster information
+  * Node and endpoint information
+* Problem analysis
+  * Connection issues
+  * Cluster not being redundant
+  * Possibility of split brain scenarios
+  * Unassigned shards
+  * High RAM usage on endpoints
+* HTML report generation
+* Help output via CLI options (help, version)
+* Tool configuration via CLI options (host, port, security, username, password)
+* SSL/TLS support for connecting to Elasticsearch
+* Exit codes for running the tool as part of a script
 
 [Apache License, Version 2.0]: LICENSE
