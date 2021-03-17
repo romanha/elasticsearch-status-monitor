@@ -19,8 +19,12 @@ public final class EndpointInfos {
 
     public static EndpointInfo random(final int ramUsage) {
         return new EndpointInfo(
-                Randoms.generateString("Address "),
-                ramUsage
+                Randoms.generateString("ip-address-"),
+                Randoms.generateString("operating-system-"),
+                Randoms.generatePositiveInteger(),
+                Randoms.generateFloat(),
+                ramUsage,
+                Randoms.generatePositiveInteger()
         );
     }
 }

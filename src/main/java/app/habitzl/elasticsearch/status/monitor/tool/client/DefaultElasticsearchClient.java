@@ -7,12 +7,14 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.Conn
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
-import app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAllocationParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterHealthParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterSettingsParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterStateParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersionParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.GeneralParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeInfoParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeStatsParams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
@@ -102,13 +104,20 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     public Optional<ClusterInfo> getClusterInfo() {
         ClusterInfo clusterInfo;
 
-        Request request = new Request(METHOD_GET, ClusterHealthParams.API_ENDPOINT);
-        setAcceptedContentToJSON(request);
+        Request clusterHealthRequest = new Request(METHOD_GET, ClusterHealthParams.API_ENDPOINT);
+        setAcceptedContentToJSON(clusterHealthRequest);
+
+        Request clusterStateRequest = new Request(METHOD_GET, ClusterStateParams.API_ENDPOINT);
+        setAcceptedContentToJSON(clusterStateRequest);
 
         try {
-            Response response = client.performRequest(request);
-            String result = responseMapper.getContentAsString(response);
-            clusterInfo = infoMapper.mapClusterInfo(result);
+            Response clusterHealthResponse = client.performRequest(clusterHealthRequest);
+            String clusterHealthResult = responseMapper.getContentAsString(clusterHealthResponse);
+
+            Response clusterStateResponse = client.performRequest(clusterStateRequest);
+            String clusterStateResult = responseMapper.getContentAsString(clusterStateResponse);
+
+            clusterInfo = infoMapper.mapClusterInfo(clusterHealthResult, clusterStateResult);
             LOG.debug("Mapped cluster info: {}", clusterInfo);
         } catch (final IOException e) {
             logError(e);
@@ -122,17 +131,25 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     public List<NodeInfo> getNodeInfo() {
         List<NodeInfo> nodeInfos = new ArrayList<>();
 
-        Request request = new Request(METHOD_GET, CatNodesParams.API_ENDPOINT);
-        setAcceptedContentToJSON(request);
-        request.addParameter(CatNodesParams.PARAM_COLUMNS, CatNodesParams.allColumns());
-        request.addParameter(CatNodesParams.PARAM_FULL_ID, "true");
+        Request nodeInfoRequest = new Request(METHOD_GET, NodeInfoParams.API_ENDPOINT);
+        setAcceptedContentToJSON(nodeInfoRequest);
+
+        Request nodeStatsRequest = new Request(METHOD_GET, NodeStatsParams.API_ENDPOINT);
+        setAcceptedContentToJSON(nodeStatsRequest);
+        nodeStatsRequest.addParameter(NodeStatsParams.PARAM_METRIC, NodeStatsParams.allMetrics());
 
         try {
-            Response response = client.performRequest(request);
-            List<Map<String, Object>> result = responseMapper.toMaps(response);
+            Response nodeInfoResponse = client.performRequest(nodeInfoRequest);
+            List<Map<String, Object>> nodeInfoResult = responseMapper.toMaps(nodeInfoResponse);
 
-            for (Map<String, Object> map : result) {
-                NodeInfo nodeInfo = infoMapper.mapNodeInfo(map);
+            Response nodeStatsResponse = client.performRequest(nodeStatsRequest);
+            List<Map<String, Object>> nodeStatsResult = responseMapper.toMaps(nodeStatsResponse);
+
+            // TODO find maps with same keys (= node ID) in both results and group them to map node info
+            //      best would probably be map<nodeId, jsonString> and use Jayway JSON Path to map the info
+
+            for (Map<String, Object> map : nodeInfoResult) {
+                NodeInfo nodeInfo = infoMapper.mapLegacyNodeInfo(map);
                 nodeInfos.add(nodeInfo);
                 LOG.debug("Mapped node info: {}", nodeInfo);
             }

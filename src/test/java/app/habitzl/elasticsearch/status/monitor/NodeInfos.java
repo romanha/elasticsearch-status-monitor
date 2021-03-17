@@ -3,8 +3,6 @@ package app.habitzl.elasticsearch.status.monitor;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 
-import java.time.Duration;
-
 /**
  * Utility class for creating random node infos.
  */
@@ -38,16 +36,17 @@ public final class NodeInfos {
 
     private static NodeInfo random(final EndpointInfo endpoint, final boolean isMasterEligible, final boolean isDataNode) {
         return new NodeInfo(
-                Randoms.generateString("P"),
                 Randoms.generateString("node-id-"),
                 Randoms.generateString("node-name-"),
+                Randoms.generateString("P"),
+                Randoms.generateString("jvm-version-"),
+                Randoms.generateString("elasticsearch-version-"),
                 Randoms.generateBoolean(),
-                isDataNode,
                 isMasterEligible,
-                Duration.ofMillis(Randoms.generatePositiveInteger()).toString(),
-                Randoms.generateFloat(),
-                Randoms.generateInteger(ONE_HUNDRED),
-                endpoint
+                isDataNode,
+                Randoms.generateBoolean(),
+                endpoint,
+                NodeStatsUtils.random()
         );
     }
 }

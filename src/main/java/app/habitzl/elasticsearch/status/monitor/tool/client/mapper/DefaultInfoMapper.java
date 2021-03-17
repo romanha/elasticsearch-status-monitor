@@ -34,12 +34,17 @@ public class DefaultInfoMapper implements InfoMapper {
     }
 
     @Override
-    public ClusterInfo mapClusterInfo(final String jsonData) {
-        return clusterInfoMapper.map(jsonData);
+    public ClusterInfo mapClusterInfo(final String clusterHealthJson, final String clusterStateJson) {
+        return clusterInfoMapper.map(clusterHealthJson, clusterStateJson);
     }
 
     @Override
-    public NodeInfo mapNodeInfo(final Map<String, Object> data) {
+    public NodeInfo mapNodeInfo(final String nodeInfoJson, final String nodeStatsJson) {
+        return nodeInfoMapper.map(nodeInfoJson, nodeStatsJson);
+    }
+
+    @Override
+    public NodeInfo mapLegacyNodeInfo(final Map<String, Object> data) {
         return nodeInfoMapper.map(data);
     }
 

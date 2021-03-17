@@ -19,14 +19,20 @@ public interface InfoMapper {
     ClusterSettings mapClusterSettings(String jsonData);
 
     /**
-     * Maps data returned via the ES {@code /_cluster/health} API.
+     * Maps data returned via the ES {@code /_cluster/health} and {@code /_cluster/state} APIs.
      */
-    ClusterInfo mapClusterInfo(String jsonData);
+    ClusterInfo mapClusterInfo(String clusterHealthJson, String clusterStateJson);
+
+    /**
+     * Maps data returned via the ES {@code /_nodes} and {@code /_nodes/stats} APIs.
+     */
+    NodeInfo mapNodeInfo(String nodeInfoJson, String nodeStatsJson);
 
     /**
      * Maps data returned via the ES {@code /_cat/nodes} API.
      */
-    NodeInfo mapNodeInfo(Map<String, Object> data);
+    @Deprecated(forRemoval = true)
+    NodeInfo mapLegacyNodeInfo(Map<String, Object> data);
 
     /**
      * Maps data returned via the ES {@code /_cluster/allocation/explain} API.

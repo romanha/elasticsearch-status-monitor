@@ -15,6 +15,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParam
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAllocationParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterHealthParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterSettingsParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterStateParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersionParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.GeneralParams;
 import org.apache.http.ProtocolVersion;
@@ -193,8 +194,10 @@ class DefaultElasticsearchClientTest {
         sut.getClusterInfo();
 
         // Then
-        Request expectedRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, ClusterHealthParams.API_ENDPOINT);
-        verify(client).performRequest(expectedRequest);
+        Request expectedClusterHealthRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, ClusterHealthParams.API_ENDPOINT);
+        Request expectedClusterStateRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, ClusterStateParams.API_ENDPOINT);
+        verify(client).performRequest(expectedClusterHealthRequest);
+        verify(client).performRequest(expectedClusterStateRequest);
     }
 
     @Test
@@ -385,7 +388,7 @@ class DefaultElasticsearchClientTest {
 
     private ClusterInfo givenContentCanBeMappedToClusterInfo(final String responseContent) {
         ClusterInfo info = ClusterInfos.random();
-        when(infoMapper.mapClusterInfo(responseContent)).thenReturn(info);
+        when(infoMapper.mapClusterInfo(responseContent, responseContent)).thenReturn(info);
         return info;
     }
 
@@ -393,7 +396,7 @@ class DefaultElasticsearchClientTest {
         List<NodeInfo> infos = new ArrayList<>();
         for (Map<String, Object> content : responseContent) {
             NodeInfo info = NodeInfos.random();
-            when(infoMapper.mapNodeInfo(content)).thenReturn(info);
+            when(infoMapper.mapLegacyNodeInfo(content)).thenReturn(info);
             infos.add(info);
         }
 

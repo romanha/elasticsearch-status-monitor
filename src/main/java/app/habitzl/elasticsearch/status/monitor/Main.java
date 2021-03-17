@@ -22,7 +22,13 @@ public class Main {
 
         ConfigurationLoader configurationLoader = injector.getInstance(ConfigurationLoader.class);
         AnalysisStartOption startOption = configurationLoader.load(args);
+        AnalysisReport report = startAnalysis(injector, startOption);
 
+        teardown(injector);
+        exit(injector, startOption, report);
+    }
+
+    private static AnalysisReport startAnalysis(final Injector injector, final AnalysisStartOption startOption) {
         AnalysisReport report;
         switch (startOption) {
             case ANALYSIS_POSSIBLE:
@@ -39,8 +45,7 @@ public class Main {
                 break;
         }
 
-        teardown(injector);
-        exit(injector, startOption, report);
+        return report;
     }
 
     private static AnalysisReport performAnalysis(final Injector injector) {

@@ -18,6 +18,8 @@ public class DefaultClusterInfoMapper implements ClusterInfoMapper {
     private static final String INITIALIZING_SHARDS_PATH = "/initializing_shards";
     private static final String UNASSIGNED_SHARDS_PATH = "/unassigned_shards";
 
+    private static final String MASTER_NODE_ID_PATH = "/master_node";
+
     private final JsonParser parser;
 
     @Inject
@@ -26,18 +28,20 @@ public class DefaultClusterInfoMapper implements ClusterInfoMapper {
     }
 
     @Override
-    public ClusterInfo map(final String jsonData) {
-        Optional<String> clusterName = parser.getValueFromPath(jsonData, CLUSTER_NAME_PATH, String.class);
-        ClusterHealthStatus healthStatus = parser.getValueFromPath(jsonData, HEALTH_STATUS_PATH, String.class)
+    public ClusterInfo map(final String clusterHealthJson, final String clusterStateJson) {
+        Optional<String> clusterName = parser.getValueFromPath(clusterHealthJson, CLUSTER_NAME_PATH, String.class);
+        ClusterHealthStatus healthStatus = parser.getValueFromPath(clusterHealthJson, HEALTH_STATUS_PATH, String.class)
                                                  .map(String::toUpperCase)
                                                  .map(ClusterHealthStatus::valueOf)
                                                  .orElse(ClusterHealthStatus.UNKNOWN);
-        Optional<Integer> numberOfNodes = parser.getValueFromPath(jsonData, NUMBER_OF_NODES_PATH, Integer.class);
-        Optional<Integer> numberOfDataNodes = parser.getValueFromPath(jsonData, NUMBER_OF_DATA_NODES_PATH, Integer.class);
-        Optional<Integer> activeShards = parser.getValueFromPath(jsonData, ACTIVE_SHARDS_PATH, Integer.class);
-        Optional<Integer> activePrimaryShards = parser.getValueFromPath(jsonData, ACTIVE_PRIMARY_SHARDS_PATH, Integer.class);
-        Optional<Integer> initializingShards = parser.getValueFromPath(jsonData, INITIALIZING_SHARDS_PATH, Integer.class);
-        Optional<Integer> unassignedShards = parser.getValueFromPath(jsonData, UNASSIGNED_SHARDS_PATH, Integer.class);
+        Optional<Integer> numberOfNodes = parser.getValueFromPath(clusterHealthJson, NUMBER_OF_NODES_PATH, Integer.class);
+        Optional<Integer> numberOfDataNodes = parser.getValueFromPath(clusterHealthJson, NUMBER_OF_DATA_NODES_PATH, Integer.class);
+        Optional<Integer> activeShards = parser.getValueFromPath(clusterHealthJson, ACTIVE_SHARDS_PATH, Integer.class);
+        Optional<Integer> activePrimaryShards = parser.getValueFromPath(clusterHealthJson, ACTIVE_PRIMARY_SHARDS_PATH, Integer.class);
+        Optional<Integer> initializingShards = parser.getValueFromPath(clusterHealthJson, INITIALIZING_SHARDS_PATH, Integer.class);
+        Optional<Integer> unassignedShards = parser.getValueFromPath(clusterHealthJson, UNASSIGNED_SHARDS_PATH, Integer.class);
+
+        Optional<String> masterNodeId = parser.getValueFromPath(clusterStateJson, MASTER_NODE_ID_PATH, String.class);
 
         return new ClusterInfo(
                 clusterName.orElse(""),
@@ -47,7 +51,8 @@ public class DefaultClusterInfoMapper implements ClusterInfoMapper {
                 activeShards.orElse(0),
                 activePrimaryShards.orElse(0),
                 initializingShards.orElse(0),
-                unassignedShards.orElse(0)
+                unassignedShards.orElse(0),
+                masterNodeId.orElse("")
         );
     }
 }

@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 class DefaultClusterInfoMapperTest {
 
     private static final String CLUSTER_NAME = "cluster-name";
+    private static final String CLUSTER_UUID = "cluster-uuid";
     private static final ClusterHealthStatus HEALTH_STATUS = ClusterHealthStatus.YELLOW;
     private static final int NUMBER_OF_NODES = 10;
     private static final int NUMBER_OF_DATA_NODES = 5;
@@ -21,7 +22,9 @@ class DefaultClusterInfoMapperTest {
     private static final int INITIALIZING_SHARDS = 7;
     private static final int UNASSIGNED_SHARDS = 17;
 
-    private static final String JSON = "{\n"
+    private static final String MASTER_NODE_ID = "master-node-id";
+
+    private static final String JSON_CLUSTER_HEALTH = "{\n"
             + "  \"cluster_name\": \"" + CLUSTER_NAME + "\",\n"
             + "  \"status\": \"" + HEALTH_STATUS.name().toLowerCase() + "\",\n"
             + "  \"number_of_nodes\": " + NUMBER_OF_NODES + ",\n"
@@ -30,6 +33,11 @@ class DefaultClusterInfoMapperTest {
             + "  \"active_shards\": " + ACTIVE_SHARDS + ",\n"
             + "  \"initializing_shards\": " + INITIALIZING_SHARDS + ",\n"
             + "  \"unassigned_shards\": " + UNASSIGNED_SHARDS + "\n"
+            + "}";
+    private static final String JSON_CLUSTER_STATE = "{\n"
+            + "  \"cluster_name\": \"" + CLUSTER_NAME + "\",\n"
+            + "  \"cluster_uuid\": \"" + CLUSTER_UUID + "\",\n"
+            + "  \"master_node\": \"" + MASTER_NODE_ID + "\"\n"
             + "}";
 
     private DefaultClusterInfoMapper sut;
@@ -51,11 +59,12 @@ class DefaultClusterInfoMapperTest {
                 ACTIVE_SHARDS,
                 ACTIVE_PRIMARY_SHARDS,
                 INITIALIZING_SHARDS,
-                UNASSIGNED_SHARDS
+                UNASSIGNED_SHARDS,
+                MASTER_NODE_ID
         );
 
         // When
-        ClusterInfo result = sut.map(JSON);
+        ClusterInfo result = sut.map(JSON_CLUSTER_HEALTH, JSON_CLUSTER_STATE);
 
         // Then
         assertThat(result, equalTo(expectedInfo));
@@ -72,11 +81,12 @@ class DefaultClusterInfoMapperTest {
                 0,
                 0,
                 0,
-                0
+                0,
+                ""
         );
 
         // When
-        ClusterInfo result = sut.map("");
+        ClusterInfo result = sut.map("", "");
 
         // Then
         assertThat(result, equalTo(expectedInfo));

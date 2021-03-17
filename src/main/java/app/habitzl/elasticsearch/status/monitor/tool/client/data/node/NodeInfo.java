@@ -9,42 +9,41 @@ import java.util.StringJoiner;
 public final class NodeInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final String processId;
     private final String nodeId;
     private final String nodeName;
+    private final String processId;
+    private final String jvmVersion;
+    private final String elasticsearchVersion;
     private final boolean isMasterNode;
-    private final boolean isDataNode;
     private final boolean isMasterEligibleNode;
-    private final String uptime;
-    private final float loadAverageLast15Minutes;
-    private final int heapUsageInPercent;
+    private final boolean isDataNode;
+    private final boolean isIngestNode;
     private final EndpointInfo endpointInfo;
+    private final NodeStats nodeStats;
 
     public NodeInfo(
-            final String processId,
             final String nodeId,
             final String nodeName,
+            final String processId,
+            final String jvmVersion,
+            final String elasticsearchVersion,
             final boolean isMasterNode,
-            final boolean isDataNode,
             final boolean isMasterEligibleNode,
-            final String uptime,
-            final float loadAverageLast15Minutes,
-            final int heapUsageInPercent,
-            final EndpointInfo endpointInfo) {
-        this.processId = processId;
+            final boolean isDataNode,
+            final boolean isIngestNode,
+            final EndpointInfo endpointInfo,
+            final NodeStats nodeStats) {
         this.nodeId = nodeId;
         this.nodeName = nodeName;
+        this.processId = processId;
+        this.jvmVersion = jvmVersion;
+        this.elasticsearchVersion = elasticsearchVersion;
         this.isMasterNode = isMasterNode;
-        this.isDataNode = isDataNode;
         this.isMasterEligibleNode = isMasterEligibleNode;
-        this.uptime = uptime;
-        this.loadAverageLast15Minutes = loadAverageLast15Minutes;
-        this.heapUsageInPercent = heapUsageInPercent;
+        this.isDataNode = isDataNode;
+        this.isIngestNode = isIngestNode;
         this.endpointInfo = endpointInfo;
-    }
-
-    public String getProcessId() {
-        return processId;
+        this.nodeStats = nodeStats;
     }
 
     public String getNodeId() {
@@ -55,49 +54,40 @@ public final class NodeInfo implements Serializable {
         return nodeName;
     }
 
-    public boolean isMasterNode() {
-        return isMasterNode;
+    public String getProcessId() {
+        return processId;
     }
 
-    public boolean isDataNode() {
-        return isDataNode;
+    public String getJvmVersion() {
+        return jvmVersion;
+    }
+
+    public String getElasticsearchVersion() {
+        return elasticsearchVersion;
+    }
+
+    public boolean isMasterNode() {
+        return isMasterNode;
     }
 
     public boolean isMasterEligibleNode() {
         return isMasterEligibleNode;
     }
 
-    public String getUptime() {
-        return uptime;
+    public boolean isDataNode() {
+        return isDataNode;
     }
 
-    /**
-     * The load average indicates the workload of a node.
-     * In normal cases, this should be lower than the number of CPU cores on the node.
-     * <p>
-     * For example, the load value means for a single-core node:
-     * <ul>
-     * <li>load < 1: No pending processes exist.</li>
-     * <li>load = 1: The system does not have idle resources to run more processes.</li>
-     * <li>load > 1: Processes are queuing for resources.</li>
-     * </ul>
-     * If the load exceeds the number of CPU cores:
-     * <ul>
-     * <li>The CPU utilization or heap memory usage is high or reaches 100%.</li>
-     * <li>The query QPS or write QPS spikes or significantly fluctuates.</li>
-     * <li>The cluster receives slow queries.</li>
-     * </ul>
-     */
-    public float getLoadAverageLast15Minutes() {
-        return loadAverageLast15Minutes;
-    }
-
-    public int getHeapUsageInPercent() {
-        return heapUsageInPercent;
+    public boolean isIngestNode() {
+        return isIngestNode;
     }
 
     public EndpointInfo getEndpointInfo() {
         return endpointInfo;
+    }
+
+    public NodeStats getNodeStats() {
+        return nodeStats;
     }
 
     @Override
@@ -112,15 +102,16 @@ public final class NodeInfo implements Serializable {
         } else {
             NodeInfo nodeInfo = (NodeInfo) o;
             isEqual = Objects.equals(isMasterNode, nodeInfo.isMasterNode)
-                    && Objects.equals(isDataNode, nodeInfo.isDataNode)
                     && Objects.equals(isMasterEligibleNode, nodeInfo.isMasterEligibleNode)
-                    && Objects.equals(loadAverageLast15Minutes, nodeInfo.loadAverageLast15Minutes)
-                    && Objects.equals(heapUsageInPercent, nodeInfo.heapUsageInPercent)
-                    && Objects.equals(processId, nodeInfo.processId)
+                    && Objects.equals(isDataNode, nodeInfo.isDataNode)
+                    && Objects.equals(isIngestNode, nodeInfo.isIngestNode)
                     && Objects.equals(nodeId, nodeInfo.nodeId)
                     && Objects.equals(nodeName, nodeInfo.nodeName)
-                    && Objects.equals(uptime, nodeInfo.uptime)
-                    && Objects.equals(endpointInfo, nodeInfo.endpointInfo);
+                    && Objects.equals(processId, nodeInfo.processId)
+                    && Objects.equals(jvmVersion, nodeInfo.jvmVersion)
+                    && Objects.equals(elasticsearchVersion, nodeInfo.elasticsearchVersion)
+                    && Objects.equals(endpointInfo, nodeInfo.endpointInfo)
+                    && Objects.equals(nodeStats, nodeInfo.nodeStats);
         }
 
         return isEqual;
@@ -128,22 +119,35 @@ public final class NodeInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(processId, nodeId, nodeName, isMasterNode, isDataNode, isMasterEligibleNode, uptime, loadAverageLast15Minutes, heapUsageInPercent, endpointInfo);
+        return Objects.hash(
+                nodeId,
+                nodeName,
+                processId,
+                jvmVersion,
+                elasticsearchVersion,
+                isMasterNode,
+                isMasterEligibleNode,
+                isDataNode,
+                isIngestNode,
+                endpointInfo,
+                nodeStats
+        );
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", NodeInfo.class.getSimpleName() + "[", "]")
-                .add("processId='" + processId + "'")
                 .add("nodeId='" + nodeId + "'")
                 .add("nodeName='" + nodeName + "'")
+                .add("processId='" + processId + "'")
+                .add("jvmVersion='" + jvmVersion + "'")
+                .add("elasticsearchVersion='" + elasticsearchVersion + "'")
                 .add("isMasterNode=" + isMasterNode)
-                .add("isDataNode=" + isDataNode)
                 .add("isMasterEligibleNode=" + isMasterEligibleNode)
-                .add("uptime='" + uptime + "'")
-                .add("loadAverageLast15Minutes=" + loadAverageLast15Minutes)
-                .add("heapUsageInPercent=" + heapUsageInPercent)
+                .add("isDataNode=" + isDataNode)
+                .add("isIngestNode=" + isIngestNode)
                 .add("endpointInfo=" + endpointInfo)
+                .add("nodeStats=" + nodeStats)
                 .toString();
     }
 }

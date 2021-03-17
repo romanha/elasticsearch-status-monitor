@@ -26,6 +26,12 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
     }
 
     @Override
+    public NodeInfo map(final String nodeInfoJson, final String nodeStatsJson) {
+        // TODO implement
+        return null;
+    }
+
+    @Override
     public NodeInfo map(final Map<String, Object> data) {
         EndpointInfo endpointInfo = mapEndpointInfo(data);
 
@@ -38,24 +44,40 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
         Duration uptime = timeParser.parse(getString(data, NODE_UPTIME_COLUMN));
         float load15m = getFloat(data, AVERAGE_LOAD_COLUMN);
         int heap = getInteger(data, HEAP_PERCENT_COLUMN);
-        return new NodeInfo(
-                processId,
-                nodeId,
-                name,
-                isMasterNode,
-                isDataNode,
-                isMasterEligibleNode,
-                timeFormatter.format(uptime),
-                load15m,
-                heap,
-                endpointInfo
-        );
+
+        // TODO
+//        return new NodeInfo(
+//                processId,
+//                nodeId,
+//                name,
+//                jvmVersion,
+//                elasticsearchVersion,
+//                isMasterNode,
+//                isDataNode,
+//                isMasterEligibleNode,
+//                timeFormatter.format(uptime),
+//                load15m,
+//                heap,
+//                isIngestNode,
+//                endpointInfo,
+//                null
+//        );
+        return null;
     }
 
     private EndpointInfo mapEndpointInfo(final Map<String, Object> data) {
         String address = getString(data, IP_COLUMN);
         int ram = getInteger(data, RAM_PERCENT_COLUMN);
 
-        return new EndpointInfo(address, ram);
+        // TODO
+//        return new EndpointInfo(
+//                address,
+//                operatingSystemName,
+//                availableProcessors,
+//                cpuLoadAverageLast15Minutes,
+//                ram,
+//                ramUsageInBytes
+//        );
+        return null;
     }
 }

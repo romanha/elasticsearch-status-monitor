@@ -10,19 +10,66 @@ public final class EndpointInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String ipAddress;
+    private final String operatingSystemName;
+    private final int availableProcessors;
+    private final float cpuLoadAverageLast15Minutes;
     private final int ramUsageInPercent;
+    private final int ramUsageInBytes;
 
-    public EndpointInfo(final String ipAddress, final int ramUsageInPercent) {
+    public EndpointInfo(
+            final String ipAddress,
+            final String operatingSystemName,
+            final int availableProcessors,
+            final float cpuLoadAverageLast15Minutes,
+            final int ramUsageInPercent,
+            final int ramUsageInBytes) {
         this.ipAddress = ipAddress;
+        this.operatingSystemName = operatingSystemName;
+        this.availableProcessors = availableProcessors;
+        this.cpuLoadAverageLast15Minutes = cpuLoadAverageLast15Minutes;
         this.ramUsageInPercent = ramUsageInPercent;
+        this.ramUsageInBytes = ramUsageInBytes;
     }
 
     public String getIpAddress() {
         return ipAddress;
     }
 
+    public String getOperatingSystemName() {
+        return operatingSystemName;
+    }
+
+    public int getAvailableProcessors() {
+        return availableProcessors;
+    }
+
+    /**
+     * The load average indicates the workload of a node.
+     * In normal cases, this should be lower than the number of CPU cores on the node.
+     * <p>
+     * For example, the load value means for a single-core node:
+     * <ul>
+     * <li>load < 1: No pending processes exist.</li>
+     * <li>load = 1: The system does not have idle resources to run more processes.</li>
+     * <li>load > 1: Processes are queuing for resources.</li>
+     * </ul>
+     * If the load exceeds the number of CPU cores:
+     * <ul>
+     * <li>The CPU utilization or heap memory usage is high or reaches 100%.</li>
+     * <li>The query QPS or write QPS spikes or significantly fluctuates.</li>
+     * <li>The cluster receives slow queries.</li>
+     * </ul>
+     */
+    public float getCpuLoadAverageLast15Minutes() {
+        return cpuLoadAverageLast15Minutes;
+    }
+
     public int getRamUsageInPercent() {
         return ramUsageInPercent;
+    }
+
+    public int getRamUsageInBytes() {
+        return ramUsageInBytes;
     }
 
     @Override
@@ -36,8 +83,12 @@ public final class EndpointInfo implements Serializable {
             isEqual = false;
         } else {
             EndpointInfo that = (EndpointInfo) o;
-            isEqual = Objects.equals(ramUsageInPercent, that.ramUsageInPercent)
-                    && Objects.equals(ipAddress, that.ipAddress);
+            isEqual = Objects.equals(availableProcessors, that.availableProcessors)
+                    && Objects.equals(cpuLoadAverageLast15Minutes, that.cpuLoadAverageLast15Minutes)
+                    && Objects.equals(ramUsageInPercent, that.ramUsageInPercent)
+                    && Objects.equals(ramUsageInBytes, that.ramUsageInBytes)
+                    && Objects.equals(ipAddress, that.ipAddress)
+                    && Objects.equals(operatingSystemName, that.operatingSystemName);
         }
 
         return isEqual;
@@ -45,14 +96,18 @@ public final class EndpointInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ipAddress, ramUsageInPercent);
+        return Objects.hash(ipAddress, operatingSystemName, availableProcessors, cpuLoadAverageLast15Minutes, ramUsageInPercent, ramUsageInBytes);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", EndpointInfo.class.getSimpleName() + "[", "]")
                 .add("ipAddress='" + ipAddress + "'")
+                .add("operatingSystemName='" + operatingSystemName + "'")
+                .add("availableProcessors=" + availableProcessors)
+                .add("cpuLoadAverageLast15Minutes=" + cpuLoadAverageLast15Minutes)
                 .add("ramUsageInPercent=" + ramUsageInPercent)
+                .add("ramUsageInBytes=" + ramUsageInBytes)
                 .toString();
     }
 }

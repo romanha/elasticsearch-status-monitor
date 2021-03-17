@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.mapper;
 
+import app.habitzl.elasticsearch.status.monitor.Randoms;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,9 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class DefaultInfoMapperTest {
-
-    private static final String TEST_STRING = "value";
-    private static final Map<String, Object> TEST_MAP = Map.of("key", "value");
 
     private DefaultInfoMapper sut;
     private ClusterSettingsMapper clusterSettingsMapper;
@@ -36,7 +34,7 @@ class DefaultInfoMapperTest {
     @Test
     void mapClusterSettings_sut_delegatesToClusterSettingsMapper() {
         // Given
-        String json = TEST_STRING;
+        String json = Randoms.generateString("cluster-settings-");
 
         // When
         sut.mapClusterSettings(json);
@@ -48,22 +46,36 @@ class DefaultInfoMapperTest {
     @Test
     void mapClusterInfo_sut_delegatesToClusterInfoMapper() {
         // Given
-        String json = TEST_STRING;
+        String json1 = Randoms.generateString("cluster-health-");
+        String json2 = Randoms.generateString("cluster-state-");
 
         // When
-        sut.mapClusterInfo(json);
+        sut.mapClusterInfo(json1, json2);
 
         // Then
-        verify(clusterInfoMapper).map(json);
+        verify(clusterInfoMapper).map(json1, json2);
     }
 
     @Test
     void mapNodeInfo_sut_delegatesToNodeInfoMapper() {
         // Given
-        Map<String, Object> map = TEST_MAP;
+        String json1 = Randoms.generateString("node-info-");
+        String json2 = Randoms.generateString("node-stats-");
 
         // When
-        sut.mapNodeInfo(map);
+        sut.mapNodeInfo(json1, json2);
+
+        // Then
+        verify(nodeInfoMapper).map(json1, json2);
+    }
+
+    @Test
+    void mapLegacyNodeInfo_sut_delegatesToNodeInfoMapper() {
+        // Given
+        Map<String, Object> map = Map.of(Randoms.generateString("key-"), Randoms.generateString("value-"));
+
+        // When
+        sut.mapLegacyNodeInfo(map);
 
         // Then
         verify(nodeInfoMapper).map(map);
@@ -72,7 +84,7 @@ class DefaultInfoMapperTest {
     @Test
     void mapUnassignedShardInfo_sut_delegatesToClusterAllocationMapper() {
         // Given
-        String json = TEST_STRING;
+        String json = Randoms.generateString("unassigned-shards-");
 
         // When
         sut.mapUnassignedShardInfo(json);

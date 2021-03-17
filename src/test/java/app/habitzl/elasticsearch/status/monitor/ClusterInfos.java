@@ -21,7 +21,8 @@ public final class ClusterInfos {
                 Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger(),
-                Randoms.generatePositiveInteger()
+                Randoms.generatePositiveInteger(),
+                Randoms.generateString("master-node-id-")
         );
     }
 
@@ -34,7 +35,8 @@ public final class ClusterInfos {
                 Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger(),
                 0,
-                0
+                0,
+                Randoms.generateString("master-node-id-")
         );
     }
 }

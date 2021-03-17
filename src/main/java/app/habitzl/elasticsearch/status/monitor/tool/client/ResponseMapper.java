@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A mapper for converting Elasticsearch responses to maps with key-value pairs.
+ * A mapper for converting Elasticsearch responses to other formats.
  */
 public interface ResponseMapper {
     /**
