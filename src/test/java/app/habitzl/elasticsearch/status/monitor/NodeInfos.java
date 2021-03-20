@@ -16,6 +16,10 @@ public final class NodeInfos {
         return randomMasterEligibleDataNode(EndpointInfos.random());
     }
 
+    public static NodeInfo randomMasterNode() {
+        return random(EndpointInfos.random(), true, true, Randoms.generateBoolean());
+    }
+
     public static NodeInfo randomMasterEligibleDataNode() {
         return random(EndpointInfos.random(), Randoms.generateBoolean(), true, true);
     }

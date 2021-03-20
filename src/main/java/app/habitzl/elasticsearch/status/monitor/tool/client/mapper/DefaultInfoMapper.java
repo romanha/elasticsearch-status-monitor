@@ -39,8 +39,8 @@ public class DefaultInfoMapper implements InfoMapper {
     }
 
     @Override
-    public List<NodeInfo> mapNodeInfo(final String nodeInfoJson, final String nodeStatsJson) {
-        return nodeInfoMapper.map(nodeInfoJson, nodeStatsJson);
+    public List<NodeInfo> mapNodeInfo(final String masterNodeJson, final String nodeInfoJson, final String nodeStatsJson) {
+        return nodeInfoMapper.map(masterNodeJson, nodeInfoJson, nodeStatsJson);
     }
 
     @Override

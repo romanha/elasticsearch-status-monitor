@@ -8,5 +8,9 @@ public final class ClusterStateParams {
         // instantiation protection
     }
 
-    public static final String API_ENDPOINT = "/_cluster/state/master_node";
+    public static final String API_ENDPOINT = "/_cluster/state";
+
+    public static String onlyRequestMasterNode() {
+        return API_ENDPOINT + "/master_node";
+    }
 }

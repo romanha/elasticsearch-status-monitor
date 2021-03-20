@@ -14,19 +14,105 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class DefaultNodeInfoMapperTest {
 
-    private static final NodeInfo NODE_INFO_1 = NodeInfos.randomMasterEligibleDataNode();
-    private static final NodeInfo NODE_INFO_2 = NodeInfos.randomNotMasterEligibleDataNode();
+    private DefaultNodeInfoMapper sut;
+    private TimeFormatter timeFormatter;
+
+    private NodeInfo masterNode;
+    private NodeInfo dataNode;
+
+    @BeforeEach
+    void setUp() {
+        timeFormatter = mock(TimeFormatter.class);
+        sut = new DefaultNodeInfoMapper(timeFormatter);
+
+        masterNode = NodeInfos.randomMasterNode();
+        dataNode = NodeInfos.randomNotMasterEligibleDataNode();
+        prepareTimeFormatter(masterNode, dataNode);
+    }
+
+    @Test
+    void map_validResponses_returnNodeInfos() {
+        // Given
+        String masterNodeResponse = createMasterNodeResponse(masterNode.getNodeId());
+        String nodeInfoResponse = createNodeInfoResponse(masterNode, dataNode);
+        String nodeStatsResponse = createNodeStatsResponse(true, masterNode, dataNode);
+
+        // When
+        List<NodeInfo> result = sut.map(masterNodeResponse, nodeInfoResponse, nodeStatsResponse);
+
+        // Then
+        assertThat(result, containsInAnyOrder(masterNode, dataNode));
+    }
+
+    @Test
+    void map_responsesWithoutOptionalFields_returnNodeInfosWithoutOptionalData() {
+        // Given
+        String masterNodeResponse = createMasterNodeResponse(masterNode.getNodeId());
+        String nodeInfoResponse = createNodeInfoResponse(masterNode, dataNode);
+        String nodeStatsResponse = createNodeStatsResponse(false, masterNode, dataNode);
+
+        // When
+        List<NodeInfo> result = sut.map(masterNodeResponse, nodeInfoResponse, nodeStatsResponse);
+
+        // Then
+        assertThat(result, hasSize(2));
+        result.forEach(nodeInfo -> assertThat(nodeInfo.getEndpointInfo().getCpuLoadAverageLast15Minutes(), nullValue()));
+    }
+
+    @Test
+    void map_responsesWithoutNodes_returnEmpty() {
+        // Given
+        String masterNodeResponse = createMasterNodeResponse(masterNode.getNodeId());
+        String nodeInfoResponse = createEmptyNodesResponse();
+        String nodeStatsResponse = createEmptyNodesResponse();
+
+        // When
+        List<NodeInfo> result = sut.map(masterNodeResponse, nodeInfoResponse, nodeStatsResponse);
+
+        // Then
+        assertThat(result, empty());
+    }
+
+    @Test
+    void map_invalidResponses_returnEmpty() {
+        // Given
+        String masterNodeResponse = createMasterNodeResponse(masterNode.getNodeId());
+        String nodeInfoResponse = createInvalidResponse();
+        String nodeStatsResponse = createInvalidResponse();
+
+        // When
+        List<NodeInfo> result = sut.map(masterNodeResponse, nodeInfoResponse, nodeStatsResponse);
+
+        // Then
+        assertThat(result, empty());
+    }
+
+    private void prepareTimeFormatter(final NodeInfo... nodeInfos) {
+        Arrays.stream(nodeInfos)
+                .forEach(nodeInfo ->
+                        when(timeFormatter.format(nodeInfo.getNodeStats().getUptime()))
+                                .thenReturn(nodeInfo.getNodeStats().getUptimeFormatted())
+                );
+    }
+
+    private static String createMasterNodeResponse(final String masterNodeId) {
+        return "{\n"
+                + "\t\"cluster_name\": \"local-cluster\",\n"
+                + "\t\"cluster_uuid\": \"cluster-id\",\n"
+                + "\t\"master_node\": \"" + masterNodeId + "\"\n"
+                + "}";
+    }
 
     private static String createNodeInfoResponse(final NodeInfo... nodeInfos) {
         String jsonNodeInfos = Arrays.stream(nodeInfos)
-                                     .map(DefaultNodeInfoMapperTest::createNodeInfoJson)
-                                     .collect(Collectors.joining(",\n", "", "\n"));
+                .map(DefaultNodeInfoMapperTest::createNodeInfoJson)
+                .collect(Collectors.joining(",\n", "", "\n"));
         return "{\n"
                 + "  \"_nodes\": {\n"
                 + "    \"total\": " + nodeInfos.length + ",\n"
@@ -96,10 +182,10 @@ class DefaultNodeInfoMapperTest {
                 + "    }";
     }
 
-    private static String createNodeStatsResponse(final NodeInfo... nodeInfos) {
+    private static String createNodeStatsResponse(final boolean includeOptionalData, final NodeInfo... nodeInfos) {
         String jsonNodeStats = Arrays.stream(nodeInfos)
-                                     .map(DefaultNodeInfoMapperTest::createNodeStatsJson)
-                                     .collect(Collectors.joining(",\n", "", "\n"));
+                .map((NodeInfo nodeInfo) -> createNodeStatsJson(nodeInfo, includeOptionalData))
+                .collect(Collectors.joining(",\n", "", "\n"));
         return "{\n"
                 + "  \"_nodes\": {\n"
                 + "    \"total\": " + nodeInfos.length + ",\n"
@@ -113,7 +199,7 @@ class DefaultNodeInfoMapperTest {
                 + "}";
     }
 
-    private static String createNodeStatsJson(final NodeInfo nodeInfo) {
+    private static String createNodeStatsJson(final NodeInfo nodeInfo, final boolean includeOptionalData) {
         EndpointInfo endpointInfo = nodeInfo.getEndpointInfo();
         NodeStats nodeStats = nodeInfo.getNodeStats();
         return "    \"" + nodeInfo.getNodeId() + "\": {\n"
@@ -127,7 +213,7 @@ class DefaultNodeInfoMapperTest {
                 + "        \"cpu\": {\n"
                 + "          \"percent\":" + endpointInfo.getCpuUsageInPercent() + ",\n"
                 + "          \"load_average\": {\n"
-                + "            \"15m\": " + endpointInfo.getCpuLoadAverageLast15Minutes() + "\n"
+                + (includeOptionalData ? "            \"15m\": " + endpointInfo.getCpuLoadAverageLast15Minutes() + "\n" : "")
                 + "          }\n"
                 + "        },\n"
                 + "        \"mem\": {\n"
@@ -193,36 +279,19 @@ class DefaultNodeInfoMapperTest {
                 + "    }";
     }
 
-    private DefaultNodeInfoMapper sut;
-    private TimeFormatter timeFormatter;
-
-    @BeforeEach
-    void setUp() {
-        var timeParser = mock(TimeParser.class);
-        timeFormatter = mock(TimeFormatter.class);
-        sut = new DefaultNodeInfoMapper(timeParser, timeFormatter);
+    private static String createInvalidResponse() {
+        return "{}";
     }
 
-    @Test
-    void map_validResponses_returnNodeInfos() {
-        // Given
-        prepareTimeFormatter(NODE_INFO_1, NODE_INFO_2);
-        String nodeInfoResponse = createNodeInfoResponse(NODE_INFO_1, NODE_INFO_2);
-        String nodeStatsResponse = createNodeStatsResponse(NODE_INFO_1, NODE_INFO_2);
-
-        // When
-        List<NodeInfo> result = sut.map(nodeInfoResponse, nodeStatsResponse);
-
-        // Then
-        assertThat(result, containsInAnyOrder(NODE_INFO_1, NODE_INFO_2));
-    }
-
-    private void prepareTimeFormatter(final NodeInfo... nodeInfos) {
-        Arrays.stream(nodeInfos)
-              .forEach(nodeInfo ->
-                      when(timeFormatter.format(nodeInfo.getNodeStats().getUptime()))
-                              .thenReturn(nodeInfo.getNodeStats().getUptimeFormatted())
-              );
-        ;
+    private static String createEmptyNodesResponse() {
+        return "{\n"
+                + "  \"_nodes\": {\n"
+                + "    \"total\": 0,\n"
+                + "    \"successful\": 0,\n"
+                + "    \"failed\": 0\n"
+                + "  },\n"
+                + "  \"cluster_name\": \"local-cluster\",\n"
+                + "  \"nodes\": {}\n"
+                + "}";
     }
 }

@@ -26,7 +26,7 @@ public interface InfoMapper {
     /**
      * Maps data returned via the ES {@code /_nodes} and {@code /_nodes/stats} APIs.
      */
-    List<NodeInfo> mapNodeInfo(String nodeInfoJson, String nodeStatsJson);
+    List<NodeInfo> mapNodeInfo(String masterNodeJson, String nodeInfoJson, String nodeStatsJson);
 
     /**
      * Maps data returned via the ES {@code /_cluster/allocation/explain} API.

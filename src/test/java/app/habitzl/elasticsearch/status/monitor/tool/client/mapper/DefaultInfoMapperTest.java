@@ -57,14 +57,15 @@ class DefaultInfoMapperTest {
     @Test
     void mapNodeInfo_sut_delegatesToNodeInfoMapper() {
         // Given
-        String json1 = Randoms.generateString("node-info-");
-        String json2 = Randoms.generateString("node-stats-");
+        String masterNodeJson = Randoms.generateString("master-node-");
+        String nodeInfoJson = Randoms.generateString("node-info-");
+        String nodeStatsJson = Randoms.generateString("node-stats-");
 
         // When
-        sut.mapNodeInfo(json1, json2);
+        sut.mapNodeInfo(masterNodeJson, nodeInfoJson, nodeStatsJson);
 
         // Then
-        verify(nodeInfoMapper).map(json1, json2);
+        verify(nodeInfoMapper).map(masterNodeJson, nodeInfoJson, nodeStatsJson);
     }
 
     @Test

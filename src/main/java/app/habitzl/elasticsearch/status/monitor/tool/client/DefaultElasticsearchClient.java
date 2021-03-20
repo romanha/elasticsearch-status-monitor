@@ -129,6 +129,9 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     public List<NodeInfo> getNodeInfo() {
         List<NodeInfo> nodeInfos = List.of();
 
+        Request masterNodeRequest = new Request(METHOD_GET, ClusterStateParams.onlyRequestMasterNode());
+        setAcceptedContentToJSON(masterNodeRequest);
+
         Request nodeInfoRequest = new Request(METHOD_GET, NodeInfoParams.API_ENDPOINT);
         setAcceptedContentToJSON(nodeInfoRequest);
 
@@ -137,13 +140,16 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         nodeStatsRequest.addParameter(NodeStatsParams.PARAM_METRIC, NodeStatsParams.allMetrics());
 
         try {
+            Response masterNodeResponse = client.performRequest(masterNodeRequest);
+            String masterNodeResult = responseMapper.getContentAsString(masterNodeResponse);
+
             Response nodeInfoResponse = client.performRequest(nodeInfoRequest);
             String nodeInfoResult = responseMapper.getContentAsString(nodeInfoResponse);
 
             Response nodeStatsResponse = client.performRequest(nodeStatsRequest);
             String nodeStatsResult = responseMapper.getContentAsString(nodeStatsResponse);
 
-            nodeInfos = infoMapper.mapNodeInfo(nodeInfoResult, nodeStatsResult);
+            nodeInfos = infoMapper.mapNodeInfo(masterNodeResult, nodeInfoResult, nodeStatsResult);
             LOG.debug("Mapped node infos: {}", nodeInfos);
         } catch (final IOException e) {
             logError(e);

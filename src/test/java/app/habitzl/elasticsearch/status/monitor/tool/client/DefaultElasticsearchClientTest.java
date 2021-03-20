@@ -227,7 +227,7 @@ class DefaultElasticsearchClientTest {
     }
 
     @Test
-    void getNodeInfo_always_sendNodeInfoAndNodeStatsRequest() throws IOException {
+    void getNodeInfo_always_sendClusterStateAndNodeInfoAndNodeStatsRequests() throws IOException {
         // Given
         givenClientRespondsWith(HTTP_STATUS_OK);
 
@@ -235,9 +235,12 @@ class DefaultElasticsearchClientTest {
         sut.getNodeInfo();
 
         // Then
+        Request expectedMasterNodeRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, ClusterStateParams.onlyRequestMasterNode());
         Request expectedNodeInfoRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, NodeInfoParams.API_ENDPOINT);
         Request expectedNodeStatsRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, NodeStatsParams.API_ENDPOINT);
         expectedNodeStatsRequest.addParameter(NodeStatsParams.PARAM_METRIC, NodeStatsParams.allMetrics());
+
+        verify(client).performRequest(expectedMasterNodeRequest);
         verify(client).performRequest(expectedNodeInfoRequest);
         verify(client).performRequest(expectedNodeStatsRequest);
     }
@@ -388,7 +391,7 @@ class DefaultElasticsearchClientTest {
 
     private List<NodeInfo> givenContentCanBeMappedToNodeInfo(final String responseContent) {
         List<NodeInfo> infos = List.of(NodeInfos.random(), NodeInfos.random());
-        when(infoMapper.mapNodeInfo(responseContent, responseContent)).thenReturn(infos);
+        when(infoMapper.mapNodeInfo(responseContent, responseContent, responseContent)).thenReturn(infos);
         return infos;
     }
 
