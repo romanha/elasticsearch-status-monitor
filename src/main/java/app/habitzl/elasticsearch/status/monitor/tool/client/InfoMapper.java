@@ -5,7 +5,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * A mapper for data returned via various Elasticsearch APIs.
@@ -26,13 +26,7 @@ public interface InfoMapper {
     /**
      * Maps data returned via the ES {@code /_nodes} and {@code /_nodes/stats} APIs.
      */
-    NodeInfo mapNodeInfo(String nodeInfoJson, String nodeStatsJson);
-
-    /**
-     * Maps data returned via the ES {@code /_cat/nodes} API.
-     */
-    @Deprecated(forRemoval = true)
-    NodeInfo mapLegacyNodeInfo(Map<String, Object> data);
+    List<NodeInfo> mapNodeInfo(String nodeInfoJson, String nodeStatsJson);
 
     /**
      * Maps data returned via the ES {@code /_cluster/allocation/explain} API.

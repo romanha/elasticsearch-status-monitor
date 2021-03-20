@@ -7,11 +7,11 @@ import java.util.StringJoiner;
 
 @Immutable
 public final class NodeInfo implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private final String nodeId;
     private final String nodeName;
-    private final String processId;
+    private final int processId;
     private final String jvmVersion;
     private final String elasticsearchVersion;
     private final boolean isMasterNode;
@@ -24,7 +24,7 @@ public final class NodeInfo implements Serializable {
     public NodeInfo(
             final String nodeId,
             final String nodeName,
-            final String processId,
+            final int processId,
             final String jvmVersion,
             final String elasticsearchVersion,
             final boolean isMasterNode,
@@ -54,7 +54,7 @@ public final class NodeInfo implements Serializable {
         return nodeName;
     }
 
-    public String getProcessId() {
+    public int getProcessId() {
         return processId;
     }
 

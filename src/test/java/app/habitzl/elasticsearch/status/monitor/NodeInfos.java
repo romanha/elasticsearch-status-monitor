@@ -8,8 +8,6 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
  */
 public final class NodeInfos {
 
-    private static final int ONE_HUNDRED = 100;
-
     private NodeInfos() {
         // instantiation protection
     }
@@ -19,29 +17,33 @@ public final class NodeInfos {
     }
 
     public static NodeInfo randomMasterEligibleDataNode() {
-        return random(EndpointInfos.random(), true, true);
+        return random(EndpointInfos.random(), Randoms.generateBoolean(), true, true);
     }
 
     public static NodeInfo randomMasterEligibleDataNode(final EndpointInfo endpoint) {
-        return random(endpoint, true, true);
+        return random(endpoint, Randoms.generateBoolean(), true, true);
     }
 
     public static NodeInfo randomMasterEligibleNode(final EndpointInfo endpoint, final boolean isDataNode) {
-        return random(endpoint, true, isDataNode);
+        return random(endpoint, Randoms.generateBoolean(), true, isDataNode);
     }
 
     public static NodeInfo randomNotMasterEligibleDataNode() {
-        return random(EndpointInfos.random(), false, true);
+        return random(EndpointInfos.random(), false, false, true);
     }
 
-    private static NodeInfo random(final EndpointInfo endpoint, final boolean isMasterEligible, final boolean isDataNode) {
+    private static NodeInfo random(
+            final EndpointInfo endpoint,
+            final boolean isMaster,
+            final boolean isMasterEligible,
+            final boolean isDataNode) {
         return new NodeInfo(
                 Randoms.generateString("node-id-"),
                 Randoms.generateString("node-name-"),
-                Randoms.generateString("P"),
+                Randoms.generatePositiveInteger(),
                 Randoms.generateString("jvm-version-"),
                 Randoms.generateString("elasticsearch-version-"),
-                Randoms.generateBoolean(),
+                isMaster,
                 isMasterEligible,
                 isDataNode,
                 Randoms.generateBoolean(),

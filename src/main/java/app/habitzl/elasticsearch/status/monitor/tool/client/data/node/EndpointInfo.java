@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.data.node;
 
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Objects;
@@ -7,12 +8,14 @@ import java.util.StringJoiner;
 
 @Immutable
 public final class EndpointInfo implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private final String ipAddress;
     private final String operatingSystemName;
     private final int availableProcessors;
-    private final float cpuLoadAverageLast15Minutes;
+    private final int cpuUsageInPercent;
+    @Nullable
+    private final Float cpuLoadAverageLast15Minutes;
     private final int ramUsageInPercent;
     private final int ramUsageInBytes;
 
@@ -20,12 +23,14 @@ public final class EndpointInfo implements Serializable {
             final String ipAddress,
             final String operatingSystemName,
             final int availableProcessors,
-            final float cpuLoadAverageLast15Minutes,
+            final int cpuUsageInPercent,
+            final @Nullable Float cpuLoadAverageLast15Minutes,
             final int ramUsageInPercent,
             final int ramUsageInBytes) {
         this.ipAddress = ipAddress;
         this.operatingSystemName = operatingSystemName;
         this.availableProcessors = availableProcessors;
+        this.cpuUsageInPercent = cpuUsageInPercent;
         this.cpuLoadAverageLast15Minutes = cpuLoadAverageLast15Minutes;
         this.ramUsageInPercent = ramUsageInPercent;
         this.ramUsageInBytes = ramUsageInBytes;
@@ -41,6 +46,10 @@ public final class EndpointInfo implements Serializable {
 
     public int getAvailableProcessors() {
         return availableProcessors;
+    }
+
+    public int getCpuUsageInPercent() {
+        return cpuUsageInPercent;
     }
 
     /**
@@ -60,7 +69,8 @@ public final class EndpointInfo implements Serializable {
      * <li>The cluster receives slow queries.</li>
      * </ul>
      */
-    public float getCpuLoadAverageLast15Minutes() {
+    @Nullable
+    public Float getCpuLoadAverageLast15Minutes() {
         return cpuLoadAverageLast15Minutes;
     }
 
@@ -84,6 +94,7 @@ public final class EndpointInfo implements Serializable {
         } else {
             EndpointInfo that = (EndpointInfo) o;
             isEqual = Objects.equals(availableProcessors, that.availableProcessors)
+                    && Objects.equals(cpuUsageInPercent, that.cpuUsageInPercent)
                     && Objects.equals(cpuLoadAverageLast15Minutes, that.cpuLoadAverageLast15Minutes)
                     && Objects.equals(ramUsageInPercent, that.ramUsageInPercent)
                     && Objects.equals(ramUsageInBytes, that.ramUsageInBytes)
@@ -96,7 +107,7 @@ public final class EndpointInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ipAddress, operatingSystemName, availableProcessors, cpuLoadAverageLast15Minutes, ramUsageInPercent, ramUsageInBytes);
+        return Objects.hash(ipAddress, operatingSystemName, availableProcessors, cpuUsageInPercent, cpuLoadAverageLast15Minutes, ramUsageInPercent, ramUsageInBytes);
     }
 
     @Override
@@ -105,6 +116,7 @@ public final class EndpointInfo implements Serializable {
                 .add("ipAddress='" + ipAddress + "'")
                 .add("operatingSystemName='" + operatingSystemName + "'")
                 .add("availableProcessors=" + availableProcessors)
+                .add("cpuUsageInPercent=" + cpuUsageInPercent)
                 .add("cpuLoadAverageLast15Minutes=" + cpuLoadAverageLast15Minutes)
                 .add("ramUsageInPercent=" + ramUsageInPercent)
                 .add("ramUsageInBytes=" + ramUsageInBytes)

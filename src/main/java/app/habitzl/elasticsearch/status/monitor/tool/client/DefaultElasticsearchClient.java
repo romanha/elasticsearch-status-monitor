@@ -26,9 +26,7 @@ import org.elasticsearch.client.RestClient;
 import javax.inject.Inject;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class DefaultElasticsearchClient implements ElasticsearchClient {
@@ -129,7 +127,7 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
 
     @Override
     public List<NodeInfo> getNodeInfo() {
-        List<NodeInfo> nodeInfos = new ArrayList<>();
+        List<NodeInfo> nodeInfos = List.of();
 
         Request nodeInfoRequest = new Request(METHOD_GET, NodeInfoParams.API_ENDPOINT);
         setAcceptedContentToJSON(nodeInfoRequest);
@@ -140,19 +138,13 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
 
         try {
             Response nodeInfoResponse = client.performRequest(nodeInfoRequest);
-            List<Map<String, Object>> nodeInfoResult = responseMapper.toMaps(nodeInfoResponse);
+            String nodeInfoResult = responseMapper.getContentAsString(nodeInfoResponse);
 
             Response nodeStatsResponse = client.performRequest(nodeStatsRequest);
-            List<Map<String, Object>> nodeStatsResult = responseMapper.toMaps(nodeStatsResponse);
+            String nodeStatsResult = responseMapper.getContentAsString(nodeStatsResponse);
 
-            // TODO find maps with same keys (= node ID) in both results and group them to map node info
-            //      best would probably be map<nodeId, jsonString> and use Jayway JSON Path to map the info
-
-            for (Map<String, Object> map : nodeInfoResult) {
-                NodeInfo nodeInfo = infoMapper.mapLegacyNodeInfo(map);
-                nodeInfos.add(nodeInfo);
-                LOG.debug("Mapped node info: {}", nodeInfo);
-            }
+            nodeInfos = infoMapper.mapNodeInfo(nodeInfoResult, nodeStatsResult);
+            LOG.debug("Mapped node infos: {}", nodeInfos);
         } catch (final IOException e) {
             logError(e);
         }

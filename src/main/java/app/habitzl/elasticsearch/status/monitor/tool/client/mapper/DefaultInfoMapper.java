@@ -7,7 +7,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 
 import javax.inject.Inject;
-import java.util.Map;
+import java.util.List;
 
 public class DefaultInfoMapper implements InfoMapper {
 
@@ -39,13 +39,8 @@ public class DefaultInfoMapper implements InfoMapper {
     }
 
     @Override
-    public NodeInfo mapNodeInfo(final String nodeInfoJson, final String nodeStatsJson) {
+    public List<NodeInfo> mapNodeInfo(final String nodeInfoJson, final String nodeStatsJson) {
         return nodeInfoMapper.map(nodeInfoJson, nodeStatsJson);
-    }
-
-    @Override
-    public NodeInfo mapLegacyNodeInfo(final Map<String, Object> data) {
-        return nodeInfoMapper.map(data);
     }
 
     @Override

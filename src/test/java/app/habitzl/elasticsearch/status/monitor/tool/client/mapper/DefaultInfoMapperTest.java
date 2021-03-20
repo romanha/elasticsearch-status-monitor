@@ -4,8 +4,6 @@ import app.habitzl.elasticsearch.status.monitor.Randoms;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -67,18 +65,6 @@ class DefaultInfoMapperTest {
 
         // Then
         verify(nodeInfoMapper).map(json1, json2);
-    }
-
-    @Test
-    void mapLegacyNodeInfo_sut_delegatesToNodeInfoMapper() {
-        // Given
-        Map<String, Object> map = Map.of(Randoms.generateString("key-"), Randoms.generateString("value-"));
-
-        // When
-        sut.mapLegacyNodeInfo(map);
-
-        // Then
-        verify(nodeInfoMapper).map(map);
     }
 
     @Test

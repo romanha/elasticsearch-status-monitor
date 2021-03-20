@@ -22,6 +22,7 @@ public final class EndpointInfos {
                 Randoms.generateString("ip-address-"),
                 Randoms.generateString("operating-system-"),
                 Randoms.generatePositiveInteger(),
+                Randoms.generateInteger(ONE_HUNDRED),
                 Randoms.generateFloat(),
                 ramUsage,
                 Randoms.generatePositiveInteger()

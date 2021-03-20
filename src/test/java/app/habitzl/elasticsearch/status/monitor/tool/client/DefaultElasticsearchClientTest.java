@@ -11,13 +11,14 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.Conn
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
-import app.habitzl.elasticsearch.status.monitor.tool.client.params.CatNodesParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAllocationParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterHealthParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterSettingsParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterStateParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersionParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.GeneralParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeInfoParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeStatsParams;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.StatusLine;
@@ -33,9 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.github.npathai.hamcrestopt.OptionalMatchers.isEmpty;
@@ -186,7 +185,7 @@ class DefaultElasticsearchClientTest {
     }
 
     @Test
-    void getClusterInfo_always_sendClusterHealthRequest() throws IOException {
+    void getClusterInfo_always_sendClusterHealthAndClusterStateRequests() throws IOException {
         // Given
         givenClientRespondsWith(HTTP_STATUS_OK);
 
@@ -228,7 +227,7 @@ class DefaultElasticsearchClientTest {
     }
 
     @Test
-    void getNodeInfo_always_sendCatNodesRequest() throws IOException {
+    void getNodeInfo_always_sendNodeInfoAndNodeStatsRequest() throws IOException {
         // Given
         givenClientRespondsWith(HTTP_STATUS_OK);
 
@@ -236,17 +235,18 @@ class DefaultElasticsearchClientTest {
         sut.getNodeInfo();
 
         // Then
-        Request expectedRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, CatNodesParams.API_ENDPOINT);
-        expectedRequest.addParameter(CatNodesParams.PARAM_COLUMNS, CatNodesParams.allColumns());
-        expectedRequest.addParameter(CatNodesParams.PARAM_FULL_ID, "true");
-        verify(client).performRequest(expectedRequest);
+        Request expectedNodeInfoRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, NodeInfoParams.API_ENDPOINT);
+        Request expectedNodeStatsRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, NodeStatsParams.API_ENDPOINT);
+        expectedNodeStatsRequest.addParameter(NodeStatsParams.PARAM_METRIC, NodeStatsParams.allMetrics());
+        verify(client).performRequest(expectedNodeInfoRequest);
+        verify(client).performRequest(expectedNodeStatsRequest);
     }
 
     @Test
     void getNodeInfo_successResponse_returnClusterInfo() throws IOException {
         // Given
         Response response = givenClientRespondsWith(HTTP_STATUS_OK);
-        List<Map<String, Object>> content = givenResponseHasMapsContent(response);
+        String content = givenResponseHasContent(response);
         List<NodeInfo> expected = givenContentCanBeMappedToNodeInfo(content);
 
         // When
@@ -374,12 +374,6 @@ class DefaultElasticsearchClientTest {
         return responseContent;
     }
 
-    private List<Map<String, Object>> givenResponseHasMapsContent(final Response response) throws IOException {
-        List<Map<String, Object>> responseContents = List.of(Map.of(Randoms.generateString("key-"), Randoms.generateString("value-")));
-        when(responseMapper.toMaps(response)).thenReturn(responseContents);
-        return responseContents;
-    }
-
     private ClusterSettings givenContentCanBeMappedToClusterSettings(final String responseContent) {
         ClusterSettings settings = ClusterSettingsUtils.random();
         when(infoMapper.mapClusterSettings(responseContent)).thenReturn(settings);
@@ -392,14 +386,9 @@ class DefaultElasticsearchClientTest {
         return info;
     }
 
-    private List<NodeInfo> givenContentCanBeMappedToNodeInfo(final List<Map<String, Object>> responseContent) {
-        List<NodeInfo> infos = new ArrayList<>();
-        for (Map<String, Object> content : responseContent) {
-            NodeInfo info = NodeInfos.random();
-            when(infoMapper.mapLegacyNodeInfo(content)).thenReturn(info);
-            infos.add(info);
-        }
-
+    private List<NodeInfo> givenContentCanBeMappedToNodeInfo(final String responseContent) {
+        List<NodeInfo> infos = List.of(NodeInfos.random(), NodeInfos.random());
+        when(infoMapper.mapNodeInfo(responseContent, responseContent)).thenReturn(infos);
         return infos;
     }
 
