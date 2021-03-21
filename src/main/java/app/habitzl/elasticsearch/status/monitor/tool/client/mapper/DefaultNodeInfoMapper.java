@@ -112,7 +112,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
             nodeInfo = new NodeInfo(
                     nodeId,
                     nodeName,
-                    processId,
+                    Integer.toString(processId),
                     jvmVersion,
                     elasticsearchVersion,
                     Objects.equals(nodeId, masterNodeId),
@@ -137,7 +137,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
         Integer cpuUsageInPercent = nodeStatsContext.read(createPathForNode(nodeId, PATH_OS_CPU_PERCENT), Integer.class);
         Float cpuLoadAverage;
         Integer ramUsageInPercent = nodeStatsContext.read(createPathForNode(nodeId, PATH_RAM_PERCENT), Integer.class);
-        Integer ramUsageInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_RAM_BYTES), Integer.class);
+        Long ramUsageInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_RAM_BYTES), Long.class);
 
         try {
             cpuLoadAverage = nodeStatsContext.read(createPathForNode(nodeId, PATH_OS_CPU_LOAD_AVERAGE), Float.class);
@@ -158,12 +158,12 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
     }
 
     private NodeStats gatherNodeStats(final String nodeId, final DocumentContext nodeStatsContext) {
-        Integer fileSystemAvailableBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_FS_AVAILABLE_BYTES), Integer.class);
+        Long fileSystemAvailableBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_FS_AVAILABLE_BYTES), Long.class);
         Integer cpuUsageInPercent = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_CPU_PERCENT), Integer.class);
         Long uptimeInMillis = nodeStatsContext.read(createPathForNode(nodeId, PATH_UPTIME), Long.class);
         Integer heapUsageInPercent = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_HEAP_PERCENT), Integer.class);
-        Integer heapUsageInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_HEAP_BYTES), Integer.class);
-        Integer maxHeapInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_MAX_HEAP_BYTES), Integer.class);
+        Long heapUsageInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_HEAP_BYTES), Long.class);
+        Long maxHeapInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_MAX_HEAP_BYTES), Long.class);
 
         Duration uptime = Duration.ofMillis(uptimeInMillis);
         return new NodeStats(

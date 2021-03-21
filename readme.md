@@ -131,6 +131,12 @@ Built for: Java 11 / Elasticsearch 6.8.13
 #### New features
 
 * Added the timestamp to the report.
+* Added the actual byte usage to the percentage of used RAM and heap memory. 
+* Added the operating system name to the endpoint data.
+* Added the Elasticsearch version to the node data.
+* Added the JVM version to the node data.
+* Added the "ingest" role to the node data (pre-processing documents).
+* Added the available free space on the file system to the node data. 
 * Problem analysis for "Cluster not fully operational".
   
 #### Fixes
@@ -140,6 +146,7 @@ Built for: Java 11 / Elasticsearch 6.8.13
   
 #### Miscellaneous
 
+* Replaced calls to the Elasticsearch `_cat` API with proper API endpoints. (`_cluster/state`, `_nodes` and `_nodes/stats`)
 * Updated Google Guice dependency from 5.0.0-BETA-1 to 5.0.1
 * Improved styling of the generated HTML report file.
 

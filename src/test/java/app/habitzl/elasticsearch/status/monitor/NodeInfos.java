@@ -44,7 +44,7 @@ public final class NodeInfos {
         return new NodeInfo(
                 Randoms.generateString("node-id-"),
                 Randoms.generateString("node-name-"),
-                Randoms.generatePositiveInteger(),
+                Integer.toString(Randoms.generatePositiveInteger()),
                 Randoms.generateString("jvm-version-"),
                 Randoms.generateString("elasticsearch-version-"),
                 isMaster,

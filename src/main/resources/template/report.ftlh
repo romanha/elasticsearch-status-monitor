@@ -8,8 +8,7 @@
         body {
             font-family: Calibri, sans-serif;
             max-width: 100%;
-            margin: 2em 4em;
-            padding: 0 4em;
+            margin: 2% 8%;
             background-color: #f4f3f1;
         }
 
@@ -18,6 +17,10 @@
          */
         body > div {
             max-width: 80% !important;
+        }
+
+        table {
+            margin-top: 5%;
         }
 
         table tr td:first-child {
@@ -43,22 +46,25 @@
             font-weight: bold;
         }
 
+        .centered {
+            text-align: center;
+        }
+
         .detail-section {
             width: max-content; /* To nicely wrap the content if it is smaller than the parent's max-width. */
             max-width: 100%; /* To set a maximum if max-content is bigger than the parent's max-width. */
-            margin-bottom: 2em;
+            margin-bottom: 2%;
         }
 
         .bordered-detail-section {
             width: max-content;
             max-width: 100%;
+            margin-bottom: 2%;
             padding: 1em;
             background: white;
             border: solid 1px darkgray;
             border-radius: 1em;
             box-shadow: 0.5em 0.5em 1em rgba(0, 0, 0, 0.1);
-
-            margin-bottom: 2em;
         }
 
         /*
@@ -69,7 +75,7 @@
         .bordered-detail-section > h3:first-child,
         .bordered-detail-section > h4:first-child,
         .bordered-detail-section > h5:first-child {
-            margin-top: 0.2em;
+            margin-top: 1%;
         }
 
         /*
@@ -83,9 +89,9 @@
         .multi-child-detail-section > div {
             width: max-content;
             max-width: 100%;
-            margin-right: 6em;
+            margin-bottom: 2%;
+            margin-right: 2em;
             float: left;
-            margin-bottom: 2em;
         }
 
         /*
@@ -170,47 +176,101 @@
         <#list report.nodeInfos as node>
             <div class="bordered-detail-section">
                 <h2>Node: ${node.nodeName}<#if node.masterNode> &starf;</#if></h2>
-                <h3>Endpoint Information</h3>
-                <table>
-                    <tbody>
-                    <tr>
-                        <td>IP address:</td>
-                        <td>${node.endpointInfo.ipAddress}</td>
-                    </tr>
-                    <tr>
-                        <td>RAM usage:</td>
-                        <td>${node.endpointInfo.ramUsageInPercent}&percnt;</td>
-                    </tr>
-                    </tbody>
-                </table>
 
-                <h3>Node Information</h3>
-                <table>
-                    <tbody>
-                    <tr>
-                        <td>Node ID:</td>
-                        <td>${node.nodeId}</td>
-                    </tr>
-                    <tr>
-                        <td>Process ID:</td>
-                        <td>${node.processId}</td>
-                    </tr>
-                    <tr>
-                        <td>Uptime:</td>
-                        <td>${node.uptime}</td>
-                    </tr>
-                    <tr>
-                        <td>Heap usage:</td>
-                        <td>${node.heapUsageInPercent}&percnt;</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div>
+                    <h3>Endpoint Information</h3>
 
-                <p>
-                    <#if node.masterNode>&starf; This node is the current master node.<br/></#if>
-                    <#if node.masterEligibleNode>&#10027; This node can become a master node.<br/></#if>
-                    <#if node.dataNode>&#9776; This node holds search data.<br/></#if>
-                </p>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>IP address:</td>
+                            <td>${node.endpointInfo.ipAddress}</td>
+                        </tr>
+                        <tr>
+                            <td>Operating system:</td>
+                            <td>${node.endpointInfo.operatingSystemName}</td>
+                        </tr>
+                        <tr>
+                            <td>RAM usage:</td>
+                            <td>
+                                <#assign ramUsageInGB = node.endpointInfo.ramUsageInBytes/1024/1024/1024>
+                                ${node.endpointInfo.ramUsageInPercent}&percnt; (${ramUsageInGB?string["0.##"]} GB)
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div>
+                    <h3>Node Information</h3>
+
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>Node ID:</td>
+                            <td>${node.nodeId}</td>
+                        </tr>
+                        <tr>
+                            <td>Process ID:</td>
+                            <td>${node.processId}</td>
+                        </tr>
+                        <tr>
+                            <td>Uptime:</td>
+                            <td>${node.nodeStats.uptimeFormatted}</td>
+                        </tr>
+                        <tr>
+                            <td>Elasticsearch version:</td>
+                            <td>${node.elasticsearchVersion}</td>
+                        </tr>
+                        <tr>
+                            <td>Java version:</td>
+                            <td>${node.jvmVersion}</td>
+                        </tr>
+                        <tr>
+                            <td>Heap usage:</td>
+                            <td>
+                                <#assign heapUsageInMB = node.nodeStats.heapUsageInBytes/1024/1024>
+                                <#assign maxHeapInMB = node.nodeStats.maximumHeapInBytes/1024/1024>
+                                ${node.nodeStats.heapUsageInPercent}&percnt; (${heapUsageInMB?string["0.##"]} MB / ${maxHeapInMB?string["0.##"]} MB)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>File system:</td>
+                            <td>
+                                <#assign freeSpaceOnFileSystemInGB = node.nodeStats.availableBytesOnFileSystem/1024/1024/1024>
+                                ${freeSpaceOnFileSystemInGB?string["0.##"]} GB free
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <table>
+                        <#if node.masterNode>
+                            <tr>
+                                <td class="centered">&starf;</td>
+                                <td>This node is the current master node.</td>
+                            </tr>
+                        </#if>
+                        <#if node.masterEligibleNode>
+                            <tr>
+                                <td class="centered">&#10027;</td>
+                                <td>This node can become a master node.</td>
+                            </tr>
+                        </#if>
+                        <#if node.dataNode>
+                            <tr>
+                                <td class="centered">&#9016;</td>
+                                <td>This node holds search data.</td>
+                            </tr>
+                        </#if>
+                        <#if node.ingestNode>
+                            <tr>
+                                <td class="centered">&#9000;</td>
+                                <td>This node can pre-process documents.</td>
+                            </tr>
+                        </#if>
+                    </table>
+                </div>
             </div>
         </#list>
     </div>

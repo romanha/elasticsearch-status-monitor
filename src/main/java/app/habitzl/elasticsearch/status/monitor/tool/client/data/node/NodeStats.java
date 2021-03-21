@@ -10,22 +10,22 @@ import java.util.StringJoiner;
 public final class NodeStats implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final int availableBytesOnFileSystem;
+    private final long availableBytesOnFileSystem;
     private final int cpuUsageInPercent;
     private final Duration uptime;
     private final String uptimeFormatted;
     private final int heapUsageInPercent;
-    private final int heapUsageInBytes;
-    private final int maximumHeapInBytes;
+    private final long heapUsageInBytes;
+    private final long maximumHeapInBytes;
 
     public NodeStats(
-            final int availableBytesOnFileSystem,
+            final long availableBytesOnFileSystem,
             final int cpuUsageInPercent,
             final Duration uptime,
             final String uptimeFormatted,
             final int heapUsageInPercent,
-            final int heapUsageInBytes,
-            final int maximumHeapInBytes) {
+            final long heapUsageInBytes,
+            final long maximumHeapInBytes) {
         this.availableBytesOnFileSystem = availableBytesOnFileSystem;
         this.cpuUsageInPercent = cpuUsageInPercent;
         this.uptime = uptime;
@@ -35,7 +35,7 @@ public final class NodeStats implements Serializable {
         this.maximumHeapInBytes = maximumHeapInBytes;
     }
 
-    public int getAvailableBytesOnFileSystem() {
+    public long getAvailableBytesOnFileSystem() {
         return availableBytesOnFileSystem;
     }
 
@@ -55,11 +55,11 @@ public final class NodeStats implements Serializable {
         return heapUsageInPercent;
     }
 
-    public int getHeapUsageInBytes() {
+    public long getHeapUsageInBytes() {
         return heapUsageInBytes;
     }
 
-    public int getMaximumHeapInBytes() {
+    public long getMaximumHeapInBytes() {
         return maximumHeapInBytes;
     }
 

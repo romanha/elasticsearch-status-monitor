@@ -17,7 +17,7 @@ public final class EndpointInfo implements Serializable {
     @Nullable
     private final Float cpuLoadAverageLast15Minutes;
     private final int ramUsageInPercent;
-    private final int ramUsageInBytes;
+    private final long ramUsageInBytes;
 
     public EndpointInfo(
             final String ipAddress,
@@ -26,7 +26,7 @@ public final class EndpointInfo implements Serializable {
             final int cpuUsageInPercent,
             final @Nullable Float cpuLoadAverageLast15Minutes,
             final int ramUsageInPercent,
-            final int ramUsageInBytes) {
+            final long ramUsageInBytes) {
         this.ipAddress = ipAddress;
         this.operatingSystemName = operatingSystemName;
         this.availableProcessors = availableProcessors;
@@ -78,7 +78,7 @@ public final class EndpointInfo implements Serializable {
         return ramUsageInPercent;
     }
 
-    public int getRamUsageInBytes() {
+    public long getRamUsageInBytes() {
         return ramUsageInBytes;
     }
 
