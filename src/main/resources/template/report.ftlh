@@ -175,7 +175,7 @@
     <div id="node-list-info" class="multi-child-detail-section">
         <#list report.nodeInfos as node>
             <div class="bordered-detail-section">
-                <h2>Node: ${node.nodeName}<#if node.masterNode> &starf;</#if></h2>
+                <h2>Node: ${node.nodeName}<#if node.masterNode> &#11088;</#if></h2>
 
                 <div>
                     <h3>Endpoint Information</h3>
@@ -247,25 +247,25 @@
                     <table>
                         <#if node.masterNode>
                             <tr>
-                                <td class="centered">&starf;</td>
+                                <td class="centered">&#11088;</td>
                                 <td>This node is the current master node.</td>
                             </tr>
                         </#if>
                         <#if node.masterEligibleNode>
                             <tr>
-                                <td class="centered">&#10027;</td>
+                                <td class="centered">&#128499;</td>
                                 <td>This node can become a master node.</td>
                             </tr>
                         </#if>
                         <#if node.dataNode>
                             <tr>
-                                <td class="centered">&#9016;</td>
+                                <td class="centered">&#128193;</td>
                                 <td>This node holds search data.</td>
                             </tr>
                         </#if>
                         <#if node.ingestNode>
                             <tr>
-                                <td class="centered">&#9000;</td>
+                                <td class="centered">&#128202;</td>
                                 <td>This node can pre-process documents.</td>
                             </tr>
                         </#if>
