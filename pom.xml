@@ -50,6 +50,7 @@
 		<!-- Build -->
 		<maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+		<markdown.html.generator.plugin.version>2.3.0</markdown.html.generator.plugin.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -197,6 +198,28 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
+			</plugin>
+
+			<!-- Plugin for generating HTML of markdown files. -->
+			<!-- See: https://github.com/walokra/markdown-page-generator-plugin -->
+			<plugin>
+				<groupId>com.ruleoftech</groupId>
+				<artifactId>markdown-page-generator-plugin</artifactId>
+				<version>${markdown.html.generator.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<inputDirectory>${project.basedir}</inputDirectory>
+					<outputDirectory>${project.build.directory}/doc/</outputDirectory>
+					<headerHtmlFile>${project.basedir}/src/main/resources/doc/header.html</headerHtmlFile>
+					<transformRelativeMarkdownLinks>true</transformRelativeMarkdownLinks>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
