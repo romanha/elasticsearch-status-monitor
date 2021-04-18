@@ -7,17 +7,18 @@
 
 * [Introduction](#introduction)
 * [Usage](#usage)
-  * [Requirements](#requirements)
-  * [Running the tool](#running-the-tool)
-  * [Logging](#logging)
+    * [Requirements](#requirements)
+    * [Running the tool](#running-the-tool)
+    * [Logging](#logging)
 * [Configuration](#configuration)
-  * [Command line options](#command-line-options)
+    * [Command line options](#command-line-options)
 * [Features](#features)
 * [About](#about)
-  * [Author](#author)
-  * [License](#license)
+    * [Author](#author)
+    * [License](#license)
 * [Release notes](#release-notes)
 
+<a id="introduction"></a>
 ## Introduction
 
 The _Elasticsearch Status Monitor_ is an open-source tool for monitoring an _Elasticsearch_ cluster.
@@ -26,12 +27,15 @@ It generates a report containing a cluster overview and potential issues found b
 
 The tool does not manipulate or change the cluster or its data.
 
+<a id="usage"></a>
 ## Usage
 
+<a id="requirements"></a>
 ### Requirements
 
 Running the tool requires a Java runtime environment of version 11 or higher.
 
+<a id="running-the-tool"></a>
 ### Running the tool
 
 You can start the tool by running the command:
@@ -57,12 +61,15 @@ Exit Code | Description
 2         | The analysis was completed without finding problems, but some warnings were found.
 3         | The analysis was not started due to misconfiguration. (e.g. unknown CLI option)
 
+<a id="logging"></a>
 ### Logging
 
 The tool logs into a `logs` folder, which is created in the directory from where the tool is called.
 
+<a id="configuration"></a>
 ## Configuration
 
+<a id="command-line-options"></a>
 ### Command line options
 
 The tool supports following CLI options:
@@ -89,10 +96,12 @@ Here is an example with some options:
 java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --host 127.0.0.1 --port 9200 --username admin --password admin --reportPath "D:\Elasticsearch\reports\"
 ```
 
+<a id="features"></a>
 ## Features
 
 This section lists all issues that the data analysis supports.
 
+<a id="problems"></a>
 ### Problems
 
 * General connection issues
@@ -100,6 +109,7 @@ This section lists all issues that the data analysis supports.
 * SSL handshake problems
 * Cluster not fully operational
 
+<a id="warnings"></a>
 ### Warnings
 
 * Cluster setup is missing redundancy
@@ -107,16 +117,20 @@ This section lists all issues that the data analysis supports.
 * Unassigned shards
 * High RAM usage on endpoints
 
+<a id="about"></a>
 ## About
 
+<a id="author"></a>
 ### Author
 
 The _Elasticsearch Status Monitor_ is developed by Roman Habitzl since December 2020.
 
+<a id="license"></a>
 ### License
 
 The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Version 2.0].
 
+<a id="release-notes"></a>
 ## Release notes
 
 The release notes can be found at the [change log].

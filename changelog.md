@@ -5,9 +5,10 @@
 * [1.1.0](#110)
 * [1.0.0](#100)
 
+<a id="110"></a>
 ## 1.1.0
 
-**Not yet released.**
+Not yet released.
 
 ### Compatibility
 
@@ -42,9 +43,10 @@
 * Updated Google Guice dependency from 5.0.0-BETA-1 to 5.0.1
 * Improved styling of the generated HTML report file.
 
+<a id="100"></a>
 ## 1.0.0
 
-**Released on: 2021-03-08**
+Released on: 2021-03-08
 
 ### Compatibility
 
