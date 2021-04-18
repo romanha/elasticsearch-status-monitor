@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.presentation.file;
 
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,19 +24,23 @@ import java.util.Optional;
 public class ReportFileProvider implements Provider<File> {
     private static final Logger LOG = LogManager.getLogger(ReportFileProvider.class);
 
-    static final String REPORT_DIRECTORY_NAME = "reports";
     static final String REPORT_FILE_NAME = "index.html";
     static final String TIMESTAMP_FILE_PATTERN = "yyyy-MM-dd HH-mm-ss";
 
     private final Clock clock;
     private final FileCreator fileCreator;
+    private final StatusMonitorConfiguration configuration;
 
     private Path reportFilePath;
 
     @Inject
-    public ReportFileProvider(final Clock clock, final FileCreator fileCreator) {
+    public ReportFileProvider(
+            final Clock clock,
+            final FileCreator fileCreator,
+            final StatusMonitorConfiguration configuration) {
         this.clock = clock;
         this.fileCreator = fileCreator;
+        this.configuration = configuration;
     }
 
     @Override
@@ -55,7 +60,7 @@ public class ReportFileProvider implements Provider<File> {
     private Optional<Path> createTimestampReportDirectory() {
         try {
             String timestamp = getFormattedTimestamp();
-            reportFilePath = fileCreator.create(Paths.get(REPORT_DIRECTORY_NAME, timestamp));
+            reportFilePath = fileCreator.create(Paths.get(configuration.getReportFilesPath(), timestamp));
             LOG.info("Created the report directory '{}'.", reportFilePath);
         } catch (final IOException e) {
             LOG.error("Failed to create report directory.", e);

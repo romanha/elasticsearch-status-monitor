@@ -30,6 +30,6 @@ class ConnectionStatusTest {
                 Arguments.of(404, ConnectionStatus.NOT_FOUND),
                 Arguments.of(503, ConnectionStatus.SERVICE_UNAVAILABLE),
                 Arguments.of(999, ConnectionStatus.UNKNOWN)
-                );
+        );
     }
 }

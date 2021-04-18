@@ -114,6 +114,10 @@
                 <td>${report.configuration.username}</td>
             </tr>
         </#if>
+        <tr>
+            <td>Report files path:</td>
+            <td>${report.configuration.reportFilesPath}</td>
+        </tr>
         </tbody>
     </table>
 </div>

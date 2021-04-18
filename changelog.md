@@ -22,13 +22,14 @@
 ### New features
 
 * Added the timestamp to the report.
-* Added the actual byte usage to the percentage of used RAM and heap memory. 
+* Added the CLI option `reportPath` to configure the location of the generated report files.
+* Added the actual byte usage to the percentage of used RAM and heap memory.
 * Added the operating system name to the endpoint data.
 * Added the Elasticsearch version to the node data.
 * Added the JVM version to the node data.
 * Added the "ingest" role to the node data (pre-processing documents).
-* Added the available free space on the file system to the node data. 
-* Problem analysis for "Cluster not fully operational".
+* Added the available free space on the file system to the node data.
+* Added the problem analysis for "Cluster not fully operational".
   
 ### Fixes
 

@@ -17,6 +17,7 @@ public class CliOptions {
     protected static final String UNSECURE_OPTION_LONG = "unsecure";
     protected static final String USER_OPTION_LONG = "username";
     protected static final String PASSWORD_OPTION_LONG = "password";
+    protected static final String REPORT_FILES_PATH_OPTION_LONG = "reportPath";
 
     private final Options availableOptions;
 
@@ -37,6 +38,7 @@ public class CliOptions {
         options.addOption(createUnsecureOption());
         options.addOption(createUserOption());
         options.addOption(createPasswordOption());
+        options.addOption(createReportFilesPathOption());
         return options;
     }
 
@@ -97,6 +99,15 @@ public class CliOptions {
                      .hasArg(true)
                      .argName("password")
                      .desc("The password of the Elasticsearch user.")
+                     .build();
+    }
+
+    private Option createReportFilesPathOption() {
+        return Option.builder()
+                     .longOpt(REPORT_FILES_PATH_OPTION_LONG)
+                     .hasArg(true)
+                     .argName("report files path")
+                     .desc("The path to the location of the generated report files.")
                      .build();
     }
 }

@@ -2,6 +2,8 @@ package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 
+import java.io.File;
+
 /**
  * Utility class for creating random status monitor configuration.
  */
@@ -23,6 +25,7 @@ public final class StatusMonitorConfigurations {
         configuration.setUsingHttps(isUsingHttps);
         configuration.setUsername(Randoms.generateString("user-"));
         configuration.setPassword(Randoms.generateString("password-"));
+        configuration.setReportFilesPath(Randoms.generateString("reports" + File.separator));
         return configuration;
     }
 }

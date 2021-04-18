@@ -3,9 +3,16 @@ package app.habitzl.elasticsearch.status.monitor.tool.configuration;
 import app.habitzl.elasticsearch.status.monitor.AnalysisStartOption;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -116,12 +123,14 @@ class DefaultConfigurationLoaderTest {
         String port = "9999";
         String username = "username";
         String password = "password";
+        String reportFilesPath = "reports/custom";
         String[] args = ArgumentBuilder
                 .create()
                 .withLongOption(CliOptions.HOST_OPTION_LONG, address)
                 .withLongOption(CliOptions.PORT_OPTION_LONG, port)
                 .withLongOption(CliOptions.USER_OPTION_LONG, username)
                 .withLongOption(CliOptions.PASSWORD_OPTION_LONG, password)
+                .withLongOption(CliOptions.REPORT_FILES_PATH_OPTION_LONG, reportFilesPath)
                 .build();
 
         // When
@@ -132,6 +141,7 @@ class DefaultConfigurationLoaderTest {
         assertThat(configuration.getPort(), equalTo(port));
         assertThat(configuration.getUsername(), equalTo(username));
         assertThat(configuration.getPassword(), equalTo(password));
+        assertThat(configuration.getReportFilesPath(), equalTo(reportFilesPath));
     }
 
     @Test
@@ -152,6 +162,7 @@ class DefaultConfigurationLoaderTest {
         assertThat(configuration.isUsingHttps(), equalTo(StatusMonitorConfiguration.DEFAULT_USING_HTTPS));
         assertThat(configuration.getUsername(), equalTo(StatusMonitorConfiguration.DEFAULT_USERNAME));
         assertThat(configuration.getPassword(), equalTo(StatusMonitorConfiguration.DEFAULT_PASSWORD));
+        assertThat(configuration.getReportFilesPath(), equalTo(StatusMonitorConfiguration.DEFAULT_REPORT_FILES_PATH));
     }
 
     @Test
@@ -212,12 +223,57 @@ class DefaultConfigurationLoaderTest {
         assertThat(configuration.isUsingHttps(), equalTo(false));
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidFilePaths")
+    void load_invalidReportFilesPath_useDefaultPath(final String invalidPath) {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withLongOption(CliOptions.REPORT_FILES_PATH_OPTION_LONG, invalidPath)
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.getReportFilesPath(), equalTo(StatusMonitorConfiguration.DEFAULT_REPORT_FILES_PATH));
+    }
+
+    @ParameterizedTest
+    @MethodSource("validRelativeFilePaths")
+    void load_validRelativeReportFilesPath_usePath(final String validPath) {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withLongOption(CliOptions.REPORT_FILES_PATH_OPTION_LONG, validPath)
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.getReportFilesPath(), equalTo(validPath));
+    }
+
+    @EnabledOnOs(OS.WINDOWS)
+    @ParameterizedTest
+    @MethodSource("validAbsoluteFilePathsWindows")
+    void load_validAbsoluteReportFilesPath_usePath(final String validPath) {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withLongOption(CliOptions.REPORT_FILES_PATH_OPTION_LONG, validPath)
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.getReportFilesPath(), equalTo(validPath));
+    }
+
     private void assertThatConfigurationIsDefault() {
-        assertThat(configuration.getHost(), equalTo(StatusMonitorConfiguration.DEFAULT_HOST));
-        assertThat(configuration.getPort(), equalTo(StatusMonitorConfiguration.DEFAULT_PORT));
-        assertThat(configuration.isUsingHttps(), equalTo(StatusMonitorConfiguration.DEFAULT_USING_HTTPS));
-        assertThat(configuration.getUsername(), equalTo(StatusMonitorConfiguration.DEFAULT_USERNAME));
-        assertThat(configuration.getPassword(), equalTo(StatusMonitorConfiguration.DEFAULT_PASSWORD));
+        assertThat(configuration, equalTo(StatusMonitorConfiguration.defaultConfig()));
     }
 
     private static final class ArgumentBuilder {
@@ -256,5 +312,33 @@ class DefaultConfigurationLoaderTest {
         private String[] build() {
             return arguments.toArray(new String[0]);
         }
+    }
+
+    @SuppressWarnings("unused")
+    private static Stream<Arguments> invalidFilePaths() {
+        return Stream.of(
+                Arguments.of("reports:invalid"),
+                Arguments.of("reports?invalid"),
+                Arguments.of("reports\"invalid"),
+                Arguments.of("reports<invalid"),
+                Arguments.of("reports>invalid"),
+                Arguments.of("reports|invalid")
+        );
+    }
+
+    @SuppressWarnings("unused")
+    private static Stream<Arguments> validRelativeFilePaths() {
+        return Stream.of(
+                Arguments.of(""),
+                Arguments.of("reports"),
+                Arguments.of("reports" + File.separator + "valid" + File.separator + "path")
+        );
+    }
+
+    @SuppressWarnings("unused")
+    private static Stream<Arguments> validAbsoluteFilePathsWindows() {
+        return Stream.of(
+                Arguments.of("C:\\ProgramData\\Temp")
+        );
     }
 }

@@ -40,7 +40,8 @@ You can start the tool by running the command:
 java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar
 ```
 
-The tool will create a folder called `reports` in the directory of the JAR. This folder includes all generated reports.
+The tool will create a folder called `reports` in the directory from where the JAR is called. This folder includes all generated reports.
+Users can customize this path to the reports via configuration.
 
 Each report is stored in a folder representing the time of the report generation, for example `reports/2021-03-11 22-43-50/index.html`.
 
@@ -66,15 +67,16 @@ The tool logs into a `logs` folder, which is created in the directory from where
 
 The tool supports following CLI options:
 
-Option       | Alternative  | Arguments | Default   | Description                                                                                                | Example
----          | ---          | ---       | ---       | ---                                                                                                        | ---
-`--help`     | -            | 0         | -         | Print a help message on how to use this tool. **By using this option no analysis is started.**             | `--help`
-`--version`  | -            | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                    | `--version`
-`--host`     | `-h`         | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`
-`--port`     | `-p`         | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`
-`--unsecure` | -            | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`
-`--username` | -            | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`
-`--password` | -            | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`
+Option         | Alternative  | Arguments | Default   | Description                                                                                                | Example
+---            | ---          | ---       | ---       | ---                                                                                                        | ---
+`--help`       | -            | 0         | -         | Print a help message on how to use this tool. **By using this option no analysis is started.**             | `--help`
+`--version`    | -            | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                    | `--version`
+`--host`       | `-h`         | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`
+`--port`       | `-p`         | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`
+`--unsecure`   | -            | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`
+`--username`   | -            | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`
+`--password`   | -            | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`
+`--reportPath` | -            | 1         | reports   | The path to the location of the generated report files. This can be an absolute or relative path.          | `--reportPath "elasticsearch/reports"`
 
 Note that by using one of the help options (`--help`, `--version`) no analysis is started.
 These options only print information on how to use this tool.
@@ -84,7 +86,7 @@ If any unknown option or invalid argument is passed, no analysis is started.
 Here is an example with some options:
 
 ```bash
-java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --host 127.0.0.1 --port 9200 --username admin --password admin
+java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar --host 127.0.0.1 --port 9200 --username admin --password admin --reportPath "D:\Elasticsearch\reports\"
 ```
 
 ## Features

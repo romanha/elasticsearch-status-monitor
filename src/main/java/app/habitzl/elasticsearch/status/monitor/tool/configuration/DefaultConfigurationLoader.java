@@ -10,6 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 
 public class DefaultConfigurationLoader implements ConfigurationLoader {
     private static final Logger LOG = LogManager.getLogger(DefaultConfigurationLoader.class);
@@ -36,6 +38,7 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
             CommandLine commandLine = cliParser.parse(cliOptions.getAvailableOptions(), cliArguments);
             parseConnectionOptions(commandLine);
             parseAuthenticationOptions(commandLine);
+            parseOtherOptions(commandLine);
             startOption = parseHelpOptions(commandLine);
         } catch (final ParseException e) {
             LOG.error("Invalid options provided for starting the Elasticsearch Status Monitor. {}", e.getMessage());
@@ -48,12 +51,12 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
 
     private void parseConnectionOptions(final CommandLine commandLine) {
         if (commandLine.hasOption(CliOptions.HOST_OPTION_SHORT)) {
-            LOG.info("Using host {} from CLI options.", commandLine.getOptionValue(CliOptions.HOST_OPTION_SHORT));
+            LOG.info("Using host '{}' from CLI options.", commandLine.getOptionValue(CliOptions.HOST_OPTION_SHORT));
             configuration.setHost(commandLine.getOptionValue(CliOptions.HOST_OPTION_SHORT));
         }
 
         if (commandLine.hasOption(CliOptions.PORT_OPTION_SHORT)) {
-            LOG.info("Using configured port {} from CLI options.", commandLine.getOptionValue(CliOptions.PORT_OPTION_SHORT));
+            LOG.info("Using configured port '{}' from CLI options.", commandLine.getOptionValue(CliOptions.PORT_OPTION_SHORT));
             configuration.setPort(commandLine.getOptionValue(CliOptions.PORT_OPTION_SHORT));
         }
 
@@ -65,13 +68,26 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
 
     private void parseAuthenticationOptions(final CommandLine commandLine) {
         if (commandLine.hasOption(CliOptions.USER_OPTION_LONG)) {
-            LOG.info("Using configured user name {} from CLI options.", commandLine.getOptionValue(CliOptions.USER_OPTION_LONG));
+            LOG.info("Using configured user name '{}' from CLI options.", commandLine.getOptionValue(CliOptions.USER_OPTION_LONG));
             configuration.setUsername(commandLine.getOptionValue(CliOptions.USER_OPTION_LONG));
         }
 
         if (commandLine.hasOption(CliOptions.PASSWORD_OPTION_LONG)) {
             LOG.info("Using configured password from CLI options.");
             configuration.setPassword(commandLine.getOptionValue(CliOptions.PASSWORD_OPTION_LONG));
+        }
+    }
+
+    private void parseOtherOptions(final CommandLine commandLine) {
+        if (commandLine.hasOption(CliOptions.REPORT_FILES_PATH_OPTION_LONG)) {
+            String reportFilesPath = commandLine.getOptionValue(CliOptions.REPORT_FILES_PATH_OPTION_LONG);
+            try {
+                Paths.get(reportFilesPath);
+                LOG.info("Using configured report file location '{}' from CLI options.", reportFilesPath);
+                configuration.setReportFilesPath(reportFilesPath);
+            } catch (final InvalidPathException e) {
+                LOG.warn("The provided report files path '{}' is no valid path. Falling back to the default path.", reportFilesPath);
+            }
         }
     }
 

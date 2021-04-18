@@ -1,6 +1,8 @@
 package app.habitzl.elasticsearch.status.monitor.tool.presentation.file;
 
 import app.habitzl.elasticsearch.status.monitor.Clocks;
+import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,12 +24,14 @@ class ReportFileProviderTest {
     private ReportFileProvider sut;
     private Clock clock;
     private FileCreator fileCreator;
+    private StatusMonitorConfiguration configuration;
 
     @BeforeEach
     void setUp() {
         clock = Clocks.fixedSystemDefault();
         fileCreator = mock(FileCreator.class);
-        sut = new ReportFileProvider(clock, fileCreator);
+        configuration = StatusMonitorConfigurations.random();
+        sut = new ReportFileProvider(clock, fileCreator, configuration);
     }
 
     @Test
@@ -39,7 +43,7 @@ class ReportFileProviderTest {
         sut.get();
 
         // Then
-        Path expectedPath = Paths.get(ReportFileProvider.REPORT_DIRECTORY_NAME, getExpectedFileTimestamp());
+        Path expectedPath = Paths.get(configuration.getReportFilesPath(), getExpectedFileTimestamp());
         verify(fileCreator).create(expectedPath);
     }
 
@@ -64,7 +68,7 @@ class ReportFileProviderTest {
         File result = sut.get();
 
         // Then
-        File expectedResult = Paths.get(ReportFileProvider.REPORT_DIRECTORY_NAME, getExpectedFileTimestamp(), ReportFileProvider.REPORT_FILE_NAME)
+        File expectedResult = Paths.get(configuration.getReportFilesPath(), getExpectedFileTimestamp(), ReportFileProvider.REPORT_FILE_NAME)
                                    .toFile();
         assertThat(result, equalTo(expectedResult));
     }
@@ -94,7 +98,7 @@ class ReportFileProviderTest {
     }
 
     private void prepareFileCreator() throws IOException {
-        Path path = Paths.get(ReportFileProvider.REPORT_DIRECTORY_NAME, getExpectedFileTimestamp());
+        Path path = Paths.get(configuration.getReportFilesPath(), getExpectedFileTimestamp());
         when(fileCreator.create(path)).thenReturn(path);
     }
 

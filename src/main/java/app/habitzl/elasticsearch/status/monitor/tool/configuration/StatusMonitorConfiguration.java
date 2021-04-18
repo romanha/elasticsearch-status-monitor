@@ -15,13 +15,22 @@ public class StatusMonitorConfiguration implements Serializable {
     static final String DEFAULT_PORT = "9200";
     static final String DEFAULT_USERNAME = "admin";
     static final String DEFAULT_PASSWORD = "admin";
+    static final String DEFAULT_REPORT_FILES_PATH = "reports";
+
+    public static StatusMonitorConfiguration defaultConfig() {
+        return new StatusMonitorConfiguration();
+    }
 
     private Boolean usingHttps;
     private String host;
     private String port;
     private String username;
     private String password;
+    private String reportFilesPath;
 
+    /**
+     * Gets the information whether the tool should use HTTPS to connect to the Elasticsearch endpoint.
+     */
     public boolean isUsingHttps() {
         return Objects.nonNull(usingHttps) ? usingHttps : DEFAULT_USING_HTTPS;
     }
@@ -74,6 +83,17 @@ public class StatusMonitorConfiguration implements Serializable {
         this.password = password;
     }
 
+    /**
+     * Gets the path to the location of the generated report files.
+     */
+    public String getReportFilesPath() {
+        return Objects.nonNull(reportFilesPath) ? reportFilesPath : DEFAULT_REPORT_FILES_PATH;
+    }
+
+    public void setReportFilesPath(final String reportFilesPath) {
+        this.reportFilesPath = reportFilesPath;
+    }
+
     @Override
     @SuppressWarnings("CyclomaticComplexity")
     public boolean equals(final Object o) {
@@ -89,7 +109,8 @@ public class StatusMonitorConfiguration implements Serializable {
                     && Objects.equals(host, that.host)
                     && Objects.equals(port, that.port)
                     && Objects.equals(username, that.username)
-                    && Objects.equals(password, that.password);
+                    && Objects.equals(password, that.password)
+                    && Objects.equals(reportFilesPath, that.reportFilesPath);
         }
 
         return isEqual;
@@ -97,7 +118,7 @@ public class StatusMonitorConfiguration implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(usingHttps, host, port, username, password);
+        return Objects.hash(usingHttps, host, port, username, password, reportFilesPath);
     }
 
     @Override
@@ -108,6 +129,7 @@ public class StatusMonitorConfiguration implements Serializable {
                 .add("port='" + port + "'")
                 .add("username='" + username + "'")
                 .add("password='" + toStringPassword() + "'")
+                .add("reportFilesPath='" + reportFilesPath + "'")
                 .toString();
     }
 
