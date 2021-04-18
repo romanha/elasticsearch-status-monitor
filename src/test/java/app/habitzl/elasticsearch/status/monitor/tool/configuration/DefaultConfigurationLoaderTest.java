@@ -224,22 +224,6 @@ class DefaultConfigurationLoaderTest {
     }
 
     @ParameterizedTest
-    @MethodSource("invalidFilePaths")
-    void load_invalidReportFilesPath_useDefaultPath(final String invalidPath) {
-        // Given
-        String[] args = ArgumentBuilder
-                .create()
-                .withLongOption(CliOptions.REPORT_FILES_PATH_OPTION_LONG, invalidPath)
-                .build();
-
-        // When
-        sut.load(args);
-
-        // Then
-        assertThat(configuration.getReportFilesPath(), equalTo(StatusMonitorConfiguration.DEFAULT_REPORT_FILES_PATH));
-    }
-
-    @ParameterizedTest
     @MethodSource("validRelativeFilePaths")
     void load_validRelativeReportFilesPath_usePath(final String validPath) {
         // Given
@@ -258,7 +242,7 @@ class DefaultConfigurationLoaderTest {
     @EnabledOnOs(OS.WINDOWS)
     @ParameterizedTest
     @MethodSource("validAbsoluteFilePathsWindows")
-    void load_validAbsoluteReportFilesPath_usePath(final String validPath) {
+    void load_validAbsoluteReportFilesPathOnWindows_usePath(final String validPath) {
         // Given
         String[] args = ArgumentBuilder
                 .create()
@@ -270,6 +254,23 @@ class DefaultConfigurationLoaderTest {
 
         // Then
         assertThat(configuration.getReportFilesPath(), equalTo(validPath));
+    }
+
+    @EnabledOnOs(OS.WINDOWS)
+    @ParameterizedTest
+    @MethodSource("invalidFilePathsWindows")
+    void load_invalidReportFilesPathOnWindows_useDefaultPath(final String invalidPath) {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withLongOption(CliOptions.REPORT_FILES_PATH_OPTION_LONG, invalidPath)
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.getReportFilesPath(), equalTo(StatusMonitorConfiguration.DEFAULT_REPORT_FILES_PATH));
     }
 
     private void assertThatConfigurationIsDefault() {
@@ -315,18 +316,6 @@ class DefaultConfigurationLoaderTest {
     }
 
     @SuppressWarnings("unused")
-    private static Stream<Arguments> invalidFilePaths() {
-        return Stream.of(
-                Arguments.of("reports:invalid"),
-                Arguments.of("reports?invalid"),
-                Arguments.of("reports\"invalid"),
-                Arguments.of("reports<invalid"),
-                Arguments.of("reports>invalid"),
-                Arguments.of("reports|invalid")
-        );
-    }
-
-    @SuppressWarnings("unused")
     private static Stream<Arguments> validRelativeFilePaths() {
         return Stream.of(
                 Arguments.of(""),
@@ -339,6 +328,18 @@ class DefaultConfigurationLoaderTest {
     private static Stream<Arguments> validAbsoluteFilePathsWindows() {
         return Stream.of(
                 Arguments.of("C:\\ProgramData\\Temp")
+        );
+    }
+
+    @SuppressWarnings("unused")
+    private static Stream<Arguments> invalidFilePathsWindows() {
+        return Stream.of(
+                Arguments.of("reports:invalid"),
+                Arguments.of("reports?invalid"),
+                Arguments.of("reports\"invalid"),
+                Arguments.of("reports<invalid"),
+                Arguments.of("reports>invalid"),
+                Arguments.of("reports|invalid")
         );
     }
 }
