@@ -18,7 +18,7 @@ Not yet released.
 ### Changes
 
 * Renamed the generated HTML report file from `report.html` to `index.html`.
-  * This improves usability when running the tool on a webserver.
+    * This improves usability when running the tool on a webserver.
   
 ### New features
 
@@ -35,7 +35,7 @@ Not yet released.
 ### Fixes
 
 * The heap usage was part of the endpoint information in the report.
-  * Moved heap usage to node information.
+    * Moved heap usage to node information.
   
 ### Miscellaneous
 
@@ -56,14 +56,14 @@ Released on: 2021-03-08
 ### New features
 
 * Elasticsearch monitoring
-  * Cluster information
-  * Node and endpoint information
+    * Cluster information
+    * Node and endpoint information
 * Problem analysis
-  * Connection issues
-  * Cluster not being redundant
-  * Possibility of split brain scenarios
-  * Unassigned shards
-  * High RAM usage on endpoints
+    * Connection issues
+    * Cluster not being redundant
+    * Possibility of split brain scenarios
+    * Unassigned shards
+    * High RAM usage on endpoints
 * HTML report generation
 * Help output via CLI options (help, version)
 * Tool configuration via CLI options (host, port, security, username, password)
