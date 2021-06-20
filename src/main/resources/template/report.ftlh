@@ -25,6 +25,7 @@
 
         table tr td:first-child {
             padding-right: 1em;
+            vertical-align: top;
         }
 
         .error {
@@ -103,6 +104,14 @@
         <tr>
             <td>Endpoint:</td>
             <td>${report.configuration.usingHttps?string("https://", "http://")}${report.configuration.host}:${report.configuration.port}</td>
+        </tr>
+        <tr>
+            <td>Fallback endpoints:</td>
+            <td>
+                <#list report.configuration.fallbackEndpoints as endpoint>
+                    ${report.configuration.usingHttps?string("https://", "http://")}${endpoint}<br/>
+                </#list>
+            </td>
         </tr>
         <tr>
             <td>Security:</td>

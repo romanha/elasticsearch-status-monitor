@@ -14,6 +14,8 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearch
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.ElasticsearchRestClientFactory;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.FallbackElasticsearchRestClientFactory;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.FallbackRestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterAllocationMapper;
@@ -68,6 +70,7 @@ class GuiceModule extends AbstractModule {
         bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);
         bind(RestClient.class).toProvider(RestClientProvider.class).in(Singleton.class);
         bind(RestClientFactory.class).to(ElasticsearchRestClientFactory.class).in(Singleton.class);
+        bind(FallbackRestClientFactory.class).to(FallbackElasticsearchRestClientFactory.class).in(Singleton.class);
 
         // Mapper and parser
         bind(JsonParser.class).in(Singleton.class);

@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 class DefaultConfigurationLoaderTest {
 
@@ -123,6 +122,9 @@ class DefaultConfigurationLoaderTest {
         String port = "9999";
         String username = "username";
         String password = "password";
+        String fallbackEndpoint1 = "2.2.2.2:9200";
+        String fallbackEndpoint2 = "3.3.3.3:9202";
+        String fallbackEndpoints = fallbackEndpoint1 + "," + fallbackEndpoint2;
         String reportFilesPath = "reports/custom";
         String[] args = ArgumentBuilder
                 .create()
@@ -130,6 +132,7 @@ class DefaultConfigurationLoaderTest {
                 .withLongOption(CliOptions.PORT_OPTION_LONG, port)
                 .withLongOption(CliOptions.USER_OPTION_LONG, username)
                 .withLongOption(CliOptions.PASSWORD_OPTION_LONG, password)
+                .withLongOption(CliOptions.FALLBACK_ENDPOINTS_OPTION_LONG, fallbackEndpoints)
                 .withLongOption(CliOptions.REPORT_FILES_PATH_OPTION_LONG, reportFilesPath)
                 .build();
 
@@ -141,6 +144,7 @@ class DefaultConfigurationLoaderTest {
         assertThat(configuration.getPort(), equalTo(port));
         assertThat(configuration.getUsername(), equalTo(username));
         assertThat(configuration.getPassword(), equalTo(password));
+        assertThat(configuration.getFallbackEndpoints(), contains(fallbackEndpoint1, fallbackEndpoint2));
         assertThat(configuration.getReportFilesPath(), equalTo(reportFilesPath));
     }
 
@@ -195,6 +199,22 @@ class DefaultConfigurationLoaderTest {
     }
 
     @Test
+    void load_includingBlankFallbackEndpoints_ignoreBlankFallbackEndpoints() {
+        // Given
+        String validEndpoint = "127.0.0.1:9200";
+        String[] args = ArgumentBuilder
+                .create()
+                .withLongOption(CliOptions.FALLBACK_ENDPOINTS_OPTION_LONG, ",, , " + validEndpoint + "  ,,")
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.getFallbackEndpoints(), contains(validEndpoint));
+    }
+
+    @Test
     void load_noUnsecureOption_enableSecurity() {
         // Given
         String[] args = ArgumentBuilder
@@ -213,7 +233,7 @@ class DefaultConfigurationLoaderTest {
         // Given
         String[] args = ArgumentBuilder
                 .create()
-                .withShortOption(CliOptions.UNSECURE_OPTION_LONG)
+                .withLongOption(CliOptions.UNSECURE_OPTION_LONG)
                 .build();
 
         // When

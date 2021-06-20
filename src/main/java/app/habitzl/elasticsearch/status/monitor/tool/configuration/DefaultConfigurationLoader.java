@@ -8,10 +8,14 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 
 import javax.inject.Inject;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefaultConfigurationLoader implements ConfigurationLoader {
     private static final Logger LOG = LogManager.getLogger(DefaultConfigurationLoader.class);
@@ -56,8 +60,18 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
         }
 
         if (commandLine.hasOption(CliOptions.PORT_OPTION_SHORT)) {
-            LOG.info("Using configured port '{}' from CLI options.", commandLine.getOptionValue(CliOptions.PORT_OPTION_SHORT));
+            LOG.info("Using port '{}' from CLI options.", commandLine.getOptionValue(CliOptions.PORT_OPTION_SHORT));
             configuration.setPort(commandLine.getOptionValue(CliOptions.PORT_OPTION_SHORT));
+        }
+
+        if (commandLine.hasOption(CliOptions.FALLBACK_ENDPOINTS_OPTION_LONG)) {
+            String fallbackEndpointsOption = commandLine.getOptionValue(CliOptions.FALLBACK_ENDPOINTS_OPTION_LONG);
+            List<String> fallbackEndpoints = Arrays.stream(fallbackEndpointsOption.split(","))
+                    .map(String::trim)
+                    .filter(Strings::isNotBlank)
+                    .collect(Collectors.toList());
+            LOG.info("Using fallback endpoints '{}' from CLI options.", fallbackEndpointsOption);
+            configuration.setFallbackEndpoints(fallbackEndpoints);
         }
 
         if (commandLine.hasOption(CliOptions.UNSECURE_OPTION_LONG)) {
@@ -68,12 +82,12 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
 
     private void parseAuthenticationOptions(final CommandLine commandLine) {
         if (commandLine.hasOption(CliOptions.USER_OPTION_LONG)) {
-            LOG.info("Using configured user name '{}' from CLI options.", commandLine.getOptionValue(CliOptions.USER_OPTION_LONG));
+            LOG.info("Using user name '{}' from CLI options.", commandLine.getOptionValue(CliOptions.USER_OPTION_LONG));
             configuration.setUsername(commandLine.getOptionValue(CliOptions.USER_OPTION_LONG));
         }
 
         if (commandLine.hasOption(CliOptions.PASSWORD_OPTION_LONG)) {
-            LOG.info("Using configured password from CLI options.");
+            LOG.info("Using password from CLI options.");
             configuration.setPassword(commandLine.getOptionValue(CliOptions.PASSWORD_OPTION_LONG));
         }
     }
@@ -83,7 +97,7 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
             String reportFilesPath = commandLine.getOptionValue(CliOptions.REPORT_FILES_PATH_OPTION_LONG);
             try {
                 Paths.get(reportFilesPath);
-                LOG.info("Using configured report file location '{}' from CLI options.", reportFilesPath);
+                LOG.info("Using report file location '{}' from CLI options.", reportFilesPath);
                 configuration.setReportFilesPath(reportFilesPath);
             } catch (final InvalidPathException e) {
                 LOG.warn("The provided report files path '{}' is no valid path. Falling back to the default path.", reportFilesPath);
@@ -118,7 +132,6 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
      */
     private void printVersion() {
         String version = getClass().getPackage().getImplementationVersion();
-        System.out.println("Version: " + version);
         LOG.debug("Version: {}", version);
     }
 

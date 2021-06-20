@@ -1,6 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.configuration;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -24,6 +25,7 @@ public class StatusMonitorConfiguration implements Serializable {
     private Boolean usingHttps;
     private String host;
     private String port;
+    private List<String> fallbackEndpoints;
     private String username;
     private String password;
     private String reportFilesPath;
@@ -59,6 +61,18 @@ public class StatusMonitorConfiguration implements Serializable {
 
     public void setPort(final String port) {
         this.port = port;
+    }
+
+    /**
+     * Gets the list of fallback endpoints of the Elasticsearch cluster in case the main endpoint is not reachable.
+     * The endpoints are returned in the format {@code host:port}.
+     */
+    public List<String> getFallbackEndpoints() {
+        return fallbackEndpoints;
+    }
+
+    public void setFallbackEndpoints(final List<String> fallbackEndpoints) {
+        this.fallbackEndpoints = Objects.isNull(fallbackEndpoints) ? List.of() : List.copyOf(fallbackEndpoints);
     }
 
     /**
@@ -108,6 +122,7 @@ public class StatusMonitorConfiguration implements Serializable {
             isEqual = Objects.equals(usingHttps, that.usingHttps)
                     && Objects.equals(host, that.host)
                     && Objects.equals(port, that.port)
+                    && Objects.equals(fallbackEndpoints, that.fallbackEndpoints)
                     && Objects.equals(username, that.username)
                     && Objects.equals(password, that.password)
                     && Objects.equals(reportFilesPath, that.reportFilesPath);
@@ -118,7 +133,7 @@ public class StatusMonitorConfiguration implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(usingHttps, host, port, username, password, reportFilesPath);
+        return Objects.hash(usingHttps, host, port, fallbackEndpoints, username, password, reportFilesPath);
     }
 
     @Override
@@ -127,6 +142,7 @@ public class StatusMonitorConfiguration implements Serializable {
                 .add("usingHttps=" + usingHttps)
                 .add("host='" + host + "'")
                 .add("port='" + port + "'")
+                .add("fallbackEndpoints=" + fallbackEndpoints)
                 .add("username='" + username + "'")
                 .add("password='" + toStringPassword() + "'")
                 .add("reportFilesPath='" + reportFilesPath + "'")

@@ -18,8 +18,8 @@ Not yet released.
 ### Changes
 
 * Renamed the generated HTML report file from `report.html` to `index.html`.
-    * This improves usability when running the tool on a webserver.
-  
+    * This improves the usability when running the tool on a webserver.
+
 ### New features
 
 * Added the timestamp to the report.
@@ -30,13 +30,15 @@ Not yet released.
 * Added the JVM version to the node data.
 * Added the "ingest" role to the node data (pre-processing documents).
 * Added the available free space on the file system to the node data.
-* Added the problem analysis for "Cluster not fully operational".
-  
+* Added the "Cluster not fully operational" problem analysis.
+* Added the CLI option `fallbackEndpoints` to configure a list of alternative endpoint in case of connection problems.
+* Added the "Endpoints not reachable" problem analysis.
+
 ### Fixes
 
 * The heap usage was part of the endpoint information in the report.
     * Moved heap usage to node information.
-  
+
 ### Miscellaneous
 
 * Replaced calls to the Elasticsearch `_cat` API with proper API endpoints. (`_cluster/state`, `_nodes` and `_nodes/stats`)
