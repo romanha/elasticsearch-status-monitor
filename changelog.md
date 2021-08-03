@@ -38,6 +38,7 @@ Not yet released.
 
 * The heap usage was part of the endpoint information in the report.
     * Moved heap usage to node information.
+* Added missing logging binding. (SLF4J to log4j)
 
 ### Miscellaneous
 
