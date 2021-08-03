@@ -7,6 +7,8 @@ import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.util.List;
 
@@ -52,6 +54,56 @@ class ElasticsearchRestClientFactoryTest {
 
         HttpHost host = nodes.iterator().next().getHost();
         assertThat(host.getHostName(), equalTo(localhost));
+        assertThat(host.getPort(), equalTo(configuredPort));
+        assertThat(host.getSchemeName(), equalTo(configuredScheme));
+    }
+
+    @EnabledOnOs(OS.WINDOWS)
+    @Test
+    void create_windowsEnvironmentAndEndpointConfiguredWithLocalHostAddress_returnsClientWithLocalHostAddress() {
+        // Given
+        String localhostAddress = "127.0.0.1";
+        String expectedHostName = "127.0.0.1";
+        configuration.setHost(localhostAddress);
+        int configuredPort = Integer.parseInt(configuration.getPort());
+        String configuredScheme = configuration.isUsingHttps()
+                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
+                : ElasticsearchRestClientFactory.HTTP_SCHEME;
+
+        // When
+        RestClient client = sut.create();
+
+        // Then
+        List<Node> nodes = client.getNodes();
+        assertThat(nodes, hasSize(1));
+
+        HttpHost host = nodes.iterator().next().getHost();
+        assertThat(host.getHostName(), equalTo(expectedHostName));
+        assertThat(host.getPort(), equalTo(configuredPort));
+        assertThat(host.getSchemeName(), equalTo(configuredScheme));
+    }
+
+    @EnabledOnOs(OS.LINUX)
+    @Test
+    void create_linuxEnvironmentAndEndpointConfiguredWithLocalHostAddress_returnsClientWithLocalHostName() {
+        // Given
+        String localhostAddress = "127.0.0.1";
+        String expectedHostName = "localhost";
+        configuration.setHost(localhostAddress);
+        int configuredPort = Integer.parseInt(configuration.getPort());
+        String configuredScheme = configuration.isUsingHttps()
+                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
+                : ElasticsearchRestClientFactory.HTTP_SCHEME;
+
+        // When
+        RestClient client = sut.create();
+
+        // Then
+        List<Node> nodes = client.getNodes();
+        assertThat(nodes, hasSize(1));
+
+        HttpHost host = nodes.iterator().next().getHost();
+        assertThat(host.getHostName(), equalTo(expectedHostName));
         assertThat(host.getPort(), equalTo(configuredPort));
         assertThat(host.getSchemeName(), equalTo(configuredScheme));
     }

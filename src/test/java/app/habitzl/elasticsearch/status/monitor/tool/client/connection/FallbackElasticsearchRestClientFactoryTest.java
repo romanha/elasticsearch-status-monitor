@@ -7,6 +7,8 @@ import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.util.Iterator;
 import java.util.List;
@@ -60,7 +62,7 @@ class FallbackElasticsearchRestClientFactoryTest {
         // Given
         String localhost = "localhost";
         int port1 = 9202;
-        String localhostAddress = "127.0.0.1";
+        String localhostAddress = "localhost";
         int port2 = 9218;
         String invalidEndpoint1 = "invalid#host:9200";
         String invalidEndpoint2 = "localhost:invalid#port";
@@ -88,6 +90,50 @@ class FallbackElasticsearchRestClientFactoryTest {
 
         assertClient(iterator.next(), localhost, port1, configuredScheme);
         assertClient(iterator.next(), localhostAddress, port2, configuredScheme);
+    }
+
+    @EnabledOnOs(OS.WINDOWS)
+    @Test
+    void create_windowsEnvironmentAndFallbackEndpointConfiguredWithLocalHostAddress_returnsClientWithLocalHostAddress() {
+        // Given
+        String localhostAddress = "127.0.0.1";
+        String expectedHostName = "127.0.0.1";
+        int port = 9280;
+        List<String> fallbackEndpoints = List.of(localhostAddress + HOST_PORT_SEPARATOR + port);
+        configuration.setFallbackEndpoints(fallbackEndpoints);
+        String configuredScheme = configuration.isUsingHttps()
+                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
+                : ElasticsearchRestClientFactory.HTTP_SCHEME;
+
+        // When
+        List<RestClient> clients = sut.create();
+
+        // Then
+        assertThat(clients, hasSize(1));
+        Iterator<RestClient> iterator = clients.iterator();
+        assertClient(iterator.next(), expectedHostName, port, configuredScheme);
+    }
+
+    @EnabledOnOs(OS.LINUX)
+    @Test
+    void create_linuxEnvironmentAndFallbackEndpointConfiguredWithLocalHostAddress_returnsClientWithLocalHostName() {
+        // Given
+        String localhostAddress = "127.0.0.1";
+        String expectedHostName = "localhost";
+        int port = 9280;
+        List<String> fallbackEndpoints = List.of(localhostAddress + HOST_PORT_SEPARATOR + port);
+        configuration.setFallbackEndpoints(fallbackEndpoints);
+        String configuredScheme = configuration.isUsingHttps()
+                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
+                : ElasticsearchRestClientFactory.HTTP_SCHEME;
+
+        // When
+        List<RestClient> clients = sut.create();
+
+        // Then
+        assertThat(clients, hasSize(1));
+        Iterator<RestClient> iterator = clients.iterator();
+        assertClient(iterator.next(), expectedHostName, port, configuredScheme);
     }
 
     private void assertClient(final RestClient client, final String expectedHost, final int expectedPort, final String expectedScheme) {
