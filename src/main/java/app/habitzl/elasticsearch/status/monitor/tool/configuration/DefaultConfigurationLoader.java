@@ -70,7 +70,8 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
                     .map(String::trim)
                     .filter(Strings::isNotBlank)
                     .collect(Collectors.toList());
-            LOG.info("Using fallback endpoints '{}' from CLI options.", fallbackEndpointsOption);
+            String fallbackEndpointsString = String.join(", ", fallbackEndpoints.toArray(new String[0]));
+            LOG.info("Using fallback endpoints '{}' from CLI options.", fallbackEndpointsString);
             configuration.setFallbackEndpoints(fallbackEndpoints);
         }
 

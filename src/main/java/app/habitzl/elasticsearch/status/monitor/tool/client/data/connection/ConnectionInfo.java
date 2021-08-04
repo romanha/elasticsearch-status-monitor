@@ -12,6 +12,8 @@ public final class ConnectionInfo {
     private final ConnectionStatus connectionStatus;
     private final String connectionErrorInformation;
 
+    // TODO extend with info on endpoints (main + fallback), if they are reachable or not
+
     /**
      * Creates a connection info with a successful connection to the Elasticsearch cluster.
      */

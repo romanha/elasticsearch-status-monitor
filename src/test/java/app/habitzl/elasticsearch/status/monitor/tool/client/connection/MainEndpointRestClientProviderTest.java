@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
-class RestClientProviderTest {
+class MainEndpointRestClientProviderTest {
 
-    private RestClientProvider sut;
+    private MainEndpointRestClientProvider sut;
     private RestClientFactory factory;
 
     @BeforeEach
     void setUp() {
         factory = mock(RestClientFactory.class);
-        sut = new RestClientProvider(factory);
+        sut = new MainEndpointRestClientProvider(factory);
     }
 
     @Test

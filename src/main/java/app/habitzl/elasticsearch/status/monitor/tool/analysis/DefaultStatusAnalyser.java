@@ -87,19 +87,22 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
     }
 
     private AnalysisReport createAnalysisReport() {
+        // TODO pass ConnectionInfo as parameter to this method, it can contain info about not reachable endpoints
+        //      create a warning if some endpoints were not reached
+
         ClusterSettings clusterSettings = elasticsearchClient.getClusterSettings().orElse(ClusterSettings.createDefault());
         Optional<ClusterInfo> clusterInfo = elasticsearchClient.getClusterInfo();
         List<NodeInfo> nodeInfos = elasticsearchClient.getNodeInfo();
         Optional<UnassignedShardInfo> unassignedShardInfo =
                 clusterInfo.filter(info -> info.getNumberOfUnassignedShards() > 0)
-                           .flatMap(info -> elasticsearchClient.getUnassignedShardInfo());
+                        .flatMap(info -> elasticsearchClient.getUnassignedShardInfo());
 
         AnalysisResult endpointAnalysisResult = analyserProvider.getEndpointAnalyser()
-                                                                .analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
+                .analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
         AnalysisResult clusterAnalysisResult = analyserProvider.getClusterAnalyser()
-                                                               .analyse(clusterSettings, nodeInfos);
+                .analyse(clusterSettings, nodeInfos);
         AnalysisResult shardAnalysisResult = analyserProvider.getShardAnalyser()
-                                                             .analyse(unassignedShardInfo.orElse(null));
+                .analyse(unassignedShardInfo.orElse(null));
 
         AnalysisResult analysisResult = combineAnalysisResults(
                 endpointAnalysisResult,
@@ -119,13 +122,13 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 
     private AnalysisResult combineAnalysisResults(final AnalysisResult... analysisResults) {
         List<Problem> allProblems = Arrays.stream(analysisResults)
-                                          .map(AnalysisResult::getProblems)
-                                          .flatMap(List::stream)
-                                          .collect(Collectors.toList());
+                .map(AnalysisResult::getProblems)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
         List<Warning> allWarnings = Arrays.stream(analysisResults)
-                                          .map(AnalysisResult::getWarnings)
-                                          .flatMap(List::stream)
-                                          .collect(Collectors.toList());
+                .map(AnalysisResult::getWarnings)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
         return AnalysisResult.create(allProblems, allWarnings);
     }
 

@@ -54,15 +54,17 @@ class DefaultElasticsearchClientTest {
 
     private DefaultElasticsearchClient sut;
     private RestClient client;
+    private List<RestClient> fallbackClients;
     private ResponseMapper responseMapper;
     private InfoMapper infoMapper;
 
     @BeforeEach
     void setUp() {
         client = mock(RestClient.class);
+        fallbackClients = List.of();
         responseMapper = mock(ResponseMapper.class);
         infoMapper = mock(InfoMapper.class);
-        sut = new DefaultElasticsearchClient(client, responseMapper, infoMapper);
+        sut = new DefaultElasticsearchClient(client, fallbackClients, responseMapper, infoMapper);
     }
 
     @Test

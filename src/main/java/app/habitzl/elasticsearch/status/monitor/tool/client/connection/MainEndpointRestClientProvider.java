@@ -1,21 +1,21 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
+import com.google.inject.Provider;
 import org.elasticsearch.client.RestClient;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.Objects;
 
 /**
  * A provider responsible for returning a single instance of an Elasticsearch REST client.
  */
-public class RestClientProvider implements Provider<RestClient> {
+public class MainEndpointRestClientProvider implements Provider<RestClient> {
 
     private RestClient client;
     private final RestClientFactory factory;
 
     @Inject
-    public RestClientProvider(final RestClientFactory factory) {
+    public MainEndpointRestClientProvider(final RestClientFactory factory) {
         this.factory = factory;
     }
 

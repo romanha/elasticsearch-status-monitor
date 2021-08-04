@@ -1,8 +1,10 @@
 package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MainEndpointClient;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.RestClient;
@@ -55,11 +57,13 @@ public class Main {
 
     private static void teardown(final Injector injector) {
         LOG.info("Closing Elasticsearch Status Monitor.");
-        closeElasticsearchRestClient(injector);
+        closeMainEndpointRestClient(injector);
+        // TODO write close endpoint method for each of the fallback clients
     }
 
-    private static void closeElasticsearchRestClient(final Injector injector) {
-        RestClient client = injector.getInstance(RestClient.class);
+    private static void closeMainEndpointRestClient(final Injector injector) {
+        Key<RestClient> restClientKey = Key.get(RestClient.class, MainEndpointClient.class);
+        RestClient client = injector.getInstance(restClientKey);
         try {
             client.close();
         } catch (final IOException e) {
