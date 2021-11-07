@@ -58,7 +58,7 @@ public class ElasticsearchRestClientFactory
                     configuration.getFallbackEndpoints()
             );
             LOG.info("Falling back to the default endpoint '{}:{}'.", DEFAULT_HOST, port);
-            hosts = List.of(createDefaultHost(scheme));
+            hosts = List.of(createDefaultHost(scheme, port));
         }
 
         return hosts;
@@ -122,8 +122,8 @@ public class ElasticsearchRestClientFactory
         return Optional.ofNullable(host);
     }
 
-    private HttpHost createDefaultHost(final String scheme) {
-        return new HttpHost(DEFAULT_HOST, DEFAULT_PORT, scheme);
+    private HttpHost createDefaultHost(final String scheme, final int port) {
+        return new HttpHost(DEFAULT_HOST, port, scheme);
     }
 
     private RestClientBuilder.HttpClientConfigCallback createHttpClientConfigCallback() {
