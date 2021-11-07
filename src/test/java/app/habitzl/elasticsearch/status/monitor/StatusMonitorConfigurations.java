@@ -10,9 +10,6 @@ import java.util.List;
  */
 public final class StatusMonitorConfigurations {
 
-    private static final int MAX_PORT = 9999;
-    private static final String ENDPOINT_HOST_PORT_SEPARATOR = ":";
-
     private StatusMonitorConfigurations() {
         // instantiation protection
     }
@@ -21,8 +18,8 @@ public final class StatusMonitorConfigurations {
         boolean isUsingHttps = Randoms.generateBoolean();
 
         StatusMonitorConfiguration configuration = new StatusMonitorConfiguration();
-        configuration.setHost(randomHost());
-        configuration.setPort(randomPort());
+        configuration.setHost(Hosts.randomHostName());
+        configuration.setPort(Integer.toString(Hosts.randomPort()));
         configuration.setFallbackEndpoints(randomFallbackEndpoints());
         configuration.setUsingHttps(isUsingHttps);
         configuration.setUsername(Randoms.generateString("user-"));
@@ -31,20 +28,11 @@ public final class StatusMonitorConfigurations {
         return configuration;
     }
 
-    private static String randomHost() {
-        return Randoms.generateString("host-");
-    }
-
-    private static String randomPort() {
-        int port = Randoms.generateInteger(MAX_PORT);
-        return Integer.toString(port);
-    }
-
     private static List<String> randomFallbackEndpoints() {
         return List.of(
-                randomHost() + ENDPOINT_HOST_PORT_SEPARATOR + randomPort(),
-                randomHost() + ENDPOINT_HOST_PORT_SEPARATOR + randomPort(),
-                randomHost() + ENDPOINT_HOST_PORT_SEPARATOR + randomPort()
+                Hosts.randomAddress(),
+                Hosts.randomAddress(),
+                Hosts.randomAddress()
         );
     }
 }

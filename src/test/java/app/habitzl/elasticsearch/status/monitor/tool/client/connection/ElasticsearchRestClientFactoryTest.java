@@ -1,5 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client.connection;
 
+import app.habitzl.elasticsearch.status.monitor.Hosts;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import org.apache.http.HttpHost;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,12 +19,14 @@ import static org.hamcrest.Matchers.*;
 
 class ElasticsearchRestClientFactoryTest {
 
+    private static final String LOCALHOST = "localhost";
+
     private ElasticsearchRestClientFactory sut;
     private StatusMonitorConfiguration configuration;
 
     @BeforeEach
     void setUp() {
-        configuration = StatusMonitorConfigurations.random();
+        configuration = configurationWithoutFallbackEndpoints();
         sut = new ElasticsearchRestClientFactory(configuration);
     }
 
@@ -36,14 +40,10 @@ class ElasticsearchRestClientFactoryTest {
     }
 
     @Test
-    void create_sut_returnsClientWithConfiguredHttpHost() {
+    void create_withKnownEndpointAndWithoutFallbackEndpoints_returnsClientWithExpectedHttpHost() {
         // Given
-        String localhost = "localhost";
-        configuration.setHost(localhost);
+        String configuredScheme = getConfiguredScheme();
         int configuredPort = Integer.parseInt(configuration.getPort());
-        String configuredScheme = configuration.isUsingHttps()
-                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
-                : ElasticsearchRestClientFactory.HTTP_SCHEME;
 
         // When
         RestClient client = sut.create();
@@ -51,11 +51,69 @@ class ElasticsearchRestClientFactoryTest {
         // Then
         List<Node> nodes = client.getNodes();
         assertThat(nodes, hasSize(1));
+        assertHost(nodes.iterator().next().getHost(), configuredScheme, configuredPort);
+    }
 
-        HttpHost host = nodes.iterator().next().getHost();
-        assertThat(host.getHostName(), equalTo(localhost));
-        assertThat(host.getPort(), equalTo(configuredPort));
-        assertThat(host.getSchemeName(), equalTo(configuredScheme));
+    @Test
+    void create_withKnownEndpointAndInvalidFallbackEndpoints_returnsClientWithExpectedHttpHost() {
+        // Given
+        configuration.setFallbackEndpoints(List.of(
+                createInvalidEndpointAddress(),
+                createInvalidEndpointAddress())
+        );
+        String configuredScheme = getConfiguredScheme();
+        int configuredPort = Integer.parseInt(configuration.getPort());
+
+        // When
+        RestClient client = sut.create();
+
+        // Then
+        List<Node> nodes = client.getNodes();
+        assertThat(nodes, hasSize(1));
+        assertHost(nodes.iterator().next().getHost(), configuredScheme, configuredPort);
+    }
+
+    @Test
+    void create_withKnownEndpointAndUnknownFallbackEndpoints_returnsClientWithExpectedHttpHost() {
+        // Given
+        configuration.setFallbackEndpoints(List.of(
+                createUnknownEndpointAddress(),
+                createUnknownEndpointAddress())
+        );
+        String configuredScheme = getConfiguredScheme();
+        int configuredPort = Integer.parseInt(configuration.getPort());
+
+        // When
+        RestClient client = sut.create();
+
+        // Then
+        List<Node> nodes = client.getNodes();
+        assertThat(nodes, hasSize(1));
+        assertHost(nodes.iterator().next().getHost(), configuredScheme, configuredPort);
+    }
+
+    @Test
+    void create_withKnownEndpointAndKnownFallbackEndpoints_returnsClientWithAllExpectedHttpHosts() {
+        // Given
+        int fallbackPort1 = Hosts.randomPort();
+        int fallbackPort2 = Hosts.randomPort();
+        configuration.setFallbackEndpoints(List.of(
+                createEndpointAddress(fallbackPort1),
+                createEndpointAddress(fallbackPort2))
+        );
+        String configuredScheme = getConfiguredScheme();
+        int configuredPort = Integer.parseInt(configuration.getPort());
+
+        // When
+        RestClient client = sut.create();
+
+        // Then
+        List<Node> nodes = client.getNodes();
+        assertThat(nodes, hasSize(3));
+        Iterator<Node> iterator = nodes.iterator();
+        assertHost(iterator.next().getHost(), configuredScheme, configuredPort);
+        assertHost(iterator.next().getHost(), configuredScheme, fallbackPort1);
+        assertHost(iterator.next().getHost(), configuredScheme, fallbackPort2);
     }
 
     @EnabledOnOs(OS.WINDOWS)
@@ -65,10 +123,8 @@ class ElasticsearchRestClientFactoryTest {
         String localhostAddress = "127.0.0.1";
         String expectedHostName = "127.0.0.1";
         configuration.setHost(localhostAddress);
+        String configuredScheme = getConfiguredScheme();
         int configuredPort = Integer.parseInt(configuration.getPort());
-        String configuredScheme = configuration.isUsingHttps()
-                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
-                : ElasticsearchRestClientFactory.HTTP_SCHEME;
 
         // When
         RestClient client = sut.create();
@@ -90,10 +146,8 @@ class ElasticsearchRestClientFactoryTest {
         String localhostAddress = "127.0.0.1";
         String expectedHostName = "localhost";
         configuration.setHost(localhostAddress);
+        String configuredScheme = getConfiguredScheme();
         int configuredPort = Integer.parseInt(configuration.getPort());
-        String configuredScheme = configuration.isUsingHttps()
-                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
-                : ElasticsearchRestClientFactory.HTTP_SCHEME;
 
         // When
         RestClient client = sut.create();
@@ -113,11 +167,9 @@ class ElasticsearchRestClientFactoryTest {
         // Given
         configuration.setHost("invalid#host");
         configuration.setPort("invalid#port");
-        String fallbackAddress = ElasticsearchRestClientFactory.FALLBACK_HOST;
-        int configuredPort = ElasticsearchRestClientFactory.FALLBACK_PORT;
-        String configuredScheme = this.configuration.isUsingHttps()
-                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
-                : ElasticsearchRestClientFactory.HTTP_SCHEME;
+        String fallbackAddress = ElasticsearchRestClientFactory.DEFAULT_HOST;
+        String configuredScheme = getConfiguredScheme();
+        int configuredPort = ElasticsearchRestClientFactory.DEFAULT_PORT;
 
         // When
         RestClient client = sut.create();
@@ -130,5 +182,39 @@ class ElasticsearchRestClientFactoryTest {
         assertThat(host.getHostName(), equalTo(fallbackAddress));
         assertThat(host.getPort(), equalTo(configuredPort));
         assertThat(host.getSchemeName(), equalTo(configuredScheme));
+    }
+
+    private StatusMonitorConfiguration configurationWithoutFallbackEndpoints() {
+        StatusMonitorConfiguration config = StatusMonitorConfigurations.random();
+        config.setHost(LOCALHOST);
+        config.setFallbackEndpoints(List.of());
+        return config;
+    }
+
+    private String createEndpointAddress(final int port) {
+        return LOCALHOST + ElasticsearchRestClientFactory.HOST_PORT_SEPARATOR + port;
+    }
+
+    private String createUnknownEndpointAddress() {
+        return Hosts.randomAddress();
+    }
+
+    private String createInvalidEndpointAddress() {
+        return Hosts.randomHostName() + "-without-port";
+    }
+
+    private String getConfiguredScheme() {
+        return configuration.isUsingHttps()
+                ? ElasticsearchRestClientFactory.HTTPS_SCHEME
+                : ElasticsearchRestClientFactory.HTTP_SCHEME;
+    }
+
+    private void assertHost(
+            final HttpHost actualHost,
+            final String expectedScheme,
+            final int expectedPort) {
+        assertThat(actualHost.getSchemeName(), equalTo(expectedScheme));
+        assertThat(actualHost.getHostName(), equalTo(LOCALHOST));
+        assertThat(actualHost.getPort(), equalTo(expectedPort));
     }
 }

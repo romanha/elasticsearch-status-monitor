@@ -1,7 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MainEndpointClient;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MonitoringRestClient;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -57,14 +57,14 @@ public class Main {
 
     private static void teardown(final Injector injector) {
         LOG.info("Closing Elasticsearch Status Monitor.");
-        closeMainEndpointRestClient(injector);
-        // TODO write close endpoint method for each of the fallback clients
+        closeMonitoringRestClient(injector);
     }
 
-    private static void closeMainEndpointRestClient(final Injector injector) {
-        Key<RestClient> restClientKey = Key.get(RestClient.class, MainEndpointClient.class);
+    private static void closeMonitoringRestClient(final Injector injector) {
+        Key<RestClient> restClientKey = Key.get(RestClient.class, MonitoringRestClient.class);
         RestClient client = injector.getInstance(restClientKey);
         try {
+            LOG.info("Closing monitoring REST client.");
             client.close();
         } catch (final IOException e) {
             LOG.warn("Could not safely close the connection to the ES cluster.", e);

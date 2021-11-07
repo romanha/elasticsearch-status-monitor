@@ -54,21 +54,19 @@ class DefaultElasticsearchClientTest {
 
     private DefaultElasticsearchClient sut;
     private RestClient client;
-    private List<RestClient> fallbackClients;
     private ResponseMapper responseMapper;
     private InfoMapper infoMapper;
 
     @BeforeEach
     void setUp() {
         client = mock(RestClient.class);
-        fallbackClients = List.of();
         responseMapper = mock(ResponseMapper.class);
         infoMapper = mock(InfoMapper.class);
-        sut = new DefaultElasticsearchClient(client, fallbackClients, responseMapper, infoMapper);
+        sut = new DefaultElasticsearchClient(client, responseMapper, infoMapper);
     }
 
     @Test
-    void checkConnection_always_sendEndpointVersionRequest() throws IOException {
+    void checkConnection_endpointReachable_sendEndpointVersionRequest() throws IOException {
         // Given
         givenClientRespondsWith(HTTP_STATUS_OK);
 
@@ -102,7 +100,10 @@ class DefaultElasticsearchClientTest {
         ConnectionInfo result = sut.checkConnection();
 
         // Then
-        ConnectionInfo expected = ConnectionInfo.error(ConnectionStatus.fromHttpCode(HTTP_STATUS_NOT_FOUND), response.getStatusLine().toString());
+        ConnectionInfo expected = ConnectionInfo.error(
+                ConnectionStatus.fromHttpCode(HTTP_STATUS_NOT_FOUND),
+                response.getStatusLine().toString()
+        );
         assertThat(result, equalTo(expected));
     }
 
@@ -115,7 +116,10 @@ class DefaultElasticsearchClientTest {
         ConnectionInfo result = sut.checkConnection();
 
         // Then
-        ConnectionInfo expected = ConnectionInfo.error(ConnectionStatus.fromHttpCode(HTTP_STATUS_NOT_FOUND), exception.getResponse().getStatusLine().toString());
+        ConnectionInfo expected = ConnectionInfo.error(
+                ConnectionStatus.fromHttpCode(HTTP_STATUS_NOT_FOUND),
+                exception.getResponse().getStatusLine().toString()
+        );
         assertThat(result, equalTo(expected));
     }
 
@@ -128,7 +132,10 @@ class DefaultElasticsearchClientTest {
         ConnectionInfo result = sut.checkConnection();
 
         // Then
-        ConnectionInfo expected = ConnectionInfo.error(ConnectionStatus.SSL_HANDSHAKE_FAILURE, exception.getMessage());
+        ConnectionInfo expected = ConnectionInfo.error(
+                ConnectionStatus.SSL_HANDSHAKE_FAILURE,
+                exception.getMessage()
+        );
         assertThat(result, equalTo(expected));
     }
 
@@ -141,7 +148,10 @@ class DefaultElasticsearchClientTest {
         ConnectionInfo result = sut.checkConnection();
 
         // Then
-        ConnectionInfo expected = ConnectionInfo.error(ConnectionStatus.NOT_FOUND, exception.getMessage());
+        ConnectionInfo expected = ConnectionInfo.error(
+                ConnectionStatus.NOT_FOUND,
+                exception.getMessage()
+        );
         assertThat(result, equalTo(expected));
     }
 
@@ -354,13 +364,13 @@ class DefaultElasticsearchClientTest {
     }
 
     private SSLHandshakeException givenClientThrowsSSLHandshakeException() throws IOException {
-        SSLHandshakeException exception = new SSLHandshakeException("SSL handshake problem");
+        SSLHandshakeException exception = new SSLHandshakeException("[TEST] SSL handshake problem");
         when(client.performRequest(any(Request.class))).thenThrow(exception);
         return exception;
     }
 
     private IOException givenClientThrowsIOException() throws IOException {
-        IOException exception = new IOException("some other problem");
+        IOException exception = new IOException("[TEST] some other problem");
         when(client.performRequest(any(Request.class))).thenThrow(exception);
         return exception;
     }
@@ -368,7 +378,7 @@ class DefaultElasticsearchClientTest {
     private Response mockResponse(final int statusCode) {
         Response response = mock(Response.class);
         when(response.getRequestLine()).thenReturn(FAKE_REQUEST_LINE);
-        StatusLine statusLine = new BasicStatusLine(HTTP_PROTOCOL_VERSION, statusCode, Randoms.generateString("Reason: "));
+        StatusLine statusLine = new BasicStatusLine(HTTP_PROTOCOL_VERSION, statusCode, Randoms.generateString("[TEST] Reason: "));
         when(response.getStatusLine()).thenReturn(statusLine);
         return response;
     }

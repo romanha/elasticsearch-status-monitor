@@ -9,13 +9,13 @@ import java.util.Objects;
 /**
  * A provider responsible for returning a single instance of an Elasticsearch REST client.
  */
-public class MainEndpointRestClientProvider implements Provider<RestClient> {
+public class RestClientProvider implements Provider<RestClient> {
 
     private RestClient client;
     private final RestClientFactory factory;
 
     @Inject
-    public MainEndpointRestClientProvider(final RestClientFactory factory) {
+    public RestClientProvider(final RestClientFactory factory) {
         this.factory = factory;
     }
 

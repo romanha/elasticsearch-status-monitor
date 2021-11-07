@@ -73,7 +73,8 @@ class DefaultStatusAnalyserTest {
     @EnumSource(value = ConnectionStatus.class, mode = EnumSource.Mode.EXCLUDE, names = "SUCCESS")
     void createReport_connectionStatusNotSuccess_doNotAttemptMoreStatusRequests(final ConnectionStatus connectionStatusNotSuccess) {
         // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(connectionStatusNotSuccess, ""));
+        when(elasticsearchClient.checkConnection())
+                .thenReturn(ConnectionInfo.error(connectionStatusNotSuccess, ""));
 
         // When
         sut.createReport();
@@ -87,7 +88,8 @@ class DefaultStatusAnalyserTest {
     void createReport_connectionStatusNotFound_returnAbortedAnalysisReportWithGeneralConnectionProblem() {
         // Given
         String connectionErrorInformation = "some connection error";
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.NOT_FOUND, connectionErrorInformation));
+        when(elasticsearchClient.checkConnection())
+                .thenReturn(ConnectionInfo.error(ConnectionStatus.NOT_FOUND, connectionErrorInformation));
 
         // When
         AnalysisReport analysisReport = sut.createReport();
@@ -100,7 +102,8 @@ class DefaultStatusAnalyserTest {
     @Test
     void createReport_connectionStatusSSLHandshakeFailure_returnAbortedAnalysisReportWithSSLHandshakeProblem() {
         // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.SSL_HANDSHAKE_FAILURE, ""));
+        when(elasticsearchClient.checkConnection())
+                .thenReturn(ConnectionInfo.error(ConnectionStatus.SSL_HANDSHAKE_FAILURE, ""));
 
         // When
         AnalysisReport analysisReport = sut.createReport();
@@ -113,7 +116,8 @@ class DefaultStatusAnalyserTest {
     @Test
     void createReport_connectionStatusUnauthorized_returnAbortedAnalysisReportWithUnauthorizedConnectionProblem() {
         // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.UNAUTHORIZED, ""));
+        when(elasticsearchClient.checkConnection())
+                .thenReturn(ConnectionInfo.error(ConnectionStatus.UNAUTHORIZED, ""));
 
         // When
         AnalysisReport analysisReport = sut.createReport();
@@ -126,7 +130,8 @@ class DefaultStatusAnalyserTest {
     @Test
     void createReport_connectionStatusServiceUnavailable_returnAbortedAnalysisReportWithClusterNotFullyOperationalProblem() {
         // Given
-        when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.error(ConnectionStatus.SERVICE_UNAVAILABLE, ""));
+        when(elasticsearchClient.checkConnection())
+                .thenReturn(ConnectionInfo.error(ConnectionStatus.SERVICE_UNAVAILABLE, ""));
 
         // When
         AnalysisReport analysisReport = sut.createReport();

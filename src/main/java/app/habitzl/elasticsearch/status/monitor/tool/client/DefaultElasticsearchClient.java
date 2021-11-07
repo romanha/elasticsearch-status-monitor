@@ -1,8 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.FallbackEndpointClients;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MainEndpointClient;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MonitoringRestClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
@@ -40,18 +39,15 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     private static final int HTTP_STATUS_BAD_REQUEST = 400;
 
     private final RestClient client;
-    private final List<RestClient> fallbackClients;
     private final ResponseMapper responseMapper;
     private final InfoMapper infoMapper;
 
     @Inject
     public DefaultElasticsearchClient(
-            final @MainEndpointClient RestClient client,
-            final @FallbackEndpointClients List<RestClient> fallbackClients,
+            final @MonitoringRestClient RestClient client,
             final ResponseMapper responseMapper,
             final InfoMapper infoMapper) {
         this.client = client;
-        this.fallbackClients = fallbackClients;
         this.responseMapper = responseMapper;
         this.infoMapper = infoMapper;
     }
@@ -59,7 +55,6 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     @Override
     public ConnectionInfo checkConnection() {
         ConnectionInfo connectionInfo;
-        // TODO perform a connection check on each fallback client as well, and add info to ConnectionInfo result
 
         Request request = new Request(METHOD_GET, EndpointVersionParams.API_ENDPOINT);
         setAcceptedContentToJSON(request);

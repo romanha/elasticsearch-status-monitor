@@ -14,13 +14,9 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearch
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.ElasticsearchRestClientFactory;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.FallbackElasticsearchRestClientFactory;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.FallbackEndpointClients;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.FallbackEndpointRestClientProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.FallbackRestClientFactory;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MainEndpointClient;
-import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MainEndpointRestClientProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MonitoringRestClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientFactory;
+import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterAllocationMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterSettingsMapper;
@@ -49,18 +45,17 @@ import app.habitzl.elasticsearch.status.monitor.util.format.DayBasedTimeFormatte
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import freemarker.template.Configuration;
 import org.elasticsearch.client.RestClient;
 
 import java.io.File;
 import java.time.Clock;
-import java.util.List;
 
 /**
  * A Google Guice module for defining bindings for the projects dependency injection.
  */
 class GuiceModule extends AbstractModule {
+
     @Override
     protected void configure() {
         // Main program
@@ -74,10 +69,8 @@ class GuiceModule extends AbstractModule {
 
         // Elasticsearch client
         bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);
-        bind(RestClient.class).annotatedWith(MainEndpointClient.class).toProvider(MainEndpointRestClientProvider.class).in(Singleton.class);
-        bind(new TypeLiteral<List<RestClient>>() {}).annotatedWith(FallbackEndpointClients.class).toProvider(FallbackEndpointRestClientProvider.class).in(Singleton.class);
+        bind(RestClient.class).annotatedWith(MonitoringRestClient.class).toProvider(RestClientProvider.class).in(Singleton.class);
         bind(RestClientFactory.class).to(ElasticsearchRestClientFactory.class).in(Singleton.class);
-        bind(FallbackRestClientFactory.class).to(FallbackElasticsearchRestClientFactory.class).in(Singleton.class);
 
         // Mapper and parser
         bind(JsonParser.class).in(Singleton.class);
