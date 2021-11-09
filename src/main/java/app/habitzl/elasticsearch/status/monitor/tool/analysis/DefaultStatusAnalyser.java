@@ -87,9 +87,6 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
     }
 
     private AnalysisReport createAnalysisReport() {
-        // TODO pass ConnectionInfo as parameter to this method, it can contain info about not reachable endpoints
-        //      create a warning if some endpoints were not reached
-
         ClusterSettings clusterSettings = elasticsearchClient.getClusterSettings().orElse(ClusterSettings.createDefault());
         Optional<ClusterInfo> clusterInfo = elasticsearchClient.getClusterInfo();
         List<NodeInfo> nodeInfos = elasticsearchClient.getNodeInfo();

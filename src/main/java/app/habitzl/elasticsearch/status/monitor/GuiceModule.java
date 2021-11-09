@@ -40,6 +40,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFil
 import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.TemplateProcessor;
 import app.habitzl.elasticsearch.status.monitor.util.ClockProvider;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
+import app.habitzl.elasticsearch.status.monitor.util.HostnameResolver;
 import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
 import app.habitzl.elasticsearch.status.monitor.util.format.DayBasedTimeFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -100,5 +101,6 @@ class GuiceModule extends AbstractModule {
         // Utilities
         bind(Clock.class).toProvider(ClockProvider.class).in(Singleton.class);
         bind(FileCreator.class).in(Singleton.class);
+        bind(HostnameResolver.class).in(Singleton.class);
     }
 }

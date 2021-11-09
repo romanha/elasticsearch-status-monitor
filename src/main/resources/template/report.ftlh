@@ -180,6 +180,10 @@
                                 <td>${node.endpointInfo.ipAddress}</td>
                             </tr>
                             <tr>
+                                <td>HTTP publish address:</td>
+                                <td>${node.endpointInfo.httpPublishAddress}</td>
+                            </tr>
+                            <tr>
                                 <td>Operating system:</td>
                                 <td>${node.endpointInfo.operatingSystemName}</td>
                             </tr>
@@ -236,6 +240,10 @@
                             </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div>
+                        <h3>Node Roles</h3>
 
                         <table>
                             <#if node.masterNode>

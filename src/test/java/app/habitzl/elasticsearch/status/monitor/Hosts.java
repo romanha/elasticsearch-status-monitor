@@ -9,7 +9,7 @@ public final class Hosts {
 
     private static final String HTTPS_SCHEME = "https";
     private static final int PORT_MINIMUM = 9200;
-    private static final int PORT_MAXIMUM = 9300;
+    private static final int PORT_MAXIMUM = 9500;
 
     private Hosts() {
         // instantiation protection

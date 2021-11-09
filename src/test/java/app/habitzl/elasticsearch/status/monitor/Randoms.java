@@ -52,7 +52,7 @@ public final class Randoms {
      * Generates a random integer value from the given lower limit (included) to the given upper limit (included).
      */
     public static int generateInteger(final int lowerLimit, final int upperLimit) {
-        return RANDOM.nextInt(upperLimit + 1) + lowerLimit;
+        return RANDOM.nextInt((upperLimit - lowerLimit) + 1) + lowerLimit;
     }
 
     /**

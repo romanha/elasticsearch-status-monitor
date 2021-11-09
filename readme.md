@@ -71,8 +71,7 @@ A failing analysis could lead to the wrong assumption that the whole cluster fai
 You can use fallback endpoints (`--fallbackEndpoints`) to avoid this scenario.
 This option allows passing a list of alternative endpoints which can be used for querying the cluster.
 
-The tool tries to connect to each endpoint and reports an ["Endpoints not reachable" problem](#problems) if one of them is not reachable.
-It then proceeds to query the cluster on the first reachable endpoint.
+The tool also reports an ["Endpoints not reachable" problem](#problems) if one of the endpoints is not part of the cluster.
 
 <a id="logging"></a>
 ### Logging

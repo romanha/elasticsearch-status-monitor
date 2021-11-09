@@ -17,9 +17,18 @@ public final class EndpointInfos {
         return random(Randoms.generateInteger(ONE_HUNDRED));
     }
 
+    public static EndpointInfo random(final String httpPublishAddress) {
+        return random(httpPublishAddress, Randoms.generateInteger(ONE_HUNDRED));
+    }
+
     public static EndpointInfo random(final int ramUsage) {
+        return random(Hosts.randomAddress(), ramUsage);
+    }
+
+    public static EndpointInfo random(final String httpPublishAddress, final int ramUsage) {
         return new EndpointInfo(
-                Randoms.generateString("ip-address-"),
+                Hosts.randomHostName(),
+                httpPublishAddress,
                 Randoms.generateString("operating-system-"),
                 Randoms.generatePositiveInteger(),
                 Randoms.generateInteger(ONE_HUNDRED),

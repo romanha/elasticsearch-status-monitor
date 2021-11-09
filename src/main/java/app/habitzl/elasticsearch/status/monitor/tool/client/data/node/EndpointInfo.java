@@ -11,6 +11,7 @@ public final class EndpointInfo implements Serializable {
     private static final long serialVersionUID = 2L;
 
     private final String ipAddress;
+    private final String httpPublishAddress;
     private final String operatingSystemName;
     private final int availableProcessors;
     private final int cpuUsageInPercent;
@@ -21,6 +22,7 @@ public final class EndpointInfo implements Serializable {
 
     public EndpointInfo(
             final String ipAddress,
+            final String httpPublishAddress,
             final String operatingSystemName,
             final int availableProcessors,
             final int cpuUsageInPercent,
@@ -28,6 +30,7 @@ public final class EndpointInfo implements Serializable {
             final int ramUsageInPercent,
             final long ramUsageInBytes) {
         this.ipAddress = ipAddress;
+        this.httpPublishAddress = httpPublishAddress;
         this.operatingSystemName = operatingSystemName;
         this.availableProcessors = availableProcessors;
         this.cpuUsageInPercent = cpuUsageInPercent;
@@ -38,6 +41,10 @@ public final class EndpointInfo implements Serializable {
 
     public String getIpAddress() {
         return ipAddress;
+    }
+
+    public String getHttpPublishAddress() {
+        return httpPublishAddress;
     }
 
     public String getOperatingSystemName() {
@@ -95,11 +102,12 @@ public final class EndpointInfo implements Serializable {
             EndpointInfo that = (EndpointInfo) o;
             isEqual = Objects.equals(availableProcessors, that.availableProcessors)
                     && Objects.equals(cpuUsageInPercent, that.cpuUsageInPercent)
-                    && Objects.equals(cpuLoadAverageLast15Minutes, that.cpuLoadAverageLast15Minutes)
                     && Objects.equals(ramUsageInPercent, that.ramUsageInPercent)
                     && Objects.equals(ramUsageInBytes, that.ramUsageInBytes)
                     && Objects.equals(ipAddress, that.ipAddress)
-                    && Objects.equals(operatingSystemName, that.operatingSystemName);
+                    && Objects.equals(httpPublishAddress, that.httpPublishAddress)
+                    && Objects.equals(operatingSystemName, that.operatingSystemName)
+                    && Objects.equals(cpuLoadAverageLast15Minutes, that.cpuLoadAverageLast15Minutes);
         }
 
         return isEqual;
@@ -107,13 +115,14 @@ public final class EndpointInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ipAddress, operatingSystemName, availableProcessors, cpuUsageInPercent, cpuLoadAverageLast15Minutes, ramUsageInPercent, ramUsageInBytes);
+        return Objects.hash(ipAddress, httpPublishAddress, operatingSystemName, availableProcessors, cpuUsageInPercent, cpuLoadAverageLast15Minutes, ramUsageInPercent, ramUsageInBytes);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", EndpointInfo.class.getSimpleName() + "[", "]")
                 .add("ipAddress='" + ipAddress + "'")
+                .add("httpPublishAddress='" + httpPublishAddress + "'")
                 .add("operatingSystemName='" + operatingSystemName + "'")
                 .add("availableProcessors=" + availableProcessors)
                 .add("cpuUsageInPercent=" + cpuUsageInPercent)

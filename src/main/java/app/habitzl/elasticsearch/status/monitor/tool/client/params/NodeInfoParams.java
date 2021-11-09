@@ -8,5 +8,5 @@ public final class NodeInfoParams {
         // instantiation protection
     }
 
-    public static final String API_ENDPOINT = "/_nodes/os,process,jvm";
+    public static final String API_ENDPOINT = "/_nodes/os,http,process,jvm";
 }

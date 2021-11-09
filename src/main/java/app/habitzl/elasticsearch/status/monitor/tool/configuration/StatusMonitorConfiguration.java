@@ -1,5 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.configuration;
 
+import com.google.common.collect.Lists;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +19,8 @@ public class StatusMonitorConfiguration implements Serializable {
     static final String DEFAULT_USERNAME = "admin";
     static final String DEFAULT_PASSWORD = "admin";
     static final String DEFAULT_REPORT_FILES_PATH = "reports";
+
+    static final String HOST_PORT_SEPARATOR = ":";
 
     public static StatusMonitorConfiguration defaultConfig() {
         return new StatusMonitorConfiguration();
@@ -64,6 +68,14 @@ public class StatusMonitorConfiguration implements Serializable {
     }
 
     /**
+     * Gets the main endpoint defined by the {@link #host} and {@link #port} parameters.
+     * The endpoint is returned in the format {@code host:port}.
+     */
+    public String getMainEndpoint() {
+        return getHost() + HOST_PORT_SEPARATOR + getPort();
+    }
+
+    /**
      * Gets the list of fallback endpoints of the Elasticsearch cluster in case the main endpoint is not reachable.
      * The endpoints are returned in the format {@code host:port}.
      */
@@ -76,7 +88,16 @@ public class StatusMonitorConfiguration implements Serializable {
     }
 
     /**
-     * Gets the user name of the Elasticsearch user.
+     * Gets the list of all endpoints, which includes the main endpoint and all fallback endpoints.
+     * The endpoints are returned in the format {@code host:port}.
+     */
+    public List<String> getAllEndpoints() {
+        List<String> allEndpoints = Lists.asList(getMainEndpoint(), getFallbackEndpoints().toArray(String[]::new));
+        return List.copyOf(allEndpoints);
+    }
+
+    /**
+     * Gets the username of the Elasticsearch user.
      */
     public String getUsername() {
         return Objects.nonNull(username) ? username : DEFAULT_USERNAME;

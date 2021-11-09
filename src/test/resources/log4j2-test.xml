@@ -22,7 +22,7 @@
 	</Appenders>
 
 	<Loggers>
-		<Logger name="app.habitzl" level="INFO" additivity="false">
+		<Logger name="app.habitzl" level="DEBUG" additivity="false">
 			<AppenderRef ref="ConsoleLogging"/>
 		</Logger>
 

@@ -26,6 +26,7 @@ Not yet released.
 * Added the CLI option `reportPath` to configure the location of the generated report files.
 * Added the actual byte usage to the percentage of used RAM and heap memory.
 * Added the operating system name to the endpoint data.
+* Added the HTTP publish address to the endpoint data.
 * Added the Elasticsearch version to the node data.
 * Added the JVM version to the node data.
 * Added the "ingest" role to the node data (pre-processing documents).

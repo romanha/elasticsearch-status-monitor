@@ -33,6 +33,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
 
     // Endpoint info paths
     private static final String PATH_IP_ADDRESS = "ip";
+    private static final String PATH_HTTP_PUBLISH_ADDRESS = "http.publish_address";
     private static final String PATH_OS_NAME = "os.pretty_name";
     private static final String PATH_OS_PROCESSORS = "os.available_processors";
     private static final String PATH_OS_CPU_PERCENT = "os.cpu.percent";
@@ -132,6 +133,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
 
     private EndpointInfo gatherEndpointInfo(final String nodeId, final DocumentContext nodeInfoContext, final DocumentContext nodeStatsContext) {
         String ipAddress = nodeInfoContext.read(createPathForNode(nodeId, PATH_IP_ADDRESS), String.class);
+        String httpPublishAddress = nodeInfoContext.read(createPathForNode(nodeId, PATH_HTTP_PUBLISH_ADDRESS), String.class);
         String osName = nodeInfoContext.read(createPathForNode(nodeId, PATH_OS_NAME), String.class);
         Integer availableProcessors = nodeInfoContext.read(createPathForNode(nodeId, PATH_OS_PROCESSORS), Integer.class);
         Integer cpuUsageInPercent = nodeStatsContext.read(createPathForNode(nodeId, PATH_OS_CPU_PERCENT), Integer.class);
@@ -148,6 +150,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
 
         return new EndpointInfo(
                 ipAddress,
+                httpPublishAddress,
                 osName,
                 availableProcessors,
                 cpuUsageInPercent,

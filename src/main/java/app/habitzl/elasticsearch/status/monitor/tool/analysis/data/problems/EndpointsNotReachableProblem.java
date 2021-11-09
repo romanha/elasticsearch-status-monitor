@@ -34,12 +34,17 @@ public class EndpointsNotReachableProblem implements Problem {
 
     @Override
     public String getDescription() {
-        return "The tool could not connect to one or more of the configured endpoints.";
+        return "The Elasticsearch cluster does not contain one or more of the configured endpoints.";
     }
 
     @Override
     public String getSolution() {
         return "Check if an Elasticsearch node is running on each of the configured endpoints.";
+    }
+
+    @Override
+    public String getAdditionalInformation() {
+        return "Following endpoints were not reachable: " + String.join(", ", endpoints);
     }
 
     public List<String> getEndpoints() {

@@ -1,12 +1,18 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.EndpointsNotReachableProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.HighRamUsageWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
+import app.habitzl.elasticsearch.status.monitor.util.HostnameResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,23 +26,67 @@ public class EndpointAnalyser {
     private static final Logger LOG = LogManager.getLogger(EndpointAnalyser.class);
 
     private static final int RAM_USAGE_PERCENT_THRESHOLD = 80;
+    static final String HOST_PORT_SEPARATOR = ":";
+
+    private final HostnameResolver hostnameResolver;
+    private final StatusMonitorConfiguration configuration;
+
+    @Inject
+    public EndpointAnalyser(final HostnameResolver hostnameResolver, final StatusMonitorConfiguration configuration) {
+        this.hostnameResolver = hostnameResolver;
+        this.configuration = configuration;
+    }
 
     public AnalysisResult analyse(final List<EndpointInfo> endpoints) {
-        // todo add check if there are all endpoints available which are configured as main and fallbacks
-
+        List<Problem> problems = new ArrayList<>();
         List<Warning> warnings = new ArrayList<>();
 
+        findNotReachableEndpoints(endpoints).ifPresent(problems::add);
         findEndpointsWithHighRamUsage(endpoints).ifPresent(warnings::add);
 
-        return AnalysisResult.create(List.of(), warnings);
+        return AnalysisResult.create(problems, warnings);
+    }
+
+    private Optional<EndpointsNotReachableProblem> findNotReachableEndpoints(final List<EndpointInfo> endpointInfos) {
+        List<String> configuredEndpoints = configuration.getAllEndpoints()
+                .stream()
+                .map(this::resolveHostname)
+                .collect(Collectors.toList());
+        List<String> reachableEndpoints = endpointInfos.stream()
+                .map(EndpointInfo::getHttpPublishAddress)
+                .collect(Collectors.toList());
+        List<String> notReachableEndpoints = configuredEndpoints.stream()
+                .filter(configuredEndpoint -> !reachableEndpoints.contains(configuredEndpoint))
+                .collect(Collectors.toList());
+        LOG.debug("Checking if all the configured endpoints {} are part of the reachable endpoints {}.", configuredEndpoints, reachableEndpoints);
+        return notReachableEndpoints.isEmpty()
+                ? Optional.empty()
+                : Optional.of(EndpointsNotReachableProblem.create(notReachableEndpoints));
+    }
+
+    private String resolveHostname(final String address) {
+        String resolvedAddress = address;
+        String[] hostAndPort = address.split(HOST_PORT_SEPARATOR);
+        if (hostAndPort.length == 2) {
+            String hostname = hostAndPort[0];
+            String port = hostAndPort[1];
+            Optional<InetAddress> resolvedIpAddress = hostnameResolver.resolve(hostname);
+            if (resolvedIpAddress.isPresent()) {
+                resolvedAddress = resolvedIpAddress.get().getHostAddress() + HOST_PORT_SEPARATOR + port;
+            }
+        } else {
+            LOG.error("Cannot resolve the invalid endpoint address '{}'.", address);
+        }
+
+        return resolvedAddress;
     }
 
     private Optional<HighRamUsageWarning> findEndpointsWithHighRamUsage(final List<EndpointInfo> endpoints) {
         Set<String> endpointsWithHighRamUsage =
                 endpoints.stream()
-                         .filter(endpoint -> endpoint.getRamUsageInPercent() >= RAM_USAGE_PERCENT_THRESHOLD)
-                         .map(EndpointInfo::getIpAddress)
-                         .collect(Collectors.toSet());
+                        .filter(endpoint -> endpoint.getRamUsageInPercent() >= RAM_USAGE_PERCENT_THRESHOLD)
+                        .map(EndpointInfo::getIpAddress)
+                        .collect(Collectors.toSet());
         LOG.debug("Found endpoints with RAM usage over {}%: {}", RAM_USAGE_PERCENT_THRESHOLD, endpointsWithHighRamUsage);
         return endpointsWithHighRamUsage.isEmpty()
                 ? Optional.empty()
