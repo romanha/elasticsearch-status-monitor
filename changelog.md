@@ -2,8 +2,20 @@
 
 ## Releases
 
+* [1.1.1](#111)
 * [1.1.0](#110)
 * [1.0.0](#100)
+
+<a id="111"></a>
+## 1.1.1
+
+Not yet released.
+
+### Compatibility
+
+* Java 11
+* Elasticsearch 6.8
+
 
 <a id="110"></a>
 ## 1.1.0
@@ -46,6 +58,7 @@ Released on: 2021-11-10
 * Replaced calls to the Elasticsearch `_cat` API with proper API endpoints. (`_cluster/state`, `_nodes` and `_nodes/stats`)
 * Updated Google Guice dependency from `5.0.0-BETA-1` to `5.0.1`.
 * Improved styling of the generated HTML report file.
+
 
 <a id="100"></a>
 ## 1.0.0
