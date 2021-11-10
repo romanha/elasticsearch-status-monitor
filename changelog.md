@@ -8,7 +8,7 @@
 <a id="110"></a>
 ## 1.1.0
 
-Not yet released.
+Released on: 2021-11-10
 
 ### Compatibility
 
