@@ -65,11 +65,13 @@ Exit code | Description
 <a id="fallback-endpoints"></a>
 ### Fallback endpoints
 
-Only because the provided main endpoint (`--host` and `--port`) is not reachable does not mean that the whole cluster is not working.
-A failing analysis could lead to the wrong assumption that the whole cluster failed.
+An Elasticsearch cluster can consist of multiple nodes, running in a redundant setup.
+Therefore, it can happen that some nodes are not running or not reachable, but the cluster as a whole is still functional.
 
-You can use fallback endpoints (`--fallbackEndpoints`) to avoid this scenario.
-This option allows passing a list of alternative endpoints which can be used for querying the cluster.
+If the tool's main endpoint (`--host` and `--port`) is not reachable, a failing analysis could lead to the wrong assumption that the whole cluster failed.
+
+For such cases you can use fallback endpoints (`--fallbackEndpoints`) to avoid this scenario.
+This option allows passing a list of alternative endpoints, which can be used for querying the cluster.
 
 The tool also reports an ["Endpoints not reachable" problem](#problems) if one of the endpoints is not part of the cluster.
 
@@ -92,7 +94,7 @@ Option               | Alternative  | Arguments | Default   | Description       
 `--version`          | -            | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                    | `--version`
 `--host`             | `-h`         | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`
 `--port`             | `-p`         | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`
-`--fallbackEndpoints`| -            | n         | -         | A list of [fallback endpoints](#fallback-endpoints) in the format of `host1:port1,host2:port2`.            | `--fallbackEndpoints 127.0.0.1:9202,127.0.0.1:9204`
+`--fallbackEndpoints`| -            | n         | -         | A list of [fallback endpoints](#fallback-endpoints) in the format of `host1:port1,host2:port2`.            | `--fallbackEndpoints 127.0.0.1:9202,localhost:9204`
 `--unsecure`         | -            | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`
 `--username`         | -            | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`
 `--password`         | -            | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`

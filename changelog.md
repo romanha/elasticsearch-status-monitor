@@ -37,14 +37,14 @@ Not yet released.
 
 ### Fixes
 
-* The heap usage was part of the endpoint information in the report.
-    * Moved heap usage to node information.
-* Added missing logging binding. (SLF4J to log4j)
+* The heap usage was part of the endpoint information section in the report.
+    * Moved the heap usage to the node information section.
+* Added a missing logging binding. (SLF4J to log4j)
 
 ### Miscellaneous
 
 * Replaced calls to the Elasticsearch `_cat` API with proper API endpoints. (`_cluster/state`, `_nodes` and `_nodes/stats`)
-* Updated Google Guice dependency from 5.0.0-BETA-1 to 5.0.1
+* Updated Google Guice dependency from `5.0.0-BETA-1` to `5.0.1`.
 * Improved styling of the generated HTML report file.
 
 <a id="100"></a>
