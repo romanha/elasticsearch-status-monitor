@@ -1,7 +1,6 @@
 package app.habitzl.elasticsearch.status.monitor.tool.configuration;
 
 import com.google.common.collect.Lists;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -80,11 +79,11 @@ public class StatusMonitorConfiguration implements Serializable {
      * The endpoints are returned in the format {@code host:port}.
      */
     public List<String> getFallbackEndpoints() {
-        return fallbackEndpoints;
+        return Objects.isNull(fallbackEndpoints) ? List.of() : List.copyOf(fallbackEndpoints);
     }
 
     public void setFallbackEndpoints(final List<String> fallbackEndpoints) {
-        this.fallbackEndpoints = Objects.isNull(fallbackEndpoints) ? List.of() : List.copyOf(fallbackEndpoints);
+        this.fallbackEndpoints = fallbackEndpoints;
     }
 
     /**

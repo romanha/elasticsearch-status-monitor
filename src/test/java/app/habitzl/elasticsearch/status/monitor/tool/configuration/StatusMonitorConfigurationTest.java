@@ -2,13 +2,16 @@ package app.habitzl.elasticsearch.status.monitor.tool.configuration;
 
 import app.habitzl.elasticsearch.status.monitor.Hosts;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 class StatusMonitorConfigurationTest {
 
@@ -29,6 +32,31 @@ class StatusMonitorConfigurationTest {
 
         // Then
         assertThat(result, equalTo(expectedMainEndpoint));
+    }
+
+    @Test
+    void getFallbackEndpoints_defaultConfig_returnEmpty() {
+        // Given
+        sut = StatusMonitorConfiguration.defaultConfig();
+
+        // When
+        List<String> result = sut.getFallbackEndpoints();
+
+        // Then
+        assertThat(result, empty());
+    }
+
+    @Test
+    void getAllEndpoints_defaultConfig_returnOnlyMainEndpoint() {
+        // Given
+        sut = StatusMonitorConfiguration.defaultConfig();
+
+        // When
+        List<String> result = sut.getAllEndpoints();
+
+        // Then
+        String mainEndpoint = sut.getMainEndpoint();
+        assertThat(result, contains(mainEndpoint));
     }
 
     @Test
