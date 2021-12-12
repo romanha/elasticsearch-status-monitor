@@ -16,6 +16,10 @@ Not yet released.
 * Java 11
 * Elasticsearch 6.8
 
+### Miscellaneous
+
+* Improved styling of the generated HTML report file.
+
 
 <a id="110"></a>
 ## 1.1.0
