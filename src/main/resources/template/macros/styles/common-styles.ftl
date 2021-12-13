@@ -3,15 +3,20 @@
         body {
             font-family: Calibri, sans-serif;
             max-width: 100%;
-            margin: 2% 8%;
+            margin: 2% 0;
             background-color: #f4f3f1;
         }
 
         /*
         * All the main div elements should have the max-width of 80%.
         */
-        body > div {
+        body > div > div {
             max-width: 80% !important;
+            margin: 0 10%;
+        }
+
+        .hidden {
+            display: none;
         }
 
         .error {
@@ -35,6 +40,10 @@
 
         .centered {
             text-align: center;
+        }
+
+        .extra-space-after-section {
+            margin-bottom: 3em;
         }
 
         .keep-new-lines {

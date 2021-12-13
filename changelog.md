@@ -18,6 +18,7 @@ Not yet released.
 
 ### Miscellaneous
 
+* Added menu to generated HTML report file.
 * Improved styling of the generated HTML report file.
 
 

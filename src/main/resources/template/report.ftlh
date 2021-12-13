@@ -1,8 +1,11 @@
 <#-- @ftlvariable name="report" type="app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport" -->
 <#import "macros/styles/common-styles.ftl" as common>
+<#import "macros/styles/menu-styles.ftl" as menu>
 <#import "macros/styles/table-styles.ftl" as tables>
 <#import "macros/styles/grid-styles.ftl" as grids>
 <#import "macros/styles/detail-section-styles.ftl" as detail_sections>
+<#import "macros/scripts/menu-scripts.ftl" as menu_scripts>
+<#import "macros/sections/menu-section.ftl" as menubar>
 <#import "macros/sections/configuration-section.ftl" as configuration>
 <#import "macros/sections/cluster-info-section.ftl" as cluster_info>
 <#import "macros/sections/nodes-info-section.ftl" as nodes_info>
@@ -15,29 +18,55 @@
     <title>Elasticsearch Status Report</title>
     <meta charset="utf-8">
     <@common.style />
+    <@menu.style />
     <@tables.style />
     <@grids.style />
     <@detail_sections.style />
+
+    <@menu_scripts.script />
 </head>
 <body>
-<h1>Elasticsearch Status Report</h1>
+<h1 class="centered">Elasticsearch Status Report</h1>
 
-<@configuration.section />
+<@menubar.section />
 
-<#if report.reportProgress == "FINISHED">
-    <@cluster_info.section />
-    <@nodes_info.section />
-<#elseif report.reportProgress=="ABORTED">
+<#if report.reportProgress == "ABORTED">
     <@error_aborted.section />
 </#if>
 
-<#if report.problems?size gt 0>
-    <@problems.section />
-</#if>
+<div id="analysis-section" class="main-section">
+    <@configuration.section />
 
-<#if report.warnings?size gt 0>
-    <@warnings.section />
-</#if>
+    <#if report.problems?size gt 0>
+        <@problems.section />
+    </#if>
+
+    <#if report.warnings?size gt 0>
+        <@warnings.section />
+    </#if>
+</div>
+
+<div id="cluster-section" class="main-section hidden">
+    <#if report.reportProgress == "FINISHED">
+        <@cluster_info.section />
+    </#if>
+</div>
+
+<div id="nodes-section" class="main-section hidden">
+    <#if report.reportProgress == "FINISHED">
+        <@nodes_info.section />
+    </#if>
+</div>
+
+<div id="indices-section" class="main-section hidden">
+    <#if report.reportProgress == "FINISHED">
+        <!-- Section about indices. -->
+    </#if>
+</div>
+
+<div id="about-section" class="main-section hidden">
+    <!-- Section about author. -->
+</div>
 
 </body>
 </html>
