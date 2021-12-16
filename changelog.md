@@ -35,6 +35,7 @@ Not yet released.
     * Updated Apache Freemarker from 2.3.30 to 2.3.31.
     * Updated SL4J from 1.7.30 to 1.7.32.
 
+
 <a id="110"></a>
 ## 1.1.0
 
