@@ -37,6 +37,7 @@ Not yet released.
     * Updated Jackson from 2.12.0 to 2.13.0.
     * Updated JSON Path from 2.5.0 to 2.6.0.
     * Updated Apache Freemarker from 2.3.30 to 2.3.31.
+    * Updated Apache Commons CLI from 1.4 to 1.5.0.
     * Updated SL4J from 1.7.30 to 1.7.32.
 
 
