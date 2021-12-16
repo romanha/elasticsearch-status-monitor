@@ -20,11 +20,20 @@ Not yet released.
 
 * Added menu to the generated HTML report file.
 
+### Fixes
+
+* Mitigated the Log4Shell remote code execution vulnerability in the log4j library. (CVE-2021-44228)
+    * Updated log4j from 2.14.1 to 2.16.0.
+
 ### Miscellaneous
 
 * Added information about the tool to the generated HTML report file.
 * Improved styling of the generated HTML report file.
-
+* Updated various dependencies to their latest version.
+    * Updated Jackson from 2.12.0 to 2.13.0.
+    * Updated JSON Path from 2.5.0 to 2.6.0.
+    * Updated Apache Freemarker from 2.3.30 to 2.3.31.
+    * Updated SL4J from 1.7.30 to 1.7.32.
 
 <a id="110"></a>
 ## 1.1.0
