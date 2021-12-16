@@ -26,8 +26,8 @@ Not yet released.
 
 ### Fixes
 
-* Mitigated the Log4Shell remote code execution vulnerability in the log4j library. (CVE-2021-44228)
-    * Updated log4j from 2.14.1 to 2.16.0.
+* Mitigated the Log4Shell remote code execution vulnerability in the Log4j library. (CVE-2021-44228)
+    * Updated Log4j from 2.14.1 to 2.16.0.
 
 ### Miscellaneous
 
@@ -38,6 +38,7 @@ Not yet released.
     * Updated JSON Path from 2.5.0 to 2.6.0.
     * Updated Apache Freemarker from 2.3.30 to 2.3.31.
     * Updated Apache Commons CLI from 1.4 to 1.5.0.
+    * Updated Log4j from 2.14.1 to 2.16.0.
     * Updated SL4J from 1.7.30 to 1.7.32.
 
 
@@ -75,7 +76,7 @@ Released on: 2021-11-10
 
 * The heap usage was part of the endpoint information section in the report.
     * Moved the heap usage to the node information section.
-* Added a missing logging binding. (SLF4J to log4j)
+* Added a missing logging binding. (SLF4J to Log4j)
 
 ### Miscellaneous
 
