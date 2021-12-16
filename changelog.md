@@ -2,9 +2,23 @@
 
 ## Releases
 
+* [1.2.1](#121)
 * [1.2.0](#120)
 * [1.1.0](#110)
 * [1.0.0](#100)
+
+<a id="121"></a>
+## 1.2.1
+
+Released on: yyyy-mm-dd
+
+### Compatibility
+
+* Java 11
+* Elasticsearch 6.8
+
+
+---
 
 <a id="120"></a>
 ## 1.2.0
@@ -41,6 +55,7 @@ Released on: 2021-12-16
     * Updated Log4j from 2.14.1 to 2.16.0.
     * Updated SL4J from 1.7.30 to 1.7.32.
 
+---
 
 <a id="110"></a>
 ## 1.1.0
@@ -84,6 +99,7 @@ Released on: 2021-11-10
 * Updated Google Guice dependency from `5.0.0-BETA-1` to `5.0.1`.
 * Improved styling of the generated HTML report file.
 
+---
 
 <a id="100"></a>
 ## 1.0.0
