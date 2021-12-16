@@ -2,12 +2,12 @@
 
 ## Releases
 
-* [1.1.1](#111)
+* [1.2.0](#120)
 * [1.1.0](#110)
 * [1.0.0](#100)
 
-<a id="111"></a>
-## 1.1.1
+<a id="120"></a>
+## 1.2.0
 
 Not yet released.
 
@@ -16,9 +16,13 @@ Not yet released.
 * Java 11
 * Elasticsearch 6.8
 
+### New features
+
+* Added menu to the generated HTML report file.
+
 ### Miscellaneous
 
-* Added menu to generated HTML report file.
+* Added information about the tool to the generated HTML report file.
 * Improved styling of the generated HTML report file.
 
 

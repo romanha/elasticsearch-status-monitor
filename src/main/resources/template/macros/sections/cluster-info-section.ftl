@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="report" type="app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport" -->
 <#macro section>
-    <div id="cluster-info" class="bordered-detail-section">
+    <div id="cluster-info" class="bordered-detail-section centered-detail-section">
         <h2>Cluster</h2>
 
         <table>

@@ -6,12 +6,15 @@
 <#import "macros/styles/detail-section-styles.ftl" as detail_sections>
 <#import "macros/scripts/menu-scripts.ftl" as menu_scripts>
 <#import "macros/sections/menu-section.ftl" as menubar>
-<#import "macros/sections/configuration-section.ftl" as configuration>
-<#import "macros/sections/cluster-info-section.ftl" as cluster_info>
-<#import "macros/sections/nodes-info-section.ftl" as nodes_info>
 <#import "macros/sections/error-aborted-section.ftl" as error_aborted>
+<#import "macros/sections/configuration-section.ftl" as configuration>
+<#import "macros/sections/no-issues-section.ftl" as no_issues>
 <#import "macros/sections/problems-section.ftl" as problems>
 <#import "macros/sections/warnings-section.ftl" as warnings>
+<#import "macros/sections/cluster-info-section.ftl" as cluster_info>
+<#import "macros/sections/nodes-info-section.ftl" as nodes_info>
+<#import "macros/sections/indices-section.ftl" as indices>
+<#import "macros/sections/about-section.ftl" as about>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,19 +37,7 @@
     <@error_aborted.section />
 </#if>
 
-<div id="analysis-section" class="main-section">
-    <@configuration.section />
-
-    <#if report.problems?size gt 0>
-        <@problems.section />
-    </#if>
-
-    <#if report.warnings?size gt 0>
-        <@warnings.section />
-    </#if>
-</div>
-
-<div id="cluster-section" class="main-section hidden">
+<div id="cluster-section" class="main-section">
     <#if report.reportProgress == "FINISHED">
         <@cluster_info.section />
     </#if>
@@ -60,12 +51,39 @@
 
 <div id="indices-section" class="main-section hidden">
     <#if report.reportProgress == "FINISHED">
-        <!-- Section about indices. -->
+        <@indices.section />
+    </#if>
+</div>
+
+<div id="analysis-section" class="main-section hidden">
+    <#if report.problems?size gt 0>
+        <@problems.section />
+    </#if>
+
+    <#if report.warnings?size gt 0>
+        <@warnings.section />
+    </#if>
+
+    <#if report.reportProgress == "FINISHED" && report.problems?size == 0 && report.warnings?size == 0>
+        <@no_issues.section />
     </#if>
 </div>
 
 <div id="about-section" class="main-section hidden">
-    <!-- Section about author. -->
+    <div id="about-section-wrapper" class="about-grid-container">
+        <div class="about-grid-item">
+            <!-- Empty -->
+        </div>
+        <div class="about-grid-item">
+            <@configuration.section />
+        </div>
+        <div class="about-grid-item">
+            <@about.section />
+        </div>
+        <div class="about-grid-item">
+            <!-- Empty -->
+        </div>
+    </div>
 </div>
 
 </body>

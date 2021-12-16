@@ -3,20 +3,10 @@
 
         <input type="radio"
                name="slideItem"
-               id="menu-item-analysis"
-               class="slide-toggle"
-               onclick="hideAllMainSectionsExcept('analysis-section')"
-               checked/>
-        <label for="menu-item-analysis">
-            <p class="icon">&#128203;</p>
-            <span>Analysis</span>
-        </label>
-
-        <input type="radio"
-               name="slideItem"
                id="menu-item-cluster"
                class="slide-toggle"
-               onclick="hideAllMainSectionsExcept('cluster-section')"/>
+               onclick="hideAllMainSectionsExcept('cluster-section')"
+               checked/>
         <label for="menu-item-cluster">
             <p class="icon">&#127760;</p>
             <span>Cluster</span>
@@ -40,6 +30,16 @@
         <label for="menu-item-indices">
             <p class="icon">&#128194;</p>
             <span>Indices</span>
+        </label>
+
+        <input type="radio"
+               name="slideItem"
+               id="menu-item-analysis"
+               class="slide-toggle"
+               onclick="hideAllMainSectionsExcept('analysis-section')"/>
+        <label for="menu-item-analysis">
+            <p class="icon">&#128203;</p>
+            <span>Analysis</span>
         </label>
 
         <input type="radio"

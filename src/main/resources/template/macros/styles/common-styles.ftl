@@ -5,12 +5,13 @@
             max-width: 100%;
             margin: 2% 0;
             background-color: #f4f3f1;
+            overflow-y: scroll; /* To fix jumping content if some sections would display a scrollbar. */
         }
 
         /*
         * All the main div elements should have the max-width of 80%.
         */
-        body > div > div {
+        .main-section > div {
             max-width: 80% !important;
             margin: 0 10%;
         }

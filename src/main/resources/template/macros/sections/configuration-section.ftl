@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="report" type="app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport" -->
 <#macro section>
-    <div id="configuration" class="bordered-detail-section">
+    <div id="configuration" class="bordered-detail-section centered-detail-section">
         <h2>Tool Configuration</h2>
         <p>
             This report was generated at ${report.timestamp}.

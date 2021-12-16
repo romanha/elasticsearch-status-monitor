@@ -17,6 +17,11 @@
             box-shadow: 0.5em 0.5em 1em rgba(0, 0, 0, 0.1);
         }
 
+        .centered-detail-section {
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
         /*
         * Reduces the top margin of the first heading in a bordered section.
         */
