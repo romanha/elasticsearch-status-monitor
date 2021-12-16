@@ -1,6 +1,5 @@
 package app.habitzl.elasticsearch.status.monitor.tool.presentation.file;
 
-import app.habitzl.elasticsearch.status.monitor.Clocks;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
@@ -11,27 +10,23 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Clock;
-import java.time.format.DateTimeFormatter;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.*;
 
-class ReportFileProviderTest {
+class LatestReportFileProviderTest {
 
-    private ReportFileProvider sut;
-    private Clock clock;
+    private LatestReportFileProvider sut;
     private FileCreator fileCreator;
     private StatusMonitorConfiguration configuration;
 
     @BeforeEach
     void setUp() {
-        clock = Clocks.fixedSystemDefault();
         fileCreator = mock(FileCreator.class);
         configuration = StatusMonitorConfigurations.random();
-        sut = new ReportFileProvider(clock, fileCreator, configuration);
+        sut = new LatestReportFileProvider(fileCreator, configuration);
     }
 
     @Test
@@ -43,7 +38,7 @@ class ReportFileProviderTest {
         sut.get();
 
         // Then
-        Path expectedPath = Paths.get(configuration.getReportFilesPath(), getExpectedFileTimestamp());
+        Path expectedPath = Paths.get(configuration.getReportFilesPath(), getExpectedDirectoryName());
         verify(fileCreator).create(expectedPath);
     }
 
@@ -68,8 +63,8 @@ class ReportFileProviderTest {
         File result = sut.get();
 
         // Then
-        File expectedResult = Paths.get(configuration.getReportFilesPath(), getExpectedFileTimestamp(), ReportFileProvider.REPORT_FILE_NAME)
-                                   .toFile();
+        File expectedResult = Paths.get(configuration.getReportFilesPath(), getExpectedDirectoryName(), ArchiveReportFileProvider.REPORT_FILE_NAME)
+                .toFile();
         assertThat(result, equalTo(expectedResult));
     }
 
@@ -98,14 +93,12 @@ class ReportFileProviderTest {
     }
 
     private void prepareFileCreator() throws IOException {
-        Path path = Paths.get(configuration.getReportFilesPath(), getExpectedFileTimestamp());
+        Path path = Paths.get(configuration.getReportFilesPath(), getExpectedDirectoryName());
         when(fileCreator.create(path)).thenReturn(path);
     }
 
-    private String getExpectedFileTimestamp() {
-        return DateTimeFormatter.ofPattern(ReportFileProvider.TIMESTAMP_FILE_PATTERN)
-                                .withZone(clock.getZone())
-                                .format(clock.instant());
+    private String getExpectedDirectoryName() {
+        return LatestReportFileProvider.DIRECTORY_NAME;
     }
 
     private File givenReportFileAlreadyExists() throws IOException {

@@ -35,8 +35,10 @@ import app.habitzl.elasticsearch.status.monitor.tool.configuration.DefaultConfig
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.tool.presentation.FreemarkerHtmlReportGenerator;
 import app.habitzl.elasticsearch.status.monitor.tool.presentation.configuration.FreemarkerConfigurationProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ArchiveReportFile;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ArchiveReportFileProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.LatestReportFileProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFile;
-import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.ReportFileProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.presentation.file.TemplateProcessor;
 import app.habitzl.elasticsearch.status.monitor.util.ClockProvider;
 import app.habitzl.elasticsearch.status.monitor.util.FileCreator;
@@ -93,7 +95,8 @@ class GuiceModule extends AbstractModule {
 
         // Presentation
         bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);
-        bind(File.class).annotatedWith(ReportFile.class).toProvider(ReportFileProvider.class);
+        bind(File.class).annotatedWith(ReportFile.class).toProvider(LatestReportFileProvider.class);
+        bind(File.class).annotatedWith(ArchiveReportFile.class).toProvider(ArchiveReportFileProvider.class);
         bind(TemplateProcessor.class).in(Singleton.class);
         bind(Configuration.class).toProvider(FreemarkerConfigurationProvider.class).in(Singleton.class);
         bind(TimeFormatter.class).to(DayBasedTimeFormatter.class).in(Singleton.class);

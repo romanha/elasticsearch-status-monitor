@@ -19,6 +19,10 @@ Not yet released.
 ### New features
 
 * Added menu to the generated HTML report file.
+* Added generating an HTML report file to a `latest` folder within the configured report path.
+  * This improves the usability when running the tool on a webserver.
+* Added the CLI option `skipArchiveReport` to disable the generation of an archive report file.
+* Added logging of the most recent report to a `latest` folder.
 
 ### Fixes
 

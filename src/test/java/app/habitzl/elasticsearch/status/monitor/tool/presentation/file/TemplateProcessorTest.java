@@ -15,14 +15,14 @@ class TemplateProcessorTest {
 
     @BeforeEach
     void setUp() {
-        sut = new TemplateProcessor(mock(File.class));
+        sut = new TemplateProcessor(mock(File.class), mock(File.class));
     }
 
     @Test
     void generate_nullReportFile_doNotProcessOnTemplate() {
         // Given
         Template template = mock(Template.class);
-        sut = new TemplateProcessor(null);
+        sut = new TemplateProcessor(null, null);
 
         // When
         sut.processTemplate(template, mock(Object.class));
@@ -32,11 +32,11 @@ class TemplateProcessorTest {
     }
 
     @Test
-    void generate_invalidReportFilePath_doNotProcessOnTemplate() {
+    void generate_invalidReportAndArchiveReportFilePath_doNotProcessOnTemplate() {
         // Given
         Template template = mock(Template.class);
         File fileWithInvalidPath = mock(File.class);
-        sut = new TemplateProcessor(fileWithInvalidPath);
+        sut = new TemplateProcessor(fileWithInvalidPath, fileWithInvalidPath);
 
         // When
         sut.processTemplate(template, mock(Object.class));

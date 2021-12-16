@@ -1,6 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.configuration;
 
 import com.google.common.collect.Lists;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +19,7 @@ public class StatusMonitorConfiguration implements Serializable {
     static final String DEFAULT_USERNAME = "admin";
     static final String DEFAULT_PASSWORD = "admin";
     static final String DEFAULT_REPORT_FILES_PATH = "reports";
+    static final boolean DEFAULT_SKIP_ARCHIVE_REPORT = false;
 
     static final String HOST_PORT_SEPARATOR = ":";
 
@@ -32,6 +34,7 @@ public class StatusMonitorConfiguration implements Serializable {
     private String username;
     private String password;
     private String reportFilesPath;
+    private Boolean skipArchiveReport;
 
     /**
      * Gets the information whether the tool should use HTTPS to connect to the Elasticsearch endpoint.
@@ -128,6 +131,17 @@ public class StatusMonitorConfiguration implements Serializable {
         this.reportFilesPath = reportFilesPath;
     }
 
+    /**
+     * Gets the information whether the tool skip generating an archive report file.
+     */
+    public Boolean isSkippingArchiveReport() {
+        return Objects.nonNull(skipArchiveReport) ? skipArchiveReport : DEFAULT_SKIP_ARCHIVE_REPORT;
+    }
+
+    public void setSkipArchiveReport(final Boolean skipArchiveReport) {
+        this.skipArchiveReport = skipArchiveReport;
+    }
+
     @Override
     @SuppressWarnings("CyclomaticComplexity")
     public boolean equals(final Object o) {
@@ -145,7 +159,8 @@ public class StatusMonitorConfiguration implements Serializable {
                     && Objects.equals(fallbackEndpoints, that.fallbackEndpoints)
                     && Objects.equals(username, that.username)
                     && Objects.equals(password, that.password)
-                    && Objects.equals(reportFilesPath, that.reportFilesPath);
+                    && Objects.equals(reportFilesPath, that.reportFilesPath)
+                    && Objects.equals(skipArchiveReport, that.skipArchiveReport);
         }
 
         return isEqual;
@@ -153,7 +168,7 @@ public class StatusMonitorConfiguration implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(usingHttps, host, port, fallbackEndpoints, username, password, reportFilesPath);
+        return Objects.hash(usingHttps, host, port, fallbackEndpoints, username, password, reportFilesPath, skipArchiveReport);
     }
 
     @Override
@@ -166,6 +181,7 @@ public class StatusMonitorConfiguration implements Serializable {
                 .add("username='" + username + "'")
                 .add("password='" + toStringPassword() + "'")
                 .add("reportFilesPath='" + reportFilesPath + "'")
+                .add("skipArchiveReport='" + skipArchiveReport + "'")
                 .toString();
     }
 

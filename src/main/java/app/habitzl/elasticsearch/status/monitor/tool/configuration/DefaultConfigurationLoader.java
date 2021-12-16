@@ -104,6 +104,11 @@ public class DefaultConfigurationLoader implements ConfigurationLoader {
                 LOG.warn("The provided report files path '{}' is no valid path. Falling back to the default path.", reportFilesPath);
             }
         }
+
+        if (commandLine.hasOption(CliOptions.SKIP_ARCHIVE_REPORT_LONG)) {
+            LOG.info("Skipping archive report file is enabled by CLI options.");
+            configuration.setSkipArchiveReport(true);
+        }
     }
 
     /**

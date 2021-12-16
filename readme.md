@@ -48,7 +48,8 @@ java -jar elasticsearch-status-monitor-[version]-jar-with-dependencies.jar
 The tool will create a folder called `reports` in the directory from where the JAR is called. This folder includes all generated reports.
 Users can customize this path to the reports via configuration.
 
-Each report is stored in a folder representing the time of the report generation, for example `reports/2021-03-11 22-43-50/index.html`.
+The report of the most recent run is stored in a folder called `latest`.
+Additionally, the tool archives all reports in folders representing the time of the report generation, for example `reports/2021-03-11 22-43-50/index.html`.
 
 To connect to a secured _Elasticsearch_ cluster, make sure that the certificates are added to the trust store of the JRE.
 The tool uses the default trust store located at `%JAVA_HOME%/lib/security/cacerts`.
@@ -80,6 +81,9 @@ The tool also reports an ["Endpoints not reachable" problem](#problems) if one o
 
 The tool logs into a `logs` folder, which is created in the directory from where the tool is called.
 
+The `latest` sub-directory contains the logs of the most recent run.
+Additionally, the tool archives logs in sub-directories named after the report's timestamp.
+
 <a id="configuration"></a>
 ## Configuration
 
@@ -88,17 +92,18 @@ The tool logs into a `logs` folder, which is created in the directory from where
 
 The tool supports following CLI options:
 
-Option               | Alternative  | Arguments | Default   | Description                                                                                                | Example
----                  | ---          | ---       | ---       | ---                                                                                                        | ---
-`--help`             | -            | 0         | -         | Print a help message on how to use this tool. **By using this option no analysis is started.**             | `--help`
-`--version`          | -            | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                    | `--version`
-`--host`             | `-h`         | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`
-`--port`             | `-p`         | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`
-`--fallbackEndpoints`| -            | n         | -         | A list of [fallback endpoints](#fallback-endpoints) in the format of `host1:port1,host2:port2`.            | `--fallbackEndpoints 127.0.0.1:9202,localhost:9204`
-`--unsecure`         | -            | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`
-`--username`         | -            | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`
-`--password`         | -            | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`
-`--reportPath`       | -            | 1         | reports   | The path to the location of the generated report files. This can be an absolute or relative path.          | `--reportPath "elasticsearch/reports"`
+Option                 | Alternative  | Arguments | Default   | Description                                                                                                | Example
+---                    | ---          | ---       | ---       | ---                                                                                                        | ---
+`--help`               | -            | 0         | -         | Print a help message on how to use this tool. **By using this option no analysis is started.**             | `--help`
+`--version`            | -            | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                    | `--version`
+`--host`               | `-h`         | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`
+`--port`               | `-p`         | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`
+`--fallbackEndpoints`  | -            | n         | -         | A list of [fallback endpoints](#fallback-endpoints) in the format of `host1:port1,host2:port2`.            | `--fallbackEndpoints 127.0.0.1:9202,localhost:9204`
+`--unsecure`           | -            | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`
+`--username`           | -            | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`
+`--password`           | -            | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`
+`--reportPath`         | -            | 1         | reports   | The path to the location of the generated report files. This can be an absolute or relative path.          | `--reportPath "elasticsearch/reports"`
+`--skipArchiveReport`  | -            | 0         | -         | Skips the generation of an archive report file located in a timestamp folder.                              | `--skipArchiveReport`
 
 Note that by using one of the help options (`--help`, `--version`) no analysis is started.
 These options only print information on how to use this tool.

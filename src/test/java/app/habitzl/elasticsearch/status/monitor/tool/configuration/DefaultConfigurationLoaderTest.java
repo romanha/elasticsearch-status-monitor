@@ -167,6 +167,7 @@ class DefaultConfigurationLoaderTest {
         assertThat(configuration.getUsername(), equalTo(StatusMonitorConfiguration.DEFAULT_USERNAME));
         assertThat(configuration.getPassword(), equalTo(StatusMonitorConfiguration.DEFAULT_PASSWORD));
         assertThat(configuration.getReportFilesPath(), equalTo(StatusMonitorConfiguration.DEFAULT_REPORT_FILES_PATH));
+        assertThat(configuration.isSkippingArchiveReport(), equalTo(StatusMonitorConfiguration.DEFAULT_SKIP_ARCHIVE_REPORT));
     }
 
     @Test
@@ -291,6 +292,35 @@ class DefaultConfigurationLoaderTest {
 
         // Then
         assertThat(configuration.getReportFilesPath(), equalTo(StatusMonitorConfiguration.DEFAULT_REPORT_FILES_PATH));
+    }
+
+    @Test
+    void load_noSkipArchiveReportOption_disableSkippingArchiveReport() {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.isSkippingArchiveReport(), equalTo(false));
+    }
+
+    @Test
+    void load_skipArchiveReportOption_enableSkippingArchiveReport() {
+        // Given
+        String[] args = ArgumentBuilder
+                .create()
+                .withLongOption(CliOptions.SKIP_ARCHIVE_REPORT_LONG)
+                .build();
+
+        // When
+        sut.load(args);
+
+        // Then
+        assertThat(configuration.isSkippingArchiveReport(), equalTo(true));
     }
 
     private void assertThatConfigurationIsDefault() {

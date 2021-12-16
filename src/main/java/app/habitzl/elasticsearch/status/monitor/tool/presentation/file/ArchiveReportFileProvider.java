@@ -18,11 +18,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * A provider responsible for returning the file of the report to generate.
+ * A provider responsible for returning the archive file of the report to generate.
  * If the output directories do no exist yet, the provider will automatically create them in advance.
  */
-public class ReportFileProvider implements Provider<File> {
-    private static final Logger LOG = LogManager.getLogger(ReportFileProvider.class);
+public class ArchiveReportFileProvider implements Provider<File> {
+    private static final Logger LOG = LogManager.getLogger(ArchiveReportFileProvider.class);
 
     static final String REPORT_FILE_NAME = "index.html";
     static final String TIMESTAMP_FILE_PATTERN = "yyyy-MM-dd HH-mm-ss";
@@ -34,7 +34,7 @@ public class ReportFileProvider implements Provider<File> {
     private Path reportFilePath;
 
     @Inject
-    public ReportFileProvider(
+    public ArchiveReportFileProvider(
             final Clock clock,
             final FileCreator fileCreator,
             final StatusMonitorConfiguration configuration) {
@@ -45,13 +45,18 @@ public class ReportFileProvider implements Provider<File> {
 
     @Override
     public File get() {
-        Optional<Path> reportDirectory =
-                Objects.nonNull(reportFilePath)
-                        ? Optional.of(reportFilePath)
-                        : createTimestampReportDirectory();
-        return reportDirectory.map(dir -> dir.resolve(REPORT_FILE_NAME))
-                              .map(Path::toFile)
-                              .orElse(null);
+        File reportFile = null;
+        if (!configuration.isSkippingArchiveReport()) {
+            Optional<Path> reportDirectory =
+                    Objects.nonNull(reportFilePath)
+                            ? Optional.of(reportFilePath)
+                            : createTimestampReportDirectory();
+            reportFile = reportDirectory.map(dir -> dir.resolve(REPORT_FILE_NAME))
+                    .map(Path::toFile)
+                    .orElse(null);
+        }
+
+        return reportFile;
     }
 
     /**
@@ -71,12 +76,12 @@ public class ReportFileProvider implements Provider<File> {
     }
 
     /**
-     * Gets the current timestamp in a format that is supported by Windows file names.
+     * Gets the current timestamp in a format that is supported by Windows and Unix file names.
      */
     private String getFormattedTimestamp() {
         Instant now = clock.instant();
         return DateTimeFormatter.ofPattern(TIMESTAMP_FILE_PATTERN)
-                                .withZone(clock.getZone())
-                                .format(now);
+                .withZone(clock.getZone())
+                .format(now);
     }
 }

@@ -21,7 +21,11 @@
 			<PatternLayout pattern="${ConsolePattern}"/>
 		</Console>
 
-		<File name="FileLogging" fileName="logs/${date:yyyy-MM-dd HH-mm-ss}/report.log" append="false">
+		<File name="FileLoggingArchive" fileName="logs/${date:yyyy-MM-dd HH-mm-ss}/report.log" append="false">
+			<PatternLayout pattern="${FilePattern}"/>
+		</File>
+
+		<File name="FileLoggingLatest" fileName="logs/latest/report.log" append="false">
 			<PatternLayout pattern="${FilePattern}"/>
 		</File>
 	</Appenders>
@@ -29,12 +33,14 @@
 	<Loggers>
 		<Logger name="app.habitzl" level="INFO" additivity="false">
 			<!-- <AppenderRef ref="ConsoleLogging" /> -->
-			<AppenderRef ref="FileLogging"/>
+			<AppenderRef ref="FileLoggingArchive"/>
+			<AppenderRef ref="FileLoggingLatest"/>
 		</Logger>
 
 		<Root level="ERROR">
 			<!-- <AppenderRef ref="ConsoleLogging" /> -->
-			<AppenderRef ref="FileLogging"/>
+			<AppenderRef ref="FileLoggingArchive"/>
+			<AppenderRef ref="FileLoggingLatest"/>
 		</Root>
 	</Loggers>
 </Configuration>

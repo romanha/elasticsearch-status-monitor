@@ -2,14 +2,15 @@ package app.habitzl.elasticsearch.status.monitor.tool.presentation.configuration
 
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
+
+import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import javax.inject.Provider;
 
 /**
  * A provider responsible for returning a single instance of an Apache FreeMarker configuration.
  * FreeMarker {@link Configuration} should not be recreated, because doing so loses the template cache.
- * Therefore the configuration should be injected as application wide Singleton.
+ * Therefore, the configuration should be injected as application wide Singleton.
  */
 public class FreemarkerConfigurationProvider implements Provider<Configuration> {
 
