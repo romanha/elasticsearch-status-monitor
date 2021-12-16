@@ -9,7 +9,7 @@
 <a id="120"></a>
 ## 1.2.0
 
-Not yet released.
+Released on: 2021-12-16
 
 ### Compatibility
 
