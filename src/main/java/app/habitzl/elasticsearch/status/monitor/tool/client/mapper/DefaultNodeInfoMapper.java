@@ -145,7 +145,7 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
             cpuLoadAverage = nodeStatsContext.read(createPathForNode(nodeId, PATH_OS_CPU_LOAD_AVERAGE), Float.class);
         } catch (final PathNotFoundException exception) {
             cpuLoadAverage = null;
-            LOG.info("The Elasticsearch node stats API did not return any data for the CPU load average.");
+            LOG.debug("The Elasticsearch node stats API did not return any data for the CPU load average.");
         }
 
         return new EndpointInfo(

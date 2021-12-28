@@ -32,13 +32,13 @@
 
 	<Loggers>
 		<Logger name="app.habitzl" level="INFO" additivity="false">
-			<!-- <AppenderRef ref="ConsoleLogging" /> -->
+			<AppenderRef ref="ConsoleLogging" />
 			<AppenderRef ref="FileLoggingArchive"/>
 			<AppenderRef ref="FileLoggingLatest"/>
 		</Logger>
 
 		<Root level="ERROR">
-			<!-- <AppenderRef ref="ConsoleLogging" /> -->
+			<AppenderRef ref="ConsoleLogging" />
 			<AppenderRef ref="FileLoggingArchive"/>
 			<AppenderRef ref="FileLoggingLatest"/>
 		</Root>

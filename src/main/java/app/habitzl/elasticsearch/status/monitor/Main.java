@@ -56,7 +56,7 @@ public class Main {
     }
 
     private static void teardown(final Injector injector) {
-        LOG.info("Closing Elasticsearch Status Monitor.");
+        LOG.debug("Closing Elasticsearch Status Monitor.");
         closeMonitoringRestClient(injector);
     }
 
@@ -64,7 +64,7 @@ public class Main {
         Key<RestClient> restClientKey = Key.get(RestClient.class, MonitoringRestClient.class);
         RestClient client = injector.getInstance(restClientKey);
         try {
-            LOG.info("Closing monitoring REST client.");
+            LOG.debug("Closing monitoring REST client.");
             client.close();
         } catch (final IOException e) {
             LOG.warn("Could not safely close the connection to the ES cluster.", e);

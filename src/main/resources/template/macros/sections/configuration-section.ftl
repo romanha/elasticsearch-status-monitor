@@ -33,6 +33,10 @@
                 <td>Report files path:</td>
                 <td>${report.configuration.reportFilesPath}</td>
             </tr>
+            <tr>
+                <td>Archive report:</td>
+                <td>${report.configuration.isSkippingArchiveReport()?string("disabled", "enabled")}</td>
+            </tr>
             </tbody>
         </table>
     </div>

@@ -72,16 +72,10 @@
 <div id="about-section" class="main-section hidden">
     <div id="about-section-wrapper" class="about-grid-container">
         <div class="about-grid-item">
-            <!-- Empty -->
-        </div>
-        <div class="about-grid-item">
             <@configuration.section />
         </div>
         <div class="about-grid-item">
             <@about.section />
-        </div>
-        <div class="about-grid-item">
-            <!-- Empty -->
         </div>
     </div>
 </div>

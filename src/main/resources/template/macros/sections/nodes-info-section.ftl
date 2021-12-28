@@ -3,7 +3,7 @@
     <div id="node-list-info" class="node-list-grid-container">
         <#list report.nodeInfos as node>
             <div class="node-list-grid-item">
-                <div class="bordered-detail-section">
+                <div class="bordered-detail-section centered-detail-section">
                     <h2>Node: ${node.nodeName}<#if node.masterNode> &#11088;</#if></h2>
 
                     <div>

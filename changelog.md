@@ -17,6 +17,20 @@ Released on: yyyy-mm-dd
 * Java 11
 * Elasticsearch 6.8
 
+### Fixes
+
+* Mitigated the Log4DoS denial of service vulnerability in the Log4j library. (CVE-2021-45105)
+  * Updated Log4j from 2.16.0 to 2.17.0.
+
+### Miscellaneous
+
+* Improved styling of the generated HTML report file.
+* Enabled logging to console by default.
+* Updated various dependencies to their latest version.
+  * Updated Elasticsearch REST client from 6.8.13 to 6.8.22.
+  * Updated Jackson from 2.13.0 to 2.13.1.
+  * Updated Log4j from 2.16.0 to 2.17.0.
+
 
 ---
 
