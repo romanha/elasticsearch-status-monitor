@@ -48,6 +48,8 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
     private static final String PATH_PROCESS_HEAP_PERCENT = "jvm.mem.heap_used_percent";
     private static final String PATH_PROCESS_HEAP_BYTES = "jvm.mem.heap_used_in_bytes";
     private static final String PATH_PROCESS_MAX_HEAP_BYTES = "jvm.mem.heap_max_in_bytes";
+    private static final String PATH_INDICES_DOCUMENT_COUNT = "indices.docs.count";
+    private static final String PATH_INDICES_SIZE_IN_BYTES = "indices.store.size_in_bytes";
 
     private static final String ROLE_MASTER_ELIGIBLE = "master";
     private static final String ROLE_DATA = "data";
@@ -167,6 +169,8 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
         Integer heapUsageInPercent = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_HEAP_PERCENT), Integer.class);
         Long heapUsageInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_HEAP_BYTES), Long.class);
         Long maxHeapInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_PROCESS_MAX_HEAP_BYTES), Long.class);
+        Long numberOfDocuments = nodeStatsContext.read(createPathForNode(nodeId, PATH_INDICES_DOCUMENT_COUNT), Long.class);
+        Long documentSizeInBytes = nodeStatsContext.read(createPathForNode(nodeId, PATH_INDICES_SIZE_IN_BYTES), Long.class);
 
         Duration uptime = Duration.ofMillis(uptimeInMillis);
         return new NodeStats(
@@ -176,7 +180,9 @@ public class DefaultNodeInfoMapper implements NodeInfoMapper {
                 timeFormatter.format(uptime),
                 heapUsageInPercent,
                 heapUsageInBytes,
-                maxHeapInBytes
+                maxHeapInBytes,
+                numberOfDocuments,
+                documentSizeInBytes
         );
     }
 

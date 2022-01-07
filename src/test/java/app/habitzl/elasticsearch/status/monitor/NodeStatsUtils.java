@@ -9,8 +9,6 @@ import java.time.Duration;
  */
 public final class NodeStatsUtils {
 
-    private static final int ONE_HUNDRED = 100;
-
     private NodeStatsUtils() {
         // instantiation protection
     }
@@ -18,10 +16,12 @@ public final class NodeStatsUtils {
     public static NodeStats random() {
         return new NodeStats(
                 Randoms.generatePositiveInteger(),
-                Randoms.generateInteger(ONE_HUNDRED),
+                Randoms.generatePercentage(),
                 Duration.ofMillis(Randoms.generatePositiveInteger()),
                 Randoms.generateString("uptime-"),
-                Randoms.generateInteger(ONE_HUNDRED),
+                Randoms.generatePercentage(),
+                Randoms.generatePositiveInteger(),
+                Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger()
         );

@@ -74,6 +74,13 @@
                                     ${freeSpaceOnFileSystemInGB?string["0.##"]} GB free
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Documents:</td>
+                                <td>
+                                    <#assign documentSizeInMB = node.nodeStats.documentSizeInBytes/1024/1024>
+                                    ${node.nodeStats.numberOfDocuments} (${documentSizeInMB?string["0.##"]} MB)
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>

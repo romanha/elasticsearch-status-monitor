@@ -9,6 +9,7 @@ public final class Randoms {
 
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final int DEFAULT_STRING_LENGTH = 5;
+    private static final int ONE_HUNDRED = 100;
     private static final int UNICODE_INDEX_ZERO = 48;
     private static final int UNICODE_INDEX_NINE = 57;
     private static final int UNICODE_INDEX_CAPITAL_A = 65;
@@ -56,6 +57,13 @@ public final class Randoms {
     }
 
     /**
+     * Generates a random integer value from 0 (included) to 100 (included).
+     */
+    public static int generatePercentage() {
+        return generateInteger(ONE_HUNDRED);
+    }
+
+    /**
      * Generates a random float value.
      */
     public static float generateFloat() {
@@ -92,11 +100,11 @@ public final class Randoms {
      */
     private static String generateString(final int length) {
         return RANDOM.ints(UNICODE_INDEX_ZERO, UNICODE_INDEX_SMALL_Z + 1)
-                     .filter(unicodeIndex ->
-                             (unicodeIndex <= UNICODE_INDEX_NINE || unicodeIndex >= UNICODE_INDEX_CAPITAL_A)
-                                     && (unicodeIndex <= UNICODE_INDEX_CAPITAL_Z || unicodeIndex >= UNICODE_INDEX_SMALL_A))
-                     .limit(length)
-                     .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                     .toString();
+                .filter(unicodeIndex ->
+                        (unicodeIndex <= UNICODE_INDEX_NINE || unicodeIndex >= UNICODE_INDEX_CAPITAL_A)
+                                && (unicodeIndex <= UNICODE_INDEX_CAPITAL_Z || unicodeIndex >= UNICODE_INDEX_SMALL_A))
+                .limit(length)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }

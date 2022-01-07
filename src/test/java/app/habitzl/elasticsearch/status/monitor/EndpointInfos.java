@@ -7,18 +7,16 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointIn
  */
 public final class EndpointInfos {
 
-    private static final int ONE_HUNDRED = 100;
-
     private EndpointInfos() {
         // instantiation protection
     }
 
     public static EndpointInfo random() {
-        return random(Randoms.generateInteger(ONE_HUNDRED));
+        return random(Randoms.generatePercentage());
     }
 
     public static EndpointInfo random(final String httpPublishAddress) {
-        return random(httpPublishAddress, Randoms.generateInteger(ONE_HUNDRED));
+        return random(httpPublishAddress, Randoms.generatePercentage());
     }
 
     public static EndpointInfo random(final int ramUsage) {
@@ -31,7 +29,7 @@ public final class EndpointInfos {
                 httpPublishAddress,
                 Randoms.generateString("operating-system-"),
                 Randoms.generatePositiveInteger(),
-                Randoms.generateInteger(ONE_HUNDRED),
+                Randoms.generatePercentage(),
                 Randoms.generateFloat(),
                 ramUsage,
                 Randoms.generatePositiveInteger()

@@ -17,6 +17,8 @@ public final class NodeStats implements Serializable {
     private final int heapUsageInPercent;
     private final long heapUsageInBytes;
     private final long maximumHeapInBytes;
+    private final long numberOfDocuments;
+    private final long documentSizeInBytes;
 
     public NodeStats(
             final long availableBytesOnFileSystem,
@@ -25,7 +27,9 @@ public final class NodeStats implements Serializable {
             final String uptimeFormatted,
             final int heapUsageInPercent,
             final long heapUsageInBytes,
-            final long maximumHeapInBytes) {
+            final long maximumHeapInBytes,
+            final long numberOfDocuments,
+            final long documentSizeInBytes) {
         this.availableBytesOnFileSystem = availableBytesOnFileSystem;
         this.cpuUsageInPercent = cpuUsageInPercent;
         this.uptime = uptime;
@@ -33,6 +37,8 @@ public final class NodeStats implements Serializable {
         this.heapUsageInPercent = heapUsageInPercent;
         this.heapUsageInBytes = heapUsageInBytes;
         this.maximumHeapInBytes = maximumHeapInBytes;
+        this.numberOfDocuments = numberOfDocuments;
+        this.documentSizeInBytes = documentSizeInBytes;
     }
 
     public long getAvailableBytesOnFileSystem() {
@@ -63,6 +69,14 @@ public final class NodeStats implements Serializable {
         return maximumHeapInBytes;
     }
 
+    public long getNumberOfDocuments() {
+        return numberOfDocuments;
+    }
+
+    public long getDocumentSizeInBytes() {
+        return documentSizeInBytes;
+    }
+
     @Override
     @SuppressWarnings("CyclomaticComplexity")
     public boolean equals(final Object o) {
@@ -79,7 +93,10 @@ public final class NodeStats implements Serializable {
                     && Objects.equals(heapUsageInPercent, nodeStats.heapUsageInPercent)
                     && Objects.equals(heapUsageInBytes, nodeStats.heapUsageInBytes)
                     && Objects.equals(maximumHeapInBytes, nodeStats.maximumHeapInBytes)
-                    && Objects.equals(uptime, nodeStats.uptime);
+                    && Objects.equals(numberOfDocuments, nodeStats.numberOfDocuments)
+                    && Objects.equals(documentSizeInBytes, nodeStats.documentSizeInBytes)
+                    && Objects.equals(uptime, nodeStats.uptime)
+                    && Objects.equals(uptimeFormatted, nodeStats.uptimeFormatted);
         }
 
         return isEqual;
@@ -87,7 +104,7 @@ public final class NodeStats implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(availableBytesOnFileSystem, cpuUsageInPercent, uptime, heapUsageInPercent, heapUsageInBytes, maximumHeapInBytes);
+        return Objects.hash(availableBytesOnFileSystem, cpuUsageInPercent, uptime, uptimeFormatted, heapUsageInPercent, heapUsageInBytes, maximumHeapInBytes, numberOfDocuments, documentSizeInBytes);
     }
 
     @Override
@@ -96,9 +113,12 @@ public final class NodeStats implements Serializable {
                 .add("availableBytesOnFileSystem=" + availableBytesOnFileSystem)
                 .add("cpuUsageInPercent=" + cpuUsageInPercent)
                 .add("uptime=" + uptime)
+                .add("uptimeFormatted='" + uptimeFormatted + "'")
                 .add("heapUsageInPercent=" + heapUsageInPercent)
                 .add("heapUsageInBytes=" + heapUsageInBytes)
                 .add("maximumHeapInBytes=" + maximumHeapInBytes)
+                .add("numberOfDocuments=" + numberOfDocuments)
+                .add("documentSizeInBytes=" + documentSizeInBytes)
                 .toString();
     }
 }

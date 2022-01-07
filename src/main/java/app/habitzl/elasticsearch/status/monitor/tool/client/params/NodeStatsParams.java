@@ -18,6 +18,7 @@ public final class NodeStatsParams {
     public static final String METRIC_OPERATING_SYSTEM = "os";
     public static final String METRIC_PROCESS = "process";
     public static final String METRIC_JVM = "jvm";
+    public static final String METRIC_INDICES = "indices";
 
     public static String allMetrics() {
         return new StringJoiner(",")
@@ -25,6 +26,7 @@ public final class NodeStatsParams {
                 .add(METRIC_OPERATING_SYSTEM)
                 .add(METRIC_PROCESS)
                 .add(METRIC_JVM)
+                .add(METRIC_INDICES)
                 .toString();
     }
 }

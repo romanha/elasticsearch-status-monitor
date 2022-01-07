@@ -2,13 +2,13 @@
 
 ## Releases
 
-* [1.2.1](#121)
+* [1.3.0](#130)
 * [1.2.0](#120)
 * [1.1.0](#110)
 * [1.0.0](#100)
 
-<a id="121"></a>
-## 1.2.1
+<a id="130"></a>
+## 1.3.0
 
 Released on: yyyy-mm-dd
 
@@ -16,6 +16,10 @@ Released on: yyyy-mm-dd
 
 * Java 11
 * Elasticsearch 6.8
+
+### New features
+
+* Added document count and size per node.
 
 ### Fixes
 
@@ -30,7 +34,6 @@ Released on: yyyy-mm-dd
   * Updated Elasticsearch REST client from 6.8.13 to 6.8.22.
   * Updated Jackson from 2.13.0 to 2.13.1.
   * Updated Log4j from 2.16.0 to 2.17.0.
-
 
 ---
 
