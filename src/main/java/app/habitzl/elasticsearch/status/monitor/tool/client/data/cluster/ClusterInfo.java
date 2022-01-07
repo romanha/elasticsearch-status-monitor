@@ -18,6 +18,7 @@ public final class ClusterInfo implements Serializable {
     private final int numberOfInitializingShards;
     private final int numberOfUnassignedShards;
     private final String masterNodeId;
+    private final ClusterStats clusterStats;
 
     public ClusterInfo(
             final String clusterName,
@@ -28,7 +29,8 @@ public final class ClusterInfo implements Serializable {
             final int numberOfPrimaryShards,
             final int numberOfInitializingShards,
             final int numberOfUnassignedShards,
-            final String masterNodeId) {
+            final String masterNodeId,
+            final ClusterStats clusterStats) {
         this.clusterName = clusterName;
         this.healthStatus = healthStatus;
         this.numberOfNodes = numberOfNodes;
@@ -38,6 +40,7 @@ public final class ClusterInfo implements Serializable {
         this.numberOfInitializingShards = numberOfInitializingShards;
         this.numberOfUnassignedShards = numberOfUnassignedShards;
         this.masterNodeId = masterNodeId;
+        this.clusterStats = clusterStats;
     }
 
     public String getClusterName() {
@@ -76,6 +79,10 @@ public final class ClusterInfo implements Serializable {
         return masterNodeId;
     }
 
+    public ClusterStats getClusterStats() {
+        return clusterStats;
+    }
+
     @Override
     @SuppressWarnings("CyclomaticComplexity")
     public boolean equals(final Object o) {
@@ -95,7 +102,8 @@ public final class ClusterInfo implements Serializable {
                     && Objects.equals(numberOfUnassignedShards, that.numberOfUnassignedShards)
                     && Objects.equals(clusterName, that.clusterName)
                     && Objects.equals(healthStatus, that.healthStatus)
-                    && Objects.equals(masterNodeId, that.masterNodeId);
+                    && Objects.equals(masterNodeId, that.masterNodeId)
+                    && Objects.equals(clusterStats, that.clusterStats);
         }
 
         return isEqual;
@@ -103,7 +111,7 @@ public final class ClusterInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(clusterName, healthStatus, numberOfNodes, numberOfDataNodes, numberOfActiveShards, numberOfPrimaryShards, numberOfInitializingShards, numberOfUnassignedShards, masterNodeId);
+        return Objects.hash(clusterName, healthStatus, numberOfNodes, numberOfDataNodes, numberOfActiveShards, numberOfPrimaryShards, numberOfInitializingShards, numberOfUnassignedShards, masterNodeId, clusterStats);
     }
 
     @Override
@@ -118,6 +126,7 @@ public final class ClusterInfo implements Serializable {
                 .add("numberOfInitializingShards=" + numberOfInitializingShards)
                 .add("numberOfUnassignedShards=" + numberOfUnassignedShards)
                 .add("masterNodeId='" + masterNodeId + "'")
+                .add("clusterStats=" + clusterStats)
                 .toString();
     }
 }

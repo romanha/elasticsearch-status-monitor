@@ -19,21 +19,28 @@ Released on: yyyy-mm-dd
 
 ### New features
 
-* Added document count and size per node.
+* Added information for the cluster:
+    * Number of nodes (total, master-eligible and data)
+    * Number of shards (total, primary and replica)
+    * Number of indices
+    * Number of documents
+* Added information for each node:
+    * Number of documents
+    * Storage size of documents
 
 ### Fixes
 
 * Mitigated the Log4DoS denial of service vulnerability in the Log4j library. (CVE-2021-45105)
-  * Updated Log4j from 2.16.0 to 2.17.0.
+    * Updated Log4j from 2.16.0 to 2.17.0.
 
 ### Miscellaneous
 
 * Improved styling of the generated HTML report file.
 * Enabled logging to console by default.
 * Updated various dependencies to their latest version.
-  * Updated Elasticsearch REST client from 6.8.13 to 6.8.22.
-  * Updated Jackson from 2.13.0 to 2.13.1.
-  * Updated Log4j from 2.16.0 to 2.17.0.
+    * Updated Elasticsearch REST client from 6.8.13 to 6.8.22.
+    * Updated Jackson from 2.13.0 to 2.13.1.
+    * Updated Log4j from 2.16.0 to 2.17.0.
 
 ---
 
@@ -51,7 +58,7 @@ Released on: 2021-12-16
 
 * Added menu to the generated HTML report file.
 * Added generating an HTML report file to a `latest` folder within the configured report path.
-  * This improves the usability when running the tool on a webserver.
+    * This improves the usability when running the tool on a webserver.
 * Added the CLI option `skipArchiveReport` to disable the generation of an archive report file.
 * Added logging of the most recent report to a `latest` folder.
 

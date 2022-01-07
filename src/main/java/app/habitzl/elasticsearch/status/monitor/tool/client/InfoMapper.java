@@ -19,9 +19,9 @@ public interface InfoMapper {
     ClusterSettings mapClusterSettings(String jsonData);
 
     /**
-     * Maps data returned via the ES {@code /_cluster/health} and {@code /_cluster/state} APIs.
+     * Maps data returned via the ES {@code /_cluster/health}, {@code /_cluster/state} and {@code /_cluster/stats} APIs.
      */
-    ClusterInfo mapClusterInfo(String clusterHealthJson, String clusterStateJson);
+    ClusterInfo mapClusterInfo(String clusterHealthJson, String clusterStateJson, String clusterStatsJson);
 
     /**
      * Maps data returned via the ES {@code /_nodes} and {@code /_nodes/stats} APIs.

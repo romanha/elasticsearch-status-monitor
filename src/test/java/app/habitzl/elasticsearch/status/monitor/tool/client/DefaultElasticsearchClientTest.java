@@ -15,6 +15,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAlloca
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterHealthParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterSettingsParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterStateParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterStatsParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersionParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.GeneralParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeInfoParams;
@@ -197,7 +198,7 @@ class DefaultElasticsearchClientTest {
     }
 
     @Test
-    void getClusterInfo_always_sendClusterHealthAndClusterStateRequests() throws IOException {
+    void getClusterInfo_always_sendClusterHealthAndClusterStateAndClusterStatsRequests() throws IOException {
         // Given
         givenClientRespondsWith(HTTP_STATUS_OK);
 
@@ -207,8 +208,11 @@ class DefaultElasticsearchClientTest {
         // Then
         Request expectedClusterHealthRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, ClusterHealthParams.API_ENDPOINT);
         Request expectedClusterStateRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, ClusterStateParams.API_ENDPOINT);
+        Request expectedClusterStatsRequest = createRequestWithJson(DefaultElasticsearchClient.METHOD_GET, ClusterStatsParams.API_ENDPOINT);
+
         verify(client).performRequest(expectedClusterHealthRequest);
         verify(client).performRequest(expectedClusterStateRequest);
+        verify(client).performRequest(expectedClusterStatsRequest);
     }
 
     @Test
@@ -397,7 +401,7 @@ class DefaultElasticsearchClientTest {
 
     private ClusterInfo givenContentCanBeMappedToClusterInfo(final String responseContent) {
         ClusterInfo info = ClusterInfos.random();
-        when(infoMapper.mapClusterInfo(responseContent, responseContent)).thenReturn(info);
+        when(infoMapper.mapClusterInfo(responseContent, responseContent, responseContent)).thenReturn(info);
         return info;
     }
 

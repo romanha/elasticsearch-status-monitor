@@ -14,7 +14,7 @@ public final class ClusterInfos {
 
     public static ClusterInfo random() {
         return new ClusterInfo(
-                Randoms.generateString("test-cluster-"),
+                randomClusterName(),
                 Randoms.generateEnumValue(ClusterHealthStatus.class),
                 Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger(),
@@ -22,13 +22,14 @@ public final class ClusterInfos {
                 Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger(),
-                Randoms.generateString("master-node-id-")
+                randomMasterNodeId(),
+                ClusterStatsUtils.random()
         );
     }
 
     public static ClusterInfo randomHealthy() {
         return new ClusterInfo(
-                Randoms.generateString("test-cluster-"),
+                randomClusterName(),
                 ClusterHealthStatus.GREEN,
                 Randoms.generatePositiveInteger(),
                 Randoms.generatePositiveInteger(),
@@ -36,7 +37,16 @@ public final class ClusterInfos {
                 Randoms.generatePositiveInteger(),
                 0,
                 0,
-                Randoms.generateString("master-node-id-")
+                randomMasterNodeId(),
+                ClusterStatsUtils.random()
         );
+    }
+
+    private static String randomClusterName() {
+        return Randoms.generateString("test-cluster-");
+    }
+
+    private static String randomMasterNodeId() {
+        return Randoms.generateString("master-node-id-");
     }
 }

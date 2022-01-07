@@ -12,6 +12,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAlloca
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterHealthParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterSettingsParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterStateParams;
+import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterStatsParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersionParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.GeneralParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeInfoParams;
@@ -112,6 +113,9 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         Request clusterStateRequest = new Request(METHOD_GET, ClusterStateParams.API_ENDPOINT);
         setAcceptedContentToJSON(clusterStateRequest);
 
+        Request clusterStatsRequest = new Request(METHOD_GET, ClusterStatsParams.API_ENDPOINT);
+        setAcceptedContentToJSON(clusterStatsRequest);
+
         try {
             Response clusterHealthResponse = client.performRequest(clusterHealthRequest);
             String clusterHealthResult = responseMapper.getContentAsString(clusterHealthResponse);
@@ -119,7 +123,10 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
             Response clusterStateResponse = client.performRequest(clusterStateRequest);
             String clusterStateResult = responseMapper.getContentAsString(clusterStateResponse);
 
-            clusterInfo = infoMapper.mapClusterInfo(clusterHealthResult, clusterStateResult);
+            Response clusterStatsResponse = client.performRequest(clusterStatsRequest);
+            String clusterStatsResult = responseMapper.getContentAsString(clusterStatsResponse);
+
+            clusterInfo = infoMapper.mapClusterInfo(clusterHealthResult, clusterStateResult, clusterStatsResult);
             LOG.debug("Mapped cluster info: {}", clusterInfo);
         } catch (final IOException e) {
             logError(e);

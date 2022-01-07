@@ -46,12 +46,13 @@ class DefaultInfoMapperTest {
         // Given
         String json1 = Randoms.generateString("cluster-health-");
         String json2 = Randoms.generateString("cluster-state-");
+        String json3 = Randoms.generateString("cluster-stats-");
 
         // When
-        sut.mapClusterInfo(json1, json2);
+        sut.mapClusterInfo(json1, json2, json3);
 
         // Then
-        verify(clusterInfoMapper).map(json1, json2);
+        verify(clusterInfoMapper).map(json1, json2, json3);
     }
 
     @Test
