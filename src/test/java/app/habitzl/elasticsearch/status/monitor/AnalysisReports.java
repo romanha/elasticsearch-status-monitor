@@ -21,7 +21,8 @@ public final class AnalysisReports {
 
     public static AnalysisReport randomFinished(final List<Problem> problems, final List<Warning> warnings) {
         return AnalysisReport.finished(
-                Randoms.generateString("Timestamp "),
+                randomToolVersion(),
+                randomFormattedTimestamp(),
                 StatusMonitorConfigurations.random(),
                 problems,
                 warnings,
@@ -36,9 +37,18 @@ public final class AnalysisReports {
 
     public static AnalysisReport randomAborted(final List<Problem> problems) {
         return AnalysisReport.aborted(
-                Randoms.generateString("Timestamp "),
+                randomToolVersion(),
+                randomFormattedTimestamp(),
                 StatusMonitorConfigurations.random(),
                 problems
         );
+    }
+
+    private static String randomToolVersion() {
+        return Randoms.generateString("Tool Version ");
+    }
+
+    private static String randomFormattedTimestamp() {
+        return Randoms.generateString("Timestamp ");
     }
 }

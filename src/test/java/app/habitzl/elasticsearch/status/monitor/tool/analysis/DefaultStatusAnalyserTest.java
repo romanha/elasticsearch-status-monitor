@@ -46,6 +46,7 @@ import static org.mockito.Mockito.*;
 
 class DefaultStatusAnalyserTest {
 
+    private static final String TOOL_VERSION = null;
     private static final String CURRENT_TIME = Randoms.generateString("Timestamp: ");
 
     private DefaultStatusAnalyser sut;
@@ -95,7 +96,12 @@ class DefaultStatusAnalyserTest {
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
-        AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(GeneralConnectionProblem.create(connectionErrorInformation)));
+        AnalysisReport expected = AnalysisReport.aborted(
+                TOOL_VERSION,
+                CURRENT_TIME,
+                configuration,
+                List.of(GeneralConnectionProblem.create(connectionErrorInformation))
+        );
         assertThat(analysisReport, equalTo(expected));
     }
 
@@ -109,7 +115,12 @@ class DefaultStatusAnalyserTest {
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
-        AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(SSLHandshakeProblem.create()));
+        AnalysisReport expected = AnalysisReport.aborted(
+                TOOL_VERSION,
+                CURRENT_TIME,
+                configuration,
+                List.of(SSLHandshakeProblem.create())
+        );
         assertThat(analysisReport, equalTo(expected));
     }
 
@@ -123,7 +134,12 @@ class DefaultStatusAnalyserTest {
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
-        AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(UnauthorizedConnectionProblem.create()));
+        AnalysisReport expected = AnalysisReport.aborted(
+                TOOL_VERSION,
+                CURRENT_TIME,
+                configuration,
+                List.of(UnauthorizedConnectionProblem.create())
+        );
         assertThat(analysisReport, equalTo(expected));
     }
 
@@ -137,7 +153,12 @@ class DefaultStatusAnalyserTest {
         AnalysisReport analysisReport = sut.createReport();
 
         // Then
-        AnalysisReport expected = AnalysisReport.aborted(CURRENT_TIME, configuration, List.of(ClusterNotFullyOperationalProblem.create()));
+        AnalysisReport expected = AnalysisReport.aborted(
+                TOOL_VERSION,
+                CURRENT_TIME,
+                configuration,
+                List.of(ClusterNotFullyOperationalProblem.create())
+        );
         assertThat(analysisReport, equalTo(expected));
     }
 
@@ -270,7 +291,7 @@ class DefaultStatusAnalyserTest {
         ClusterInfo clusterInfo = ClusterInfos.randomHealthy();
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
         givenAllRequestsSucceed(clusterInfo, nodeInfos, null);
-        return AnalysisReport.finished(CURRENT_TIME, configuration, List.of(), List.of(), clusterInfo, nodeInfos);
+        return AnalysisReport.finished(TOOL_VERSION, CURRENT_TIME, configuration, List.of(), List.of(), clusterInfo, nodeInfos);
     }
 
     /**
@@ -281,7 +302,7 @@ class DefaultStatusAnalyserTest {
         List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
         UnassignedShardInfo unassignedShardInfo = UnassignedShardInfos.random();
         givenAllRequestsSucceed(clusterInfo, nodeInfos, unassignedShardInfo);
-        return AnalysisReport.finished(CURRENT_TIME, configuration, List.of(), warnings, clusterInfo, nodeInfos);
+        return AnalysisReport.finished(TOOL_VERSION, CURRENT_TIME, configuration, List.of(), warnings, clusterInfo, nodeInfos);
     }
 
     private void givenAllRequestsSucceed(

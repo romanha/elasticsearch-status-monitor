@@ -36,6 +36,7 @@ Released on: yyyy-mm-dd
 ### Miscellaneous
 
 * Improved styling of the generated HTML report file.
+* Added number of found problems and warnings to the analysis section.
 * Enabled logging to console by default.
 * Updated various dependencies to their latest version.
     * Updated Elasticsearch REST client from 6.8.13 to 6.8.22.

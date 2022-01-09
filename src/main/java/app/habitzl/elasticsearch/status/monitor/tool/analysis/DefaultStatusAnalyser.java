@@ -108,6 +108,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
         );
 
         return AnalysisReport.finished(
+                getToolVersion(),
                 getTimestamp(),
                 configuration,
                 analysisResult.getProblems(),
@@ -131,7 +132,11 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
 
     private AnalysisReport abortStatusMonitoring(final Problem problem) {
         LOG.warn("Encountered problem while gathering data: '{}'. Aborting status report generation.", problem);
-        return AnalysisReport.aborted(getTimestamp(), configuration, List.of(problem));
+        return AnalysisReport.aborted(getToolVersion(), getTimestamp(), configuration, List.of(problem));
+    }
+
+    private String getToolVersion() {
+        return getClass().getPackage().getImplementationVersion();
     }
 
     private String getTimestamp() {

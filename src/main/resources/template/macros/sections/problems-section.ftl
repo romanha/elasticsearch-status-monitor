@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="report" type="app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport" -->
 <#macro section>
     <div id="problems" class="detail-section">
-        <h2>Problems</h2>
+        <h2>Problems (${report.problems?size})</h2>
         <#list report.problems as problem>
             <div class="bordered-detail-section">
                 <h3>${problem.title}</h3>

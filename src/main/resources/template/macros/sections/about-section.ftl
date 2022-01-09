@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="report" type="app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport" -->
 <#macro section>
     <div id="about" class="bordered-detail-section centered-detail-section">
         <h2>About</h2>
@@ -5,7 +6,7 @@
             <tbody>
             <tr>
                 <td>Version:</td>
-                <td>1.2.0</td>
+                <td>${(report.toolVersion)!"Development Version"}</td>
             </tr>
             <tr>
                 <td>Author:</td>
