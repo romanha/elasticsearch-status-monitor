@@ -56,12 +56,12 @@ The tool uses the default trust store located at `%JAVA_HOME%/lib/security/cacer
 
 If the JAR is used as part of a script, following exit codes can be used for automation:
 
-Exit code | Description
----       | ---
-0         | The analysis was completed and did not find and problems or warnings.
-1         | The analysis was aborted or completed and found problems.
-2         | The analysis was completed without finding problems, but some warnings were found.
-3         | The analysis was not started due to misconfiguration. (e.g. unknown CLI option)
+| Exit code | Description                                                                        |
+|-----------|------------------------------------------------------------------------------------|
+| 0         | The analysis was completed and did not find and problems or warnings.              |
+| 1         | The analysis was aborted or completed and found problems.                          |
+| 2         | The analysis was completed without finding problems, but some warnings were found. |
+| 3         | The analysis was not started due to misconfiguration. (e.g. unknown CLI option)    |
 
 <a id="fallback-endpoints"></a>
 ### Fallback endpoints
@@ -81,8 +81,8 @@ The tool also reports an ["Endpoints not reachable" problem](#problems) if one o
 
 The tool logs into a `logs` folder, which is created in the directory from where the tool is called.
 
-The `latest` sub-directory contains the logs of the most recent run.
-Additionally, the tool archives logs in sub-directories named after the report's timestamp.
+The `latest` subdirectory contains the logs of the most recent run.
+Additionally, the tool archives logs in subdirectories named after the report's timestamp.
 
 <a id="configuration"></a>
 ## Configuration
@@ -92,18 +92,18 @@ Additionally, the tool archives logs in sub-directories named after the report's
 
 The tool supports following CLI options:
 
-Option                 | Alternative  | Arguments | Default   | Description                                                                                                | Example
----                    | ---          | ---       | ---       | ---                                                                                                        | ---
-`--help`               | -            | 0         | -         | Print a help message on how to use this tool. **By using this option no analysis is started.**             | `--help`
-`--version`            | -            | 0         | -         | Print the version number of this tool. **By using this option no analysis is started.**                    | `--version`
-`--host`               | `-h`         | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`
-`--port`               | `-p`         | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`
-`--fallbackEndpoints`  | -            | n         | -         | A list of [fallback endpoints](#fallback-endpoints) in the format of `host1:port1,host2:port2`.            | `--fallbackEndpoints 127.0.0.1:9202,localhost:9204`
-`--unsecure`           | -            | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`
-`--username`           | -            | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`
-`--password`           | -            | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`
-`--reportPath`         | -            | 1         | reports   | The path to the location of the generated report files. This can be an absolute or relative path.          | `--reportPath "elasticsearch/reports"`
-`--skipArchiveReport`  | -            | 0         | -         | Skips the generation of an archive report file located in a timestamp folder.                              | `--skipArchiveReport`
+| Option                | Alternative | Arguments | Default   | Description                                                                                                | Example                                             |
+|-----------------------|-------------|-----------|-----------|------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| `--help`              | -           | 0         | -         | Print a help message on how to use this tool.<br/>**By using this option no analysis is started.**         | `--help`                                            |
+| `--version`           | -           | 0         | -         | Print the version number of this tool.<br/>**By using this option no analysis is started.**                | `--version`                                         |
+| `--host`              | `-h`        | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`                                  |
+| `--port`              | `-p`        | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`                                       |
+| `--fallbackEndpoints` | -           | 1-n       | -         | A list of [fallback endpoints](#fallback-endpoints) in the format of `host1:port1,host2:port2`.            | `--fallbackEndpoints 127.0.0.1:9202,localhost:9204` |
+| `--unsecure`          | -           | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`                                        |
+| `--username`          | -           | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`                                  |
+| `--password`          | -           | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`                                  |
+| `--reportPath`        | -           | 1         | reports   | The path to the location of the generated report files. This can be an absolute or relative path.          | `--reportPath "elasticsearch/reports"`              |
+| `--skipArchiveReport` | -           | 0         | -         | Skips the generation of an archive report file located in a timestamp folder.                              | `--skipArchiveReport`                               |
 
 Note that by using one of the help options (`--help`, `--version`) no analysis is started.
 These options only print information on how to use this tool.
