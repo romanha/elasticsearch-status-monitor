@@ -49,7 +49,7 @@ public class LatestReportFileProvider implements Provider<File> {
     }
 
     /**
-     * Creates an overall report directory with a sub-directory for the "latest" report.
+     * Creates an overall report directory with a subdirectory for the "latest" report.
      */
     private Optional<Path> createLatestReportDirectory() {
         try {

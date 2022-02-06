@@ -47,6 +47,7 @@
 		<hamcrest.version>2.2</hamcrest.version>
 		<hamcrest.optional.version>2.0.0</hamcrest.optional.version>
 		<mockito.version>4.2.0</mockito.version>
+		<jsoup.version>1.14.3</jsoup.version>
 
 		<!-- Build -->
 		<maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
@@ -170,6 +171,14 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- HTML parser -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>${jsoup.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

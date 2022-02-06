@@ -42,6 +42,7 @@ Released on: yyyy-mm-dd
     * Updated Elasticsearch REST client from 6.8.13 to 6.8.22.
     * Updated Jackson from 2.13.0 to 2.13.1.
     * Updated Log4j from 2.16.0 to 2.17.0.
+* Added integration tests for compatibility checks against various Elasticsearch versions
 
 ---
 

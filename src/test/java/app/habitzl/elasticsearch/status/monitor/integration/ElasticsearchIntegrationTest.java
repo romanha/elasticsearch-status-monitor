@@ -1,0 +1,21 @@
+package app.habitzl.elasticsearch.status.monitor.integration;
+
+import app.habitzl.elasticsearch.status.monitor.integration.data.ElasticsearchVersion;
+
+/**
+ * Interface providing required methods for all integration tests.
+ */
+public interface ElasticsearchIntegrationTest {
+
+    /**
+     * Gets the expected Elasticsearch version for this test run.
+     */
+    default ElasticsearchVersion getElasticsearchVersion() {
+        throw new IllegalArgumentException("[TEST] The test did not define an expected Elasticsearch version.");
+    }
+
+    /**
+     * Calls the Elasticsearch Status Monitor with the configuration options provided for the test run.
+     */
+    void startAnalysis();
+}
