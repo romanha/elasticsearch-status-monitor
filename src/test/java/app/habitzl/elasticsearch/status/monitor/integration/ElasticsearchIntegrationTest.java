@@ -15,6 +15,16 @@ public interface ElasticsearchIntegrationTest {
     }
 
     /**
+     * Gets the host to use for this test run.
+     */
+    String getHost();
+
+    /**
+     * Gets the port to use for this test run.
+     */
+    String getPort();
+
+    /**
      * Calls the Elasticsearch Status Monitor with the configuration options provided for the test run.
      */
     void startAnalysis();

@@ -79,7 +79,29 @@ public abstract class AbstractElasticsearchIntegrationTest implements Elasticsea
         assertThat("Expected to receive any exit code.", receivedExitCode, notNullValue());
     }
 
+    @Override
+    public String getHost() {
+        return DEFAULT_HOST;
+    }
+
+    @Override
+    public String getPort() {
+        return DEFAULT_PORT;
+    }
+
+    /**
+     * Allows tests to add command line parameters.
+     * <p>
+     * It is not supported to override the host or port here. Use the {@link #getHost()} and {@link #getPort()} methods instead.
+     * <p>
+     * It is not supported to change the report path configuration.
+     * This is because the integration test automatically cleans up generated report files.
+     */
     protected void addConfigurationOption(final String optionKey, final @Nullable String value) {
+        if (optionKey.equals("--host") || optionKey.equals("--port")) {
+            throw new IllegalArgumentException("[TEST] Changing the endpoint is not supported for integration tests. Override getHost() or getPort() instead.");
+        }
+
         if (optionKey.equals("--reportPath") || optionKey.equals("--skipArchiveReport")) {
             throw new IllegalArgumentException("[TEST] Changing the report file configuration is not supported for integration tests.");
         }
@@ -111,10 +133,15 @@ public abstract class AbstractElasticsearchIntegrationTest implements Elasticsea
         return expectedReportFilePath.toFile();
     }
 
+    protected void assertThatReportFileDoesNotExist() {
+        Path expectedReportFilePath = Paths.get(REPORT_PATH, REPORT_LATEST_FOLDER, REPORT_FILE_NAME);
+        assertThat("Report file does not exist.", Files.exists(expectedReportFilePath), is(false));
+    }
+
     private List<String> prepareConfiguration() {
         Map<String, String> defaultOptions = Map.ofEntries(
-                Map.entry("--host", DEFAULT_HOST),
-                Map.entry("--port", DEFAULT_PORT),
+                Map.entry("--host", getHost()),
+                Map.entry("--port", getPort()),
                 Map.entry("--reportPath", REPORT_PATH),
                 Map.entry("--skipArchiveReport", "")
         );

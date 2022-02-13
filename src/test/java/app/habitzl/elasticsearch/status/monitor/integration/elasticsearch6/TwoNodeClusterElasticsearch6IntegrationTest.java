@@ -4,15 +4,15 @@ import app.habitzl.elasticsearch.status.monitor.ExitCode;
 import app.habitzl.elasticsearch.status.monitor.integration.AbstractElasticsearchIntegrationTest;
 import app.habitzl.elasticsearch.status.monitor.integration.data.ElasticsearchVersion;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.ClusterNotRedundantWarning;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.SplitBrainPossibleWarning;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Integration tests for a single-node Elasticsearch 6 installation.
+ * Integration tests for a 2-node-cluster Elasticsearch 6 installation.
  */
 @Disabled("Only intended for manual runs against a local Elasticsearch cluster")
-public class SingleNodeElasticsearch6IntegrationTest extends AbstractElasticsearchIntegrationTest {
+public class TwoNodeClusterElasticsearch6IntegrationTest extends AbstractElasticsearchIntegrationTest {
 
     @Override
     public ElasticsearchVersion getElasticsearchVersion() {
@@ -30,20 +30,21 @@ public class SingleNodeElasticsearch6IntegrationTest extends AbstractElasticsear
     }
 
     @Test
-    void startAnalysis_singleNode_returnClusterNotRedundantWarning() {
+    void startAnalysis_twoNodeCluster_returnSplitBrainPossibleWarning() {
         // Given
-        // single node
+        String fallbackEndpoints = "localhost:9201";
+        addConfigurationOption("--fallbackEndpoints", fallbackEndpoints);
 
         // When
         startAnalysis();
 
         // Then
         assertThatExitCodeEquals(ExitCode.ONLY_WARNINGS_FOUND);
-        assertThatClusterIsNotRedundant();
+        assertThatSplitBrainIsPossible();
     }
 
-    private void assertThatClusterIsNotRedundant() {
-        Warning expectedWarning = ClusterNotRedundantWarning.create(true, true, false);
+    private void assertThatSplitBrainIsPossible() {
+        Warning expectedWarning = SplitBrainPossibleWarning.create(-1, 2, 2);
         getReportAssertions().assertThatWarningExists(expectedWarning);
     }
 }

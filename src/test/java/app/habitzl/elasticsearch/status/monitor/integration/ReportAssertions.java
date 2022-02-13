@@ -10,6 +10,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 
 /**
@@ -24,6 +25,18 @@ public class ReportAssertions {
 
     private ReportAssertions(final File reportFile) throws Exception {
         htmlDocument = Jsoup.parse(reportFile, StandardCharsets.UTF_8.name());
+    }
+
+    public void assertThatNoProblemsExist() {
+        String xpath = "//div[@id='problems']";
+        Elements elements = htmlDocument.selectXpath(xpath);
+        assertThat(elements, empty());
+    }
+
+    public void assertThatNoWarningsExist() {
+        String xpath = "//div[@id='warnings']";
+        Elements elements = htmlDocument.selectXpath(xpath);
+        assertThat(elements, empty());
     }
 
     /**
