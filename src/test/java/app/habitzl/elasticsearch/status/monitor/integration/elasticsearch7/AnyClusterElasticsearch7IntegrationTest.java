@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.integration.elasticsearch6;
+package app.habitzl.elasticsearch.status.monitor.integration.elasticsearch7;
 
 import app.habitzl.elasticsearch.status.monitor.ExitCode;
 import app.habitzl.elasticsearch.status.monitor.Randoms;
@@ -8,20 +8,21 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.EndpointsNotReachableProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 /**
- * Integration tests for any reachable Elasticsearch 6 installation.
+ * Integration tests for any reachable Elasticsearch 7 installation.
  */
 @Disabled("Only intended for manual runs against a local Elasticsearch cluster")
-public class AnyClusterElasticsearch6IntegrationTest extends AbstractElasticsearchIntegrationTest {
+public class AnyClusterElasticsearch7IntegrationTest extends AbstractElasticsearchIntegrationTest {
 
     @Override
     public ElasticsearchVersion getElasticsearchVersion() {
-        return ElasticsearchVersion.ELASTICSEARCH_6_8;
+        return ElasticsearchVersion.ELASTICSEARCH_7_16;
     }
 
     @Override
@@ -32,6 +33,11 @@ public class AnyClusterElasticsearch6IntegrationTest extends AbstractElasticsear
     @Override
     public String getPort() {
         return super.getPort();
+    }
+
+    @BeforeEach
+    void setUp() {
+        useCustomCredentials("elastic", "elastic");
     }
 
     @Test

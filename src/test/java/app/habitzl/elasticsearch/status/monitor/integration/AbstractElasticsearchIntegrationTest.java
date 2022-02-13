@@ -109,6 +109,11 @@ public abstract class AbstractElasticsearchIntegrationTest implements Elasticsea
         additionalConfigurationOptions.put(optionKey, value);
     }
 
+    protected void useCustomCredentials(final String username, final String password) {
+        addConfigurationOption("--username", username);
+        addConfigurationOption("--password", password);
+    }
+
     protected void assertThatExitCodeEquals(final ExitCode expectedCode) {
         assertThat("Exit code does not match.", receivedExitCode, equalTo(expectedCode.value()));
     }
