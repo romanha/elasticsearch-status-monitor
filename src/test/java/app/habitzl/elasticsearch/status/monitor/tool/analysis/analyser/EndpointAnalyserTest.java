@@ -9,14 +9,13 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.High
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.util.HostnameResolver;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -43,7 +42,7 @@ class EndpointAnalyserTest {
         configuration.setFallbackEndpoints(List.of(Hosts.randomAddress(), Hosts.randomAddress()));
         List<EndpointInfo> endpointInfos = configuration.getAllEndpoints()
                 .stream()
-                .map(address -> EndpointInfos.random(address, 0))
+                .map(httpPublishAddress -> EndpointInfos.random(httpPublishAddress, 0))
                 .collect(Collectors.toList());
 
         // When
@@ -75,7 +74,7 @@ class EndpointAnalyserTest {
         configuration.setFallbackEndpoints(List.of(Hosts.randomAddress(), Hosts.randomAddress()));
         List<EndpointInfo> endpointInfos = configuration.getFallbackEndpoints()
                 .stream()
-                .map(address -> EndpointInfos.random(address, 0))
+                .map(httpPublishAddress -> EndpointInfos.random(httpPublishAddress, 0))
                 .collect(Collectors.toList());
 
         // When
@@ -105,12 +104,33 @@ class EndpointAnalyserTest {
     }
 
     @Test
-    void analyse_endpointIsReachableAndConfiguredWithResolvableHostname_returnEmpty() {
+    void analyse_endpointIsReachableViaIpAddressAndConfiguredWithResolvableHostname_returnEmpty() {
         // Given
         configuration.setFallbackEndpoints(List.of());
         String ipAddress = "1.2.3.4";
-        String endpointAddress = ipAddress + EndpointAnalyser.HOST_PORT_SEPARATOR + configuration.getPort();
-        EndpointInfo endpointInfo = EndpointInfos.random(endpointAddress, 0);
+        String endpointHttpPublishAddress = String.format("%s:%s", ipAddress, configuration.getPort());
+        EndpointInfo endpointInfo = EndpointInfos.random(endpointHttpPublishAddress, 0);
+        givenHostnameIsResolvedToAddress(configuration.getHost(), ipAddress);
+
+        // When
+        AnalysisResult result = sut.analyse(List.of(endpointInfo));
+
+        // Then
+        AnalysisResult expected = AnalysisResult.empty();
+        assertThat(result, equalTo(expected));
+    }
+
+    /**
+     * Elasticsearch 7 changed the reported value of the HTTP publish address from [ip:port] to [hostname/ip:port].
+     */
+    @Test
+    void analyse_endpointIsReachableViaHostnamePlusIpAddressAndConfiguredWithResolvableHostname_returnEmpty() {
+        // Given
+        configuration.setFallbackEndpoints(List.of());
+        String hostname = "host.name";
+        String ipAddress = "1.2.3.4";
+        String endpointHttpPublishAddress = String.format("%s/%s:%s", hostname, ipAddress, configuration.getPort());
+        EndpointInfo endpointInfo = EndpointInfos.random(endpointHttpPublishAddress, 0);
         givenHostnameIsResolvedToAddress(configuration.getHost(), ipAddress);
 
         // When
@@ -126,8 +146,8 @@ class EndpointAnalyserTest {
         // Given
         configuration.setFallbackEndpoints(List.of());
         String ipAddress = "1.2.3.4";
-        String endpointAddress = ipAddress + EndpointAnalyser.HOST_PORT_SEPARATOR + configuration.getPort();
-        EndpointInfo endpointInfo = EndpointInfos.random(endpointAddress, 0);
+        String endpointHttpPublishAddress = String.format("%s:%s", ipAddress, configuration.getPort());
+        EndpointInfo endpointInfo = EndpointInfos.random(endpointHttpPublishAddress, 0);
 
         // When
         AnalysisResult result = sut.analyse(List.of(endpointInfo));

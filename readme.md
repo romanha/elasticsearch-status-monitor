@@ -74,7 +74,7 @@ If the tool's main endpoint (`--host` and `--port`) is not reachable, a failing 
 For such cases you can use fallback endpoints (`--fallbackEndpoints`) to avoid this scenario.
 This option allows passing a list of alternative endpoints, which can be used for querying the cluster.
 
-The tool also reports an ["Endpoints not reachable" problem](#problems) if one of the endpoints is not part of the cluster.
+The tool also reports an ["Endpoints not reachable" problem] if one of the endpoints is not part of the cluster.
 
 <a id="logging"></a>
 ### Logging
@@ -98,7 +98,7 @@ The tool supports following CLI options:
 | `--version`           | -           | 0         | -         | Print the version number of this tool.<br/>**By using this option no analysis is started.**                | `--version`                                         |
 | `--host`              | `-h`        | 1         | 127.0.0.1 | The IP address or host name of the Elasticsearch endpoint.                                                 | `--host 127.0.0.1`                                  |
 | `--port`              | `-p`        | 1         | 9200      | The HTTP port of the Elasticsearch endpoint.                                                               | `--port 9200`                                       |
-| `--fallbackEndpoints` | -           | 1-n       | -         | A list of [fallback endpoints](#fallback-endpoints) in the format of `host1:port1,host2:port2`.            | `--fallbackEndpoints 127.0.0.1:9202,localhost:9204` |
+| `--fallbackEndpoints` | -           | 1-n       | -         | A list of [fallback endpoints] in the format of `host1:port1,host2:port2`.                                 | `--fallbackEndpoints 127.0.0.1:9202,localhost:9204` |
 | `--unsecure`          | -           | 1         | -         | Disables security for the tool. If disabled, the tool will not use HTTPS when connecting to Elasticsearch. | `--unsecure`                                        |
 | `--username`          | -           | 1         | admin     | The user name of the Elasticsearch user.                                                                   | `--username admin`                                  |
 | `--password`          | -           | 1         | admin     | The password of the Elasticsearch user.                                                                    | `--password admin`                                  |
@@ -156,5 +156,7 @@ The _Elasticsearch Status Monitor_ is licensed under the [Apache License, Versio
 
 The release notes can be found at the [change log].
 
+["Endpoints not reachable" problem]: #problems
+[fallback endpoints]: #fallback-endpoints
 [Apache License, Version 2.0]: LICENSE
 [change log]: changelog.md

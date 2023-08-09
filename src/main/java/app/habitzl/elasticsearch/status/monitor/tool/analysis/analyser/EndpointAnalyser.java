@@ -8,16 +8,18 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.High
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.util.HostnameResolver;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.inject.Inject;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.inject.Inject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Analyses data of the endpoints to find problems.
@@ -26,7 +28,8 @@ public class EndpointAnalyser {
     private static final Logger LOG = LogManager.getLogger(EndpointAnalyser.class);
 
     private static final int RAM_USAGE_PERCENT_THRESHOLD = 80;
-    static final String HOST_PORT_SEPARATOR = ":";
+    private static final String HOST_PORT_SEPARATOR = ":";
+    private static final String HOSTNAME_ENDPOINT_SEPARATOR = "/";
 
     private final HostnameResolver hostnameResolver;
     private final StatusMonitorConfiguration configuration;
@@ -54,6 +57,7 @@ public class EndpointAnalyser {
                 .collect(Collectors.toList());
         List<String> reachableEndpoints = endpointInfos.stream()
                 .map(EndpointInfo::getHttpPublishAddress)
+                .flatMap(splitCombinedHostnameEndpointFormat())
                 .collect(Collectors.toList());
         List<String> notReachableEndpoints = configuredEndpoints.stream()
                 .filter(configuredEndpoint -> !reachableEndpoints.contains(configuredEndpoint))
@@ -79,6 +83,13 @@ public class EndpointAnalyser {
         }
 
         return resolvedAddress;
+    }
+
+    /**
+     * Elasticsearch 7 changed the reported value of the HTTP publish address from [ip:port] to [hostname/ip:port].
+     */
+    private static Function<String, Stream<? extends String>> splitCombinedHostnameEndpointFormat() {
+        return address -> Arrays.stream(address.split(HOSTNAME_ENDPOINT_SEPARATOR));
     }
 
     private Optional<HighRamUsageWarning> findEndpointsWithHighRamUsage(final List<EndpointInfo> endpoints) {

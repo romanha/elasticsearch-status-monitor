@@ -15,7 +15,7 @@ Released on: yyyy-mm-dd
 ### Compatibility
 
 * Java 11
-* Elasticsearch 6.8
+* Elasticsearch 6.8 / 7.17
 
 ### New features
 
@@ -32,6 +32,7 @@ Released on: yyyy-mm-dd
 
 * Mitigated the Log4DoS denial of service vulnerability in the Log4j library. (CVE-2021-45105)
     * Updated Log4j from 2.16.0 to 2.17.0.
+* Fixed the node information grid of the HTML report file overflowing on smaller screens
 
 ### Miscellaneous
 

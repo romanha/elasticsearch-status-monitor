@@ -3,7 +3,7 @@
         body {
             font-family: Calibri, sans-serif;
             max-width: 100%;
-            margin: 2% 0;
+            margin: 2% auto;
             background-color: #f4f3f1;
             overflow-y: scroll; /* To fix jumping content if some sections would display a scrollbar. */
         }
