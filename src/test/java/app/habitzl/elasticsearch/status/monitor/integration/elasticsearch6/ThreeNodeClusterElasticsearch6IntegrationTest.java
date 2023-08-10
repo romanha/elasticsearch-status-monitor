@@ -2,7 +2,7 @@ package app.habitzl.elasticsearch.status.monitor.integration.elasticsearch6;
 
 import app.habitzl.elasticsearch.status.monitor.ExitCode;
 import app.habitzl.elasticsearch.status.monitor.integration.AbstractElasticsearchIntegrationTest;
-import app.habitzl.elasticsearch.status.monitor.integration.data.ElasticsearchVersion;
+import app.habitzl.elasticsearch.status.monitor.integration.data.ElasticsearchTestVersion;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 public class ThreeNodeClusterElasticsearch6IntegrationTest extends AbstractElasticsearchIntegrationTest {
 
     @Override
-    public ElasticsearchVersion getElasticsearchVersion() {
-        return ElasticsearchVersion.ELASTICSEARCH_6_8;
+    public ElasticsearchTestVersion getElasticsearchVersion() {
+        return ElasticsearchTestVersion.ELASTICSEARCH_6_8;
     }
 
     @Override

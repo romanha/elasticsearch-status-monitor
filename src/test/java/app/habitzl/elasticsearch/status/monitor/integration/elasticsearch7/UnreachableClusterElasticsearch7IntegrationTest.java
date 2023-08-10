@@ -2,7 +2,7 @@ package app.habitzl.elasticsearch.status.monitor.integration.elasticsearch7;
 
 import app.habitzl.elasticsearch.status.monitor.ExitCode;
 import app.habitzl.elasticsearch.status.monitor.integration.AbstractElasticsearchIntegrationTest;
-import app.habitzl.elasticsearch.status.monitor.integration.data.ElasticsearchVersion;
+import app.habitzl.elasticsearch.status.monitor.integration.data.ElasticsearchTestVersion;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
 import org.junit.jupiter.api.Disabled;
@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 public class UnreachableClusterElasticsearch7IntegrationTest extends AbstractElasticsearchIntegrationTest {
 
     @Override
-    public ElasticsearchVersion getElasticsearchVersion() {
-        return ElasticsearchVersion.ELASTICSEARCH_7_16;
+    public ElasticsearchTestVersion getElasticsearchVersion() {
+        return ElasticsearchTestVersion.ELASTICSEARCH_7_17;
     }
 
     @Override

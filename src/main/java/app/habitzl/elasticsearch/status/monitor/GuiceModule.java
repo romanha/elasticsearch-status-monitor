@@ -7,9 +7,11 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultExitCodeMap
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.AnalyserProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyserProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.DefaultClusterAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.Elasticsearch6ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
@@ -17,6 +19,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.connection.Elasticse
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.MonitoringRestClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientFactory;
 import app.habitzl.elasticsearch.status.monitor.tool.client.connection.RestClientProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.version.ElasticsearchVersionProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterAllocationMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterInfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.mapper.ClusterSettingsMapper;
@@ -49,10 +52,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import freemarker.template.Configuration;
-import org.elasticsearch.client.RestClient;
-
 import java.io.File;
 import java.time.Clock;
+import org.elasticsearch.client.RestClient;
 
 /**
  * A Google Guice module for defining bindings for the projects dependency injection.
@@ -69,6 +71,9 @@ class GuiceModule extends AbstractModule {
         bind(StatusMonitorConfiguration.class).in(Singleton.class);
         bind(ConfigurationLoader.class).to(DefaultConfigurationLoader.class).in(Singleton.class);
         bind(CliOptions.class).in(Singleton.class);
+
+        // Elasticsearch data
+        bind(ElasticsearchVersionProvider.class).in(Singleton.class);
 
         // Elasticsearch client
         bind(ElasticsearchClient.class).to(DefaultElasticsearchClient.class).in(Singleton.class);
@@ -90,7 +95,9 @@ class GuiceModule extends AbstractModule {
         bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
         bind(AnalyserProvider.class).in(Singleton.class);
         bind(EndpointAnalyser.class).in(Singleton.class);
-        bind(ClusterAnalyser.class).in(Singleton.class);
+        bind(ClusterAnalyserProvider.class).in(Singleton.class);
+        bind(DefaultClusterAnalyser.class).in(Singleton.class);
+        bind(Elasticsearch6ClusterAnalyser.class).in(Singleton.class);
         bind(ShardAnalyser.class).in(Singleton.class);
 
         // Presentation

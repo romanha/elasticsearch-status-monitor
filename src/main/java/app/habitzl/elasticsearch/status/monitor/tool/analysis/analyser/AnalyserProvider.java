@@ -1,5 +1,7 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
 
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyserProvider;
 import javax.inject.Inject;
 
 /**
@@ -8,16 +10,16 @@ import javax.inject.Inject;
 public class AnalyserProvider {
 
     private final EndpointAnalyser endpointAnalyser;
-    private final ClusterAnalyser clusterAnalyser;
+    private final ClusterAnalyserProvider clusterAnalyserProvider;
     private final ShardAnalyser shardAnalyser;
 
     @Inject
     public AnalyserProvider(
             final EndpointAnalyser endpointAnalyser,
-            final ClusterAnalyser clusterAnalyser,
+            final ClusterAnalyserProvider clusterAnalyserProvider,
             final ShardAnalyser shardAnalyser) {
         this.endpointAnalyser = endpointAnalyser;
-        this.clusterAnalyser = clusterAnalyser;
+        this.clusterAnalyserProvider = clusterAnalyserProvider;
         this.shardAnalyser = shardAnalyser;
     }
 
@@ -26,7 +28,7 @@ public class AnalyserProvider {
     }
 
     public ClusterAnalyser getClusterAnalyser() {
-        return clusterAnalyser;
+        return clusterAnalyserProvider.get();
     }
 
     public ShardAnalyser getShardAnalyser() {

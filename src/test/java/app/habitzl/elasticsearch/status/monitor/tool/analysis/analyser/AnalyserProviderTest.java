@@ -1,32 +1,31 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
 
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyserProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class AnalyserProviderTest {
 
     private AnalyserProvider sut;
     private EndpointAnalyser endpointAnalyser;
-    private ClusterAnalyser clusterAnalyser;
+    private ClusterAnalyserProvider clusterAnalyserProvider;
     private ShardAnalyser shardAnalyser;
 
     @BeforeEach
     void setUp() {
         endpointAnalyser = mock(EndpointAnalyser.class);
-        clusterAnalyser = mock(ClusterAnalyser.class);
+        clusterAnalyserProvider = mock(ClusterAnalyserProvider.class);
         shardAnalyser = mock(ShardAnalyser.class);
-        sut = new AnalyserProvider(endpointAnalyser, clusterAnalyser, shardAnalyser);
+        sut = new AnalyserProvider(endpointAnalyser, clusterAnalyserProvider, shardAnalyser);
     }
 
     @Test
     void getEndpointAnalyser_always_returnEndpointAnalyser() {
-        // Given
-        // always
-
         // When
         EndpointAnalyser result = sut.getEndpointAnalyser();
 
@@ -35,22 +34,16 @@ class AnalyserProviderTest {
     }
 
     @Test
-    void getClusterAnalyser_always_returnClusterAnalyser() {
-        // Given
-        // always
-
+    void getClusterAnalyser_always_getClusterAnalyserFromProvider() {
         // When
-        ClusterAnalyser result = sut.getClusterAnalyser();
+        sut.getClusterAnalyser();
 
         // Then
-        assertThat(result, equalTo(clusterAnalyser));
+        verify(clusterAnalyserProvider).get();
     }
 
     @Test
     void getShardAnalyser_always_returnShardAnalyser() {
-        // Given
-        // always
-
         // When
         ShardAnalyser result = sut.getShardAnalyser();
 

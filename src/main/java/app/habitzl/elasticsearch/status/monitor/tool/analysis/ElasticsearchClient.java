@@ -3,10 +3,8 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
-import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.ClusterNodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
-
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,7 +32,7 @@ public interface ElasticsearchClient {
     /**
      * Gets information about each node of the ES cluster.
      */
-    List<NodeInfo> getNodeInfo();
+    Optional<ClusterNodeInfo> getNodeInfo();
 
     /**
      * Gets information about the first unassigned shard.

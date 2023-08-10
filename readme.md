@@ -134,7 +134,7 @@ This section lists all issues that the data analysis supports.
 ### Warnings
 
 * Cluster setup is missing redundancy
-* Cluster setup allows split brain scenarios
+* Cluster setup allows split brain scenarios (Elasticsearch 6 only)
 * Unassigned shards
 * High RAM usage on endpoints
 

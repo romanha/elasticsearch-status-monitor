@@ -6,9 +6,14 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings;
 
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
-
 import java.util.Objects;
 
+/**
+ * This warning is only relevant for Elasticsearch 6 clusters.
+ * <p>
+ * Since Elasticsearch 7, Elasticsearch automatically updates its voting configuration to maintain an optimal level of fault tolerance,
+ * while using quorums that do not allow for a split brain scenario.
+ */
 public class SplitBrainPossibleWarning implements Warning {
     private static final long serialVersionUID = 1L;
 

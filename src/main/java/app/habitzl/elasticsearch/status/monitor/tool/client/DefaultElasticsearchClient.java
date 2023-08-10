@@ -6,6 +6,7 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.ClusterNodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAllocationParams;
@@ -17,6 +18,11 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersi
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.GeneralParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeInfoParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeStatsParams;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import javax.inject.Inject;
+import javax.net.ssl.SSLHandshakeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
@@ -24,12 +30,6 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
-
-import javax.inject.Inject;
-import javax.net.ssl.SSLHandshakeException;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 public class DefaultElasticsearchClient implements ElasticsearchClient {
     private static final Logger LOG = LogManager.getLogger(DefaultElasticsearchClient.class);
@@ -87,12 +87,10 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         ClusterSettings clusterSettings;
 
         Request request = new Request(METHOD_GET, ClusterSettingsParams.API_ENDPOINT);
-        setAcceptedContentToJSON(request);
         request.addParameter(ClusterSettingsParams.PARAM_INCLUDE_DEFAULTS, "true");
 
         try {
-            Response response = client.performRequest(request);
-            String result = responseMapper.getContentAsString(response);
+            String result = sendRequestAndMapJSONResponse(request);
             clusterSettings = infoMapper.mapClusterSettings(result);
             LOG.debug("Mapped cluster settings: {}", clusterSettings);
         } catch (final IOException e) {
@@ -108,23 +106,13 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         ClusterInfo clusterInfo;
 
         Request clusterHealthRequest = new Request(METHOD_GET, ClusterHealthParams.API_ENDPOINT);
-        setAcceptedContentToJSON(clusterHealthRequest);
-
         Request clusterStateRequest = new Request(METHOD_GET, ClusterStateParams.API_ENDPOINT);
-        setAcceptedContentToJSON(clusterStateRequest);
-
         Request clusterStatsRequest = new Request(METHOD_GET, ClusterStatsParams.API_ENDPOINT);
-        setAcceptedContentToJSON(clusterStatsRequest);
 
         try {
-            Response clusterHealthResponse = client.performRequest(clusterHealthRequest);
-            String clusterHealthResult = responseMapper.getContentAsString(clusterHealthResponse);
-
-            Response clusterStateResponse = client.performRequest(clusterStateRequest);
-            String clusterStateResult = responseMapper.getContentAsString(clusterStateResponse);
-
-            Response clusterStatsResponse = client.performRequest(clusterStatsRequest);
-            String clusterStatsResult = responseMapper.getContentAsString(clusterStatsResponse);
+            String clusterHealthResult = sendRequestAndMapJSONResponse(clusterHealthRequest);
+            String clusterStateResult = sendRequestAndMapJSONResponse(clusterStateRequest);
+            String clusterStatsResult = sendRequestAndMapJSONResponse(clusterStatsRequest);
 
             clusterInfo = infoMapper.mapClusterInfo(clusterHealthResult, clusterStateResult, clusterStatsResult);
             LOG.debug("Mapped cluster info: {}", clusterInfo);
@@ -137,36 +125,27 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
     }
 
     @Override
-    public List<NodeInfo> getNodeInfo() {
-        List<NodeInfo> nodeInfos = List.of();
+    public Optional<ClusterNodeInfo> getNodeInfo() {
+        ClusterNodeInfo result = null;
 
         Request masterNodeRequest = new Request(METHOD_GET, ClusterStateParams.onlyRequestMasterNode());
-        setAcceptedContentToJSON(masterNodeRequest);
-
         Request nodeInfoRequest = new Request(METHOD_GET, NodeInfoParams.API_ENDPOINT);
-        setAcceptedContentToJSON(nodeInfoRequest);
-
         Request nodeStatsRequest = new Request(METHOD_GET, NodeStatsParams.API_ENDPOINT);
-        setAcceptedContentToJSON(nodeStatsRequest);
         nodeStatsRequest.addParameter(NodeStatsParams.PARAM_METRIC, NodeStatsParams.allMetrics());
 
         try {
-            Response masterNodeResponse = client.performRequest(masterNodeRequest);
-            String masterNodeResult = responseMapper.getContentAsString(masterNodeResponse);
+            String masterNodeResult = sendRequestAndMapJSONResponse(masterNodeRequest);
+            String nodeInfoResult = sendRequestAndMapJSONResponse(nodeInfoRequest);
+            String nodeStatsResult = sendRequestAndMapJSONResponse(nodeStatsRequest);
 
-            Response nodeInfoResponse = client.performRequest(nodeInfoRequest);
-            String nodeInfoResult = responseMapper.getContentAsString(nodeInfoResponse);
-
-            Response nodeStatsResponse = client.performRequest(nodeStatsRequest);
-            String nodeStatsResult = responseMapper.getContentAsString(nodeStatsResponse);
-
-            nodeInfos = infoMapper.mapNodeInfo(masterNodeResult, nodeInfoResult, nodeStatsResult);
+            List<NodeInfo> nodeInfos = infoMapper.mapNodeInfo(masterNodeResult, nodeInfoResult, nodeStatsResult);
             LOG.debug("Mapped node infos: {}", nodeInfos);
-        } catch (final IOException e) {
+            result = new ClusterNodeInfo(nodeInfos);
+        } catch (final IOException | IllegalArgumentException e) {
             logError(e);
         }
 
-        return nodeInfos;
+        return Optional.ofNullable(result);
     }
 
     @Override
@@ -199,6 +178,12 @@ public class DefaultElasticsearchClient implements ElasticsearchClient {
         }
 
         return Optional.ofNullable(unassignedShardInfo);
+    }
+
+    private String sendRequestAndMapJSONResponse(final Request request) throws IOException {
+        setAcceptedContentToJSON(request);
+        Response response = client.performRequest(request);
+        return responseMapper.getContentAsString(response);
     }
 
     /**

@@ -3,15 +3,14 @@ package app.habitzl.elasticsearch.status.monitor.integration.elasticsearch6;
 import app.habitzl.elasticsearch.status.monitor.ExitCode;
 import app.habitzl.elasticsearch.status.monitor.Randoms;
 import app.habitzl.elasticsearch.status.monitor.integration.AbstractElasticsearchIntegrationTest;
-import app.habitzl.elasticsearch.status.monitor.integration.data.ElasticsearchVersion;
+import app.habitzl.elasticsearch.status.monitor.integration.data.ElasticsearchTestVersion;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Problem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.EndpointsNotReachableProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.GeneralConnectionProblem;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.problems.UnauthorizedConnectionProblem;
+import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 /**
  * Integration tests for any reachable Elasticsearch 6 installation.
@@ -20,8 +19,8 @@ import java.util.List;
 public class AnyClusterElasticsearch6IntegrationTest extends AbstractElasticsearchIntegrationTest {
 
     @Override
-    public ElasticsearchVersion getElasticsearchVersion() {
-        return ElasticsearchVersion.ELASTICSEARCH_6_8;
+    public ElasticsearchTestVersion getElasticsearchVersion() {
+        return ElasticsearchTestVersion.ELASTICSEARCH_6_8;
     }
 
     @Override

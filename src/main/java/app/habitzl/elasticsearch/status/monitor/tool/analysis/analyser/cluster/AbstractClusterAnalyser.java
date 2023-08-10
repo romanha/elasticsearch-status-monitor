@@ -1,31 +1,17 @@
-package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
+package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster;
 
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.ClusterNotRedundantWarning;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.SplitBrainPossibleWarning;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Analyses data of the whole cluster to find problems.
+ * This abstract class provides analysis checks that are relevant for multiple strategies of the {@link ClusterAnalyser}.
  */
-public class ClusterAnalyser {
-
-    public AnalysisResult analyse(final ClusterSettings settings, final List<NodeInfo> nodes) {
-        List<Warning> warnings = new ArrayList<>();
-
-        checkIfClusterSetupIsNotRedundant(settings, nodes).ifPresent(warnings::add);
-        checkIfClusterSetupAllowsSplitBrainScenario(settings, nodes).ifPresent(warnings::add);
-
-        return AnalysisResult.create(List.of(), warnings);
-    }
+public abstract class AbstractClusterAnalyser implements ClusterAnalyser {
 
     /**
      * A cluster is only redundant if there are multiple master-eligible data nodes located on different endpoints.
@@ -38,7 +24,7 @@ public class ClusterAnalyser {
      *   if any single master-eligible node crashes, because it cannot elect a new master.</li>
      * </ul>
      */
-    private Optional<ClusterNotRedundantWarning> checkIfClusterSetupIsNotRedundant(final ClusterSettings settings, final List<NodeInfo> nodes) {
+    protected Optional<ClusterNotRedundantWarning> checkIfClusterSetupIsNotRedundant(final ClusterSettings settings, final List<NodeInfo> nodes) {
         ClusterNotRedundantWarning warning = null;
 
         if (!nodes.isEmpty()) {
@@ -61,40 +47,19 @@ public class ClusterAnalyser {
         return Optional.ofNullable(warning);
     }
 
-    /**
-     * A split brain scenario is possible when the quorum of master-eligible nodes is lower than {@code (master-eligible nodes / 2) + 1}.
-     * This is based on the ES cluster setting "discovery.zen.minimum_master_nodes".
-     */
-    private Optional<SplitBrainPossibleWarning> checkIfClusterSetupAllowsSplitBrainScenario(final ClusterSettings settings, final List<NodeInfo> nodes) {
-        SplitBrainPossibleWarning warning = null;
-
-        int numberOfMasterEligibleNodes = (int) getMasterEligibleNodes(nodes).count();
-        if (numberOfMasterEligibleNodes > 1) {
-            int requiredQuorum = (int) Math.floor(((float) numberOfMasterEligibleNodes) / 2 + 1);
-            int configuredQuorum = settings.getMinimumOfRequiredMasterNodesForElection();
-            if (configuredQuorum < requiredQuorum) {
-                warning = SplitBrainPossibleWarning.create(configuredQuorum, requiredQuorum, numberOfMasterEligibleNodes);
-            }
-        }
-
-        return Optional.ofNullable(warning);
-    }
-
     private Stream<NodeInfo> getMasterEligibleNodes(final List<NodeInfo> nodes) {
-        return nodes.stream()
-                    .filter(NodeInfo::isMasterEligibleNode);
+        return nodes.stream().filter(NodeInfo::isMasterEligibleNode);
     }
 
     private Stream<NodeInfo> getDataNodes(final List<NodeInfo> nodes) {
-        return nodes.stream()
-                    .filter(NodeInfo::isDataNode);
+        return nodes.stream().filter(NodeInfo::isDataNode);
     }
 
     private long getNumberOfDifferentEndpoints(final Stream<NodeInfo> nodes) {
         return nodes.map(NodeInfo::getEndpointInfo)
-                    .map(EndpointInfo::getIpAddress)
-                    .distinct()
-                    .count();
+                .map(EndpointInfo::getIpAddress)
+                .distinct()
+                .count();
     }
 
     private boolean notEnoughDataNodes(final long numberOfDataNodes, final long numberOfDifferentDataEndpoints) {

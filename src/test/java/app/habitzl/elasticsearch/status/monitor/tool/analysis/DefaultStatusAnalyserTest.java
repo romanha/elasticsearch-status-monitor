@@ -2,14 +2,15 @@ package app.habitzl.elasticsearch.status.monitor.tool.analysis;
 
 import app.habitzl.elasticsearch.status.monitor.Clocks;
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
-import app.habitzl.elasticsearch.status.monitor.NodeInfos;
+import app.habitzl.elasticsearch.status.monitor.ClusterNodeInfos;
 import app.habitzl.elasticsearch.status.monitor.Randoms;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.AnalyserProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyserProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.DefaultClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
@@ -24,25 +25,35 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
-import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.ClusterNodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.version.ElasticsearchVersion;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.version.ElasticsearchVersionProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
+import java.time.Clock;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import javax.annotation.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InOrder;
 
-import javax.annotation.Nullable;
-import java.time.Clock;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.nullable;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 class DefaultStatusAnalyserTest {
 
@@ -52,8 +63,9 @@ class DefaultStatusAnalyserTest {
     private DefaultStatusAnalyser sut;
     private StatusMonitorConfiguration configuration;
     private ElasticsearchClient elasticsearchClient;
+    private ElasticsearchVersionProvider elasticsearchVersionProvider;
     private EndpointAnalyser endpointAnalyser;
-    private ClusterAnalyser clusterAnalyser;
+    private DefaultClusterAnalyser clusterAnalyser;
     private ShardAnalyser shardAnalyser;
 
     @BeforeEach
@@ -62,12 +74,13 @@ class DefaultStatusAnalyserTest {
         TimeFormatter timeFormatter = prepareTimeFormatter(clock);
         configuration = StatusMonitorConfigurations.random();
         elasticsearchClient = mock(ElasticsearchClient.class);
+        elasticsearchVersionProvider = mockElasticsearchVersionProvider();
         AnalyserProvider analyserProvider = new AnalyserProvider(
                 mockEndpointAnalyser(),
-                mockClusterAnalyser(),
+                mockClusterAnalyserProvider(),
                 mockShardAnalyser()
         );
-        sut = new DefaultStatusAnalyser(clock, timeFormatter, configuration, elasticsearchClient, analyserProvider);
+        sut = new DefaultStatusAnalyser(clock, timeFormatter, configuration, elasticsearchClient, elasticsearchVersionProvider, analyserProvider);
     }
 
     @ParameterizedTest
@@ -195,6 +208,32 @@ class DefaultStatusAnalyserTest {
     }
 
     @Test
+    void createReport_allStatusRequestsSucceed_updateElasticsearchVersion() {
+        // Given
+        ClusterNodeInfo clusterNodeInfo = ClusterNodeInfos.random();
+        givenAllRequestsSucceed(ClusterInfos.random(), clusterNodeInfo, null);
+
+        // When
+        sut.createReport();
+
+        // Then
+        verify(elasticsearchVersionProvider).updateVersion(clusterNodeInfo.getElasticsearchVersion());
+    }
+
+    @Test
+    void createReport_getNodeInfoRequestsFails_doNotUpdateElasticsearchVersion() {
+        // Given
+        givenAllRequestsSucceed();
+        when(elasticsearchClient.getNodeInfo()).thenReturn(Optional.empty());
+
+        // When
+        sut.createReport();
+
+        // Then
+        verify(elasticsearchVersionProvider, never()).updateVersion(anyString());
+    }
+
+    @Test
     void createReport_allStatusRequestsSucceed_returnExpectedAnalysisReport() {
         // Given
         AnalysisReport expectedAnalysisReport = givenAllRequestsSucceed();
@@ -266,16 +305,24 @@ class DefaultStatusAnalyserTest {
         return timeFormatter;
     }
 
+    private ElasticsearchVersionProvider mockElasticsearchVersionProvider() {
+        elasticsearchVersionProvider = mock(ElasticsearchVersionProvider.class);
+        when(elasticsearchVersionProvider.get()).thenReturn(ElasticsearchVersion.defaultVersion());
+        return elasticsearchVersionProvider;
+    }
+
     private EndpointAnalyser mockEndpointAnalyser() {
         endpointAnalyser = mock(EndpointAnalyser.class);
         when(endpointAnalyser.analyse(anyList())).thenReturn(AnalysisResult.empty());
         return endpointAnalyser;
     }
 
-    private ClusterAnalyser mockClusterAnalyser() {
-        clusterAnalyser = mock(ClusterAnalyser.class);
+    private ClusterAnalyserProvider mockClusterAnalyserProvider() {
+        ClusterAnalyserProvider clusterAnalyserProvider = mock(ClusterAnalyserProvider.class);
+        clusterAnalyser = mock(DefaultClusterAnalyser.class);
         when(clusterAnalyser.analyse(any(ClusterSettings.class), anyList())).thenReturn(AnalysisResult.empty());
-        return clusterAnalyser;
+        when(clusterAnalyserProvider.get()).thenReturn(clusterAnalyser);
+        return clusterAnalyserProvider;
     }
 
     private ShardAnalyser mockShardAnalyser() {
@@ -289,9 +336,9 @@ class DefaultStatusAnalyserTest {
      */
     private AnalysisReport givenAllRequestsSucceed() {
         ClusterInfo clusterInfo = ClusterInfos.randomHealthy();
-        List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
-        givenAllRequestsSucceed(clusterInfo, nodeInfos, null);
-        return AnalysisReport.finished(TOOL_VERSION, CURRENT_TIME, configuration, List.of(), List.of(), clusterInfo, nodeInfos);
+        ClusterNodeInfo clusterNodeInfo = ClusterNodeInfos.random();
+        givenAllRequestsSucceed(clusterInfo, clusterNodeInfo, null);
+        return AnalysisReport.finished(TOOL_VERSION, CURRENT_TIME, configuration, List.of(), List.of(), clusterInfo, clusterNodeInfo.getNodeInfos());
     }
 
     /**
@@ -299,19 +346,19 @@ class DefaultStatusAnalyserTest {
      */
     private AnalysisReport givenAllRequestsSucceedWithWarnings(final List<Warning> warnings) {
         ClusterInfo clusterInfo = ClusterInfos.random();
-        List<NodeInfo> nodeInfos = List.of(NodeInfos.random());
+        ClusterNodeInfo clusterNodeInfo = ClusterNodeInfos.random();
         UnassignedShardInfo unassignedShardInfo = UnassignedShardInfos.random();
-        givenAllRequestsSucceed(clusterInfo, nodeInfos, unassignedShardInfo);
-        return AnalysisReport.finished(TOOL_VERSION, CURRENT_TIME, configuration, List.of(), warnings, clusterInfo, nodeInfos);
+        givenAllRequestsSucceed(clusterInfo, clusterNodeInfo, unassignedShardInfo);
+        return AnalysisReport.finished(TOOL_VERSION, CURRENT_TIME, configuration, List.of(), warnings, clusterInfo, clusterNodeInfo.getNodeInfos());
     }
 
     private void givenAllRequestsSucceed(
             final ClusterInfo clusterInfo,
-            final List<NodeInfo> nodeInfos,
+            final ClusterNodeInfo clusterNodeInfo,
             final @Nullable UnassignedShardInfo unassignedShardInfo) {
         when(elasticsearchClient.checkConnection()).thenReturn(ConnectionInfo.success());
         when(elasticsearchClient.getClusterInfo()).thenReturn(Optional.of(clusterInfo));
-        when(elasticsearchClient.getNodeInfo()).thenReturn(nodeInfos);
+        when(elasticsearchClient.getNodeInfo()).thenReturn(Optional.of(clusterNodeInfo));
         when(elasticsearchClient.getUnassignedShardInfo()).thenReturn(Optional.ofNullable(unassignedShardInfo));
     }
 

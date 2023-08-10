@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
+package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster;
 
 import app.habitzl.elasticsearch.status.monitor.ClusterSettingsUtils;
 import app.habitzl.elasticsearch.status.monitor.EndpointInfos;
@@ -9,21 +9,23 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.warnings.Spli
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.EndpointInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.any;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 
-class ClusterAnalyserTest {
+class Elasticsearch6ClusterAnalyserTest {
 
-    private ClusterAnalyser sut;
+    private Elasticsearch6ClusterAnalyser sut;
 
     @BeforeEach
     void setUp() {
-        sut = new ClusterAnalyser();
+        sut = new Elasticsearch6ClusterAnalyser();
     }
 
     @Test

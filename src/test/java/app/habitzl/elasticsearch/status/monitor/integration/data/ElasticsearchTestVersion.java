@@ -1,15 +1,15 @@
 package app.habitzl.elasticsearch.status.monitor.integration.data;
 
 /**
- * Defines all supported Elasticsearch versions.
+ * Defines all supported Elasticsearch versions for integration tests.
  */
-public enum ElasticsearchVersion {
+public enum ElasticsearchTestVersion {
     ELASTICSEARCH_6_8("6.8"),
-    ELASTICSEARCH_7_16("7.16");
+    ELASTICSEARCH_7_17("7.17");
 
     private final String version;
 
-    ElasticsearchVersion(final String version) {
+    ElasticsearchTestVersion(final String version) {
         this.version = version;
     }
 

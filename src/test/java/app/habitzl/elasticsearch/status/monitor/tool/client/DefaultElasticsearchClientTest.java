@@ -1,14 +1,15 @@
 package app.habitzl.elasticsearch.status.monitor.tool.client;
 
 import app.habitzl.elasticsearch.status.monitor.ClusterInfos;
+import app.habitzl.elasticsearch.status.monitor.ClusterNodeInfos;
 import app.habitzl.elasticsearch.status.monitor.ClusterSettingsUtils;
-import app.habitzl.elasticsearch.status.monitor.NodeInfos;
 import app.habitzl.elasticsearch.status.monitor.Randoms;
 import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.ClusterNodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.ClusterAllocationParams;
@@ -20,6 +21,10 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.params.EndpointVersi
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.GeneralParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeInfoParams;
 import app.habitzl.elasticsearch.status.monitor.tool.client.params.NodeStatsParams;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import javax.net.ssl.SSLHandshakeException;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.StatusLine;
@@ -33,17 +38,14 @@ import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.net.ssl.SSLHandshakeException;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
 import static com.github.npathai.hamcrestopt.OptionalMatchers.isEmpty;
 import static com.github.npathai.hamcrestopt.OptionalMatchers.isPresentAnd;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class DefaultElasticsearchClientTest {
 
@@ -266,13 +268,14 @@ class DefaultElasticsearchClientTest {
         // Given
         Response response = givenClientRespondsWith(HTTP_STATUS_OK);
         String content = givenResponseHasContent(response);
-        List<NodeInfo> expected = givenContentCanBeMappedToNodeInfo(content);
+        List<NodeInfo> expectedNodeInfos = givenContentCanBeMappedToNodeInfo(content);
 
         // When
-        List<NodeInfo> result = sut.getNodeInfo();
+        Optional<ClusterNodeInfo> result = sut.getNodeInfo();
 
         // Then
-        assertThat(result, equalTo(expected));
+        ClusterNodeInfo expected = new ClusterNodeInfo(expectedNodeInfos);
+        assertThat(result, isPresentAnd(equalTo(expected)));
     }
 
     @Test
@@ -282,10 +285,10 @@ class DefaultElasticsearchClientTest {
         givenResponseMapperThrowsException();
 
         // When
-        List<NodeInfo> result = sut.getNodeInfo();
+        Optional<ClusterNodeInfo> result = sut.getNodeInfo();
 
         // Then
-        assertThat(result, empty());
+        assertThat(result, isEmpty());
     }
 
     @Test
@@ -406,7 +409,7 @@ class DefaultElasticsearchClientTest {
     }
 
     private List<NodeInfo> givenContentCanBeMappedToNodeInfo(final String responseContent) {
-        List<NodeInfo> infos = List.of(NodeInfos.random(), NodeInfos.random());
+        List<NodeInfo> infos = ClusterNodeInfos.random().getNodeInfos();
         when(infoMapper.mapNodeInfo(responseContent, responseContent, responseContent)).thenReturn(infos);
         return infos;
     }

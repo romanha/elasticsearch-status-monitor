@@ -14,19 +14,20 @@ import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.Cluster
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.cluster.ClusterSettings;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.connection.ConnectionStatus;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.ClusterNodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.node.NodeInfo;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.shard.UnassignedShardInfo;
+import app.habitzl.elasticsearch.status.monitor.tool.client.data.version.ElasticsearchVersionProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.configuration.StatusMonitorConfiguration;
 import app.habitzl.elasticsearch.status.monitor.util.TimeFormatter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.inject.Inject;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DefaultStatusAnalyser implements StatusAnalyser {
     private static final Logger LOG = LogManager.getLogger(DefaultStatusAnalyser.class);
@@ -35,6 +36,7 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
     private final TimeFormatter timeFormatter;
     private final StatusMonitorConfiguration configuration;
     private final ElasticsearchClient elasticsearchClient;
+    private final ElasticsearchVersionProvider elasticsearchVersionProvider;
     private final AnalyserProvider analyserProvider;
 
     @Inject
@@ -43,11 +45,13 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
             final TimeFormatter timeFormatter,
             final StatusMonitorConfiguration configuration,
             final ElasticsearchClient elasticsearchClient,
+            final ElasticsearchVersionProvider elasticsearchVersionProvider,
             final AnalyserProvider analyserProvider) {
         this.clock = clock;
         this.timeFormatter = timeFormatter;
         this.configuration = configuration;
         this.elasticsearchClient = elasticsearchClient;
+        this.elasticsearchVersionProvider = elasticsearchVersionProvider;
         this.analyserProvider = analyserProvider;
     }
 
@@ -89,10 +93,12 @@ public class DefaultStatusAnalyser implements StatusAnalyser {
     private AnalysisReport createAnalysisReport() {
         ClusterSettings clusterSettings = elasticsearchClient.getClusterSettings().orElse(ClusterSettings.createDefault());
         Optional<ClusterInfo> clusterInfo = elasticsearchClient.getClusterInfo();
-        List<NodeInfo> nodeInfos = elasticsearchClient.getNodeInfo();
-        Optional<UnassignedShardInfo> unassignedShardInfo =
-                clusterInfo.filter(info -> info.getNumberOfUnassignedShards() > 0)
-                        .flatMap(info -> elasticsearchClient.getUnassignedShardInfo());
+        Optional<ClusterNodeInfo> clusterNodeInfo = elasticsearchClient.getNodeInfo();
+        clusterNodeInfo.ifPresent(info -> elasticsearchVersionProvider.updateVersion(info.getElasticsearchVersion()));
+
+        List<NodeInfo> nodeInfos = clusterNodeInfo.map(ClusterNodeInfo::getNodeInfos).orElseGet(List::of);
+        Optional<UnassignedShardInfo> unassignedShardInfo = clusterInfo.filter(info -> info.getNumberOfUnassignedShards() > 0)
+                .flatMap(info -> elasticsearchClient.getUnassignedShardInfo());
 
         AnalysisResult endpointAnalysisResult = analyserProvider.getEndpointAnalyser()
                 .analyse(nodeInfos.stream().map(NodeInfo::getEndpointInfo).collect(Collectors.toList()));
