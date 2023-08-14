@@ -10,7 +10,7 @@
 <a id="130"></a>
 ## 1.3.0
 
-Released on: yyyy-mm-dd
+Released on: 2023-08-14
 
 ### Compatibility
 
