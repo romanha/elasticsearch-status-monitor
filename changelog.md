@@ -2,10 +2,31 @@
 
 ## Releases
 
+* [1.4.0](#140)
 * [1.3.0](#130)
 * [1.2.0](#120)
 * [1.1.0](#110)
 * [1.0.0](#100)
+
+<a id="140"></a>
+## 1.4.0
+
+Released on: yyyy-mm-dd
+
+### Compatibility
+
+* Java 11
+* Elasticsearch 6.8 / 7.17
+
+### New features
+
+### Fixes
+
+### Miscellaneous
+
+### Tests
+
+---
 
 <a id="130"></a>
 ## 1.3.0
