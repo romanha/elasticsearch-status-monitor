@@ -3,9 +3,11 @@
  *            Registered with Commercial Court Vienna,
  *            reg.no. FN 72.115b.
  */
-package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster;
+package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
 
 import app.habitzl.elasticsearch.status.monitor.ElasticsearchVersions;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.DefaultClusterAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.Elasticsearch6ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.version.ElasticsearchVersion;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.version.ElasticsearchVersionProvider;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
+package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.endpoint;
 
 import app.habitzl.elasticsearch.status.monitor.EndpointInfos;
 import app.habitzl.elasticsearch.status.monitor.Hosts;
@@ -23,9 +23,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class EndpointAnalyserTest {
+class DefaultEndpointAnalyserTest {
 
-    private EndpointAnalyser sut;
+    private DefaultEndpointAnalyser sut;
     private HostnameResolver hostnameResolver;
     private StatusMonitorConfiguration configuration;
 
@@ -33,7 +33,7 @@ class EndpointAnalyserTest {
     void setUp() {
         hostnameResolver = mock(HostnameResolver.class);
         configuration = StatusMonitorConfigurations.random();
-        sut = new EndpointAnalyser(hostnameResolver, configuration);
+        sut = new DefaultEndpointAnalyser(hostnameResolver, configuration);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
+package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.shard;
 
 import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
@@ -13,11 +13,11 @@ import static org.hamcrest.Matchers.hasItem;
 
 class ShardAnalyserTest {
 
-    private ShardAnalyser sut;
+    private DefaultShardAnalyser sut;
 
     @BeforeEach
     void setUp() {
-        sut = new ShardAnalyser();
+        sut = new DefaultShardAnalyser();
     }
 
     @Test

@@ -1,7 +1,5 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
 
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyser;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyserProvider;
 import javax.inject.Inject;
 
 /**

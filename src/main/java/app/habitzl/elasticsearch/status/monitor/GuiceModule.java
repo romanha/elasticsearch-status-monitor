@@ -7,11 +7,14 @@ import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultExitCodeMap
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.DefaultStatusAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.ElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.AnalyserProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyserProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyserProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.DefaultClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.Elasticsearch6ClusterAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.endpoint.DefaultEndpointAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.shard.DefaultShardAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.DefaultElasticsearchClient;
 import app.habitzl.elasticsearch.status.monitor.tool.client.InfoMapper;
 import app.habitzl.elasticsearch.status.monitor.tool.client.ResponseMapper;
@@ -94,11 +97,11 @@ class GuiceModule extends AbstractModule {
         // Analyser
         bind(StatusAnalyser.class).to(DefaultStatusAnalyser.class).in(Singleton.class);
         bind(AnalyserProvider.class).in(Singleton.class);
-        bind(EndpointAnalyser.class).in(Singleton.class);
+        bind(EndpointAnalyser.class).to(DefaultEndpointAnalyser.class).in(Singleton.class);
         bind(ClusterAnalyserProvider.class).in(Singleton.class);
-        bind(DefaultClusterAnalyser.class).in(Singleton.class);
+        bind(ClusterAnalyser.class).to(DefaultClusterAnalyser.class).in(Singleton.class);
         bind(Elasticsearch6ClusterAnalyser.class).in(Singleton.class);
-        bind(ShardAnalyser.class).in(Singleton.class);
+        bind(ShardAnalyser.class).to(DefaultShardAnalyser.class).in(Singleton.class);
 
         // Presentation
         bind(ReportGenerator.class).to(FreemarkerHtmlReportGenerator.class).in(Singleton.class);

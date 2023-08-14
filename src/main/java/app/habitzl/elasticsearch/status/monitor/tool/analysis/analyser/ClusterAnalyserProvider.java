@@ -3,8 +3,9 @@
  *            Registered with Commercial Court Vienna,
  *            reg.no. FN 72.115b.
  */
-package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster;
+package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
 
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.Elasticsearch6ClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.version.ElasticsearchMajorVersion;
 import app.habitzl.elasticsearch.status.monitor.tool.client.data.version.ElasticsearchVersionProvider;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class ClusterAnalyserProvider implements Provider<ClusterAnalyser> {
     @Inject
     public ClusterAnalyserProvider(
             final ElasticsearchVersionProvider elasticsearchVersionProvider,
-            final DefaultClusterAnalyser defaultClusterAnalyser,
+            final ClusterAnalyser defaultClusterAnalyser,
             final Elasticsearch6ClusterAnalyser elasticsearch6ClusterAnalyser) {
         this.elasticsearchVersionProvider = elasticsearchVersionProvider;
         this.defaultClusterAnalyser = defaultClusterAnalyser;

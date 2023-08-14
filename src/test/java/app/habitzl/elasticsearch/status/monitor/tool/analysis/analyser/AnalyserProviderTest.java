@@ -1,6 +1,5 @@
 package app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser;
 
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyserProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

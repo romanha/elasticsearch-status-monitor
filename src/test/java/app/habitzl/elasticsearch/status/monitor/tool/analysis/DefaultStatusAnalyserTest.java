@@ -7,10 +7,10 @@ import app.habitzl.elasticsearch.status.monitor.Randoms;
 import app.habitzl.elasticsearch.status.monitor.StatusMonitorConfigurations;
 import app.habitzl.elasticsearch.status.monitor.UnassignedShardInfos;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.AnalyserProvider;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyser;
+import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ClusterAnalyserProvider;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.EndpointAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.ShardAnalyser;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.ClusterAnalyserProvider;
-import app.habitzl.elasticsearch.status.monitor.tool.analysis.analyser.cluster.DefaultClusterAnalyser;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisReport;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.AnalysisResult;
 import app.habitzl.elasticsearch.status.monitor.tool.analysis.data.Warning;
@@ -65,7 +65,7 @@ class DefaultStatusAnalyserTest {
     private ElasticsearchClient elasticsearchClient;
     private ElasticsearchVersionProvider elasticsearchVersionProvider;
     private EndpointAnalyser endpointAnalyser;
-    private DefaultClusterAnalyser clusterAnalyser;
+    private ClusterAnalyser clusterAnalyser;
     private ShardAnalyser shardAnalyser;
 
     @BeforeEach
@@ -319,7 +319,7 @@ class DefaultStatusAnalyserTest {
 
     private ClusterAnalyserProvider mockClusterAnalyserProvider() {
         ClusterAnalyserProvider clusterAnalyserProvider = mock(ClusterAnalyserProvider.class);
-        clusterAnalyser = mock(DefaultClusterAnalyser.class);
+        clusterAnalyser = mock(ClusterAnalyser.class);
         when(clusterAnalyser.analyse(any(ClusterSettings.class), anyList())).thenReturn(AnalysisResult.empty());
         when(clusterAnalyserProvider.get()).thenReturn(clusterAnalyser);
         return clusterAnalyserProvider;
