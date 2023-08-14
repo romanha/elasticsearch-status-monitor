@@ -35,7 +35,7 @@ public class ThreeNodeClusterElasticsearch6IntegrationTest extends AbstractElast
     //      The tool needs support for disabling certain warnings.
     //      For this test, "high RAM usage" and "cluster not redundant" (using same host) need to be disabled.
     @Test
-    void startAnalysis_threeNodeCluster_returnSplitBrainPossibleWarning() {
+    void startAnalysis_threeNodeCluster_returnNoIssuesFound() {
         // Given
         String fallbackEndpoints = "localhost:9201,localhost:9202";
         addConfigurationOption("--fallbackEndpoints", fallbackEndpoints);
